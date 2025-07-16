@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Atas de Registro de Preços</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="app-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="header-title">
+                    <h1>Atas de Registro de Preços</h1>
+                    <p>Gerencie as atas em um painel centralizado</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-primary" id="add-record-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Nova Ata</span>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <p>Carregando registros...</p>
+        </div>
+
+        <!-- Kanban Board -->
+        <div id="kanban-board" class="kanban-board hidden">
+            <div class="board-header">
+                <h2>Painel de Controle</h2>
+                <div class="board-controls">
+                    <button class="btn-secondary">
+                        <i class="fas fa-filter"></i>
+                        Filtrar
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-sort"></i>
+                        Ordenar
+                    </button>
+                </div>
+            </div>
+
+            <div class="board-columns">
+                <!-- Vigentes Column -->
+                <div class="column" id="col-vigentes">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="status-indicator status-active"></div>
+                            <h3>Vigentes</h3>
+                            <span class="count" id="count-vigentes">0</span>
+                        </div>
+                        <button class="column-menu">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="column-content" id="list-vigentes">
+                        <!-- Cards will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Próximas ao Vencimento Column -->
+                <div class="column" id="col-proximas">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="status-indicator status-warning"></div>
+                            <h3>Próximas ao Vencimento</h3>
+                            <span class="count" id="count-proximas">0</span>
+                        </div>
+                        <button class="column-menu">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="column-content" id="list-proximas">
+                        <!-- Cards will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Vencidas Column -->
+                <div class="column" id="col-vencidas">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="status-indicator status-expired"></div>
+                            <h3>Vencidas</h3>
+                            <span class="count" id="count-vencidas">0</span>
+                        </div>
+                        <button class="column-menu">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="column-content" id="list-vencidas">
+                        <!-- Cards will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Create/Edit -->
+    <div id="record-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Nova Ata</h2>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="record-form" class="modal-content">
+                <input type="hidden" id="record-id">
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3>Informações Básicas</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="numero-ata">Número da Ata</label>
+                            <input type="text" id="numero-ata" placeholder="Ex: 0016/2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="documento-sei">Documento SEI</label>
+                            <input type="text" id="documento-sei" placeholder="Ex: 12345.67890/2024-11" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="objeto">Objeto</label>
+                        <input type="text" id="objeto" placeholder="Descrição do objeto da ata" required>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="data-assinatura">Data de Assinatura</label>
+                            <input type="date" id="data-assinatura" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="data-vigencia">Data de Vigência</label>
+                            <input type="date" id="data-vigencia" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fornecedor Information -->
+                <div class="form-section">
+                    <h3>Dados do Fornecedor</h3>
+                    <div class="form-group">
+                        <label for="fornecedor">Nome do Fornecedor</label>
+                        <input type="text" id="fornecedor" placeholder="Nome da empresa fornecedora" required>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Telefones</label>
+                            <div id="telefones-container" class="dynamic-list">
+                                <!-- Dynamic phone inputs -->
+                            </div>
+                            <button type="button" class="btn-add" id="add-telefone">
+                                <i class="fas fa-plus"></i>
+                                Adicionar Telefone
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>E-mails</label>
+                            <div id="emails-container" class="dynamic-list">
+                                <!-- Dynamic email inputs -->
+                            </div>
+                            <button type="button" class="btn-add" id="add-email">
+                                <i class="fas fa-plus"></i>
+                                Adicionar E-mail
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>Itens da Ata</h3>
+                        <button type="button" class="btn-secondary" id="add-item">
+                            <i class="fas fa-plus"></i>
+                            Adicionar Item
+                        </button>
+                    </div>
+                    <div id="items-container" class="items-list">
+                        <!-- Dynamic items will be inserted here -->
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancel-btn">Cancelar</button>
+                <button type="submit" form="record-form" class="btn-primary" id="save-btn">
+                    <i class="fas fa-save"></i>
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+
