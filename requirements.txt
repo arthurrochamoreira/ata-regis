@@ -1,5 +1,1 @@
 flet
-python-dotenv
-apscheduler
-PyInstaller
-pytest
