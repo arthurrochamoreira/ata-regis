@@ -1,5 +1,3 @@
-
-
 import flet as ft
 import database
 import datetime
@@ -169,8 +167,8 @@ class AtaApp:
         # Número da Ata – usa a dica existente como máscara
         self.numero_ata_field = ft.TextField(
             label="Número da Ata",
-            value="0000/0000",  # máscara inicial
-            on_change=_handler_mascara(self, "0000/0000")
+            value="NNNN/NNNN",  # << ALTERAÇÃO AQUI
+            on_change=_handler_mascara(self, "NNNN/NNNN") # << ALTERAÇÃO AQUI
         )
         self.documento_sei_field = ft.TextField(label="Documento SEI", hint_text="Ex: 12345.67890/2024-11")
         self.objeto_field = ft.TextField(label="Objeto", hint_text="Descrição do objeto da ata")
@@ -400,7 +398,7 @@ class AtaApp:
         for field in [self.numero_ata_field, self.documento_sei_field, self.objeto_field, self.data_assinatura_field, self.data_vigencia_field, self.fornecedor_field]:
             field.error_text = None
 
-        if re.search(r'[0]', self.numero_ata_field.value):
+        if re.search(r'[N]', self.numero_ata_field.value): # << ALTERAÇÃO AQUI
             self.numero_ata_field.error_text = "Preencha todos os dígitos."
             is_valid = False
             
