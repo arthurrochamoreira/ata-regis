@@ -1,16 +1,18 @@
+# Arquivo: database.py
+
 import sqlite3
-import json
+from typing import List, Dict, Any
 
 DATABASE_NAME = 'atas_registro.db'
 
 def connect_db():
     """Conecta ao banco de dados SQLite."""
     conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row # Permite acessar colunas como dicionário
+    conn.row_factory = sqlite3.Row  # Permite acessar colunas como dicionário
     return conn
 
-def create_tables():
-    """Cria as tabelas necessárias no banco de dados."""
+def init_db():
+    """Cria as tabelas necessárias no banco de dados, se não existirem."""
     conn = connect_db()
     cursor = conn.cursor()
     
@@ -18,13 +20,13 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS atas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             numeroAta TEXT NOT NULL,
-            documentoSei TEXT NOT NULL,
+            documentoSei TEXT,
             objeto TEXT NOT NULL,
             dataAssinatura TEXT NOT NULL,
             dataVigencia TEXT NOT NULL,
             fornecedor TEXT NOT NULL,
-            createdAt TEXT NOT NULL,
-            updatedAt TEXT NOT NULL
+            createdAt TEXT,
+            updatedAt TEXT
         )
     ''')
     
@@ -59,9 +61,10 @@ def create_tables():
     
     conn.commit()
     conn.close()
+    print("Banco de dados inicializado.")
 
-def insert_ata(ata_data):
-    """Insere uma nova ata no banco de dados."""
+def insert_ata(ata_data: Dict[str, Any]):
+    """Insere uma nova ata e seus dados relacionados."""
     conn = connect_db()
     cursor = conn.cursor()
     
@@ -70,7 +73,7 @@ def insert_ata(ata_data):
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         ata_data['numeroAta'],
-        ata_data['documentoSei'],
+        ata_data.get('documentoSei', ''),
         ata_data['objeto'],
         ata_data['dataAssinatura'],
         ata_data['dataVigencia'],
@@ -95,12 +98,12 @@ def insert_ata(ata_data):
     conn.close()
     return ata_id
 
-def get_all_atas():
+def get_all_atas() -> List[Dict[str, Any]]:
     """Retorna todas as atas com seus dados relacionados."""
     conn = connect_db()
     cursor = conn.cursor()
     
-    cursor.execute('SELECT * FROM atas')
+    cursor.execute('SELECT * FROM atas ORDER BY dataVigencia DESC')
     atas = cursor.fetchall()
     
     result = []
@@ -121,7 +124,7 @@ def get_all_atas():
     conn.close()
     return result
 
-def update_ata(ata_id, ata_data):
+def update_ata(ata_id: int, ata_data: Dict[str, Any]):
     """Atualiza uma ata existente no banco de dados."""
     conn = connect_db()
     cursor = conn.cursor()
@@ -132,7 +135,7 @@ def update_ata(ata_id, ata_data):
         WHERE id = ?
     ''', (
         ata_data['numeroAta'],
-        ata_data['documentoSei'],
+        ata_data.get('documentoSei', ''),
         ata_data['objeto'],
         ata_data['dataAssinatura'],
         ata_data['dataVigencia'],
@@ -158,14 +161,10 @@ def update_ata(ata_id, ata_data):
     conn.commit()
     conn.close()
 
-def delete_ata(ata_id):
+def delete_ata(ata_id: int):
     """Deleta uma ata do banco de dados."""
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM atas WHERE id = ?', (ata_id,))
     conn.commit()
     conn.close()
-
-# Inicializa o banco de dados e cria as tabelas ao importar o módulo
-create_tables()
-
