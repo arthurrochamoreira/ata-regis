@@ -345,8 +345,14 @@ class AtaApp:
         vencidas = []
         
         for ata in self.atas:
-            vigencia_date = datetime.datetime.strptime(ata['dataVigencia'], "%Y-%m-%d").date()
-            
+            try:
+                vigencia_date = datetime.datetime.strptime(
+                    ata['dataVigencia'], "%Y-%m-%d"
+                ).date()
+            except ValueError:
+                # Skip invalid dates to avoid breaking UI
+                continue
+
             if vigencia_date < today:
                 vencidas.append(ata)
             elif vigencia_date <= ninety_days_from_now:
@@ -473,6 +479,17 @@ class AtaApp:
                 'createdAt': datetime.datetime.now().isoformat(),
                 'updatedAt': datetime.datetime.now().isoformat()
             }
+
+            # Validate date fields
+            try:
+                datetime.datetime.strptime(ata_data['dataAssinatura'], "%Y-%m-%d")
+                datetime.datetime.strptime(ata_data['dataVigencia'], "%Y-%m-%d")
+            except ValueError:
+                self.show_snackbar(
+                    "Datas devem estar no formato AAAA-MM-DD.",
+                    ft.Colors.RED,
+                )
+                return
             
             # Coletar itens
             for item_container in self.items_list.controls:
@@ -499,10 +516,10 @@ class AtaApp:
             self.close_modal()
             
             # Mostrar mensagem de sucesso
-            self.show_snackbar("Ata salva com sucesso!", ft.colors.GREEN)
+            self.show_snackbar("Ata salva com sucesso!", ft.Colors.GREEN)
             
         except Exception as ex:
-            self.show_snackbar(f"Erro ao salvar ata: {str(ex)}", ft.colors.RED)
+            self.show_snackbar(f"Erro ao salvar ata: {str(ex)}", ft.Colors.RED)
 
     def edit_ata(self, ata_id: int):
         """Edita uma ata existente."""
@@ -549,7 +566,7 @@ class AtaApp:
         def confirm_delete(e):
             database.delete_ata(ata_id)
             self.load_atas()
-            self.show_snackbar("Ata excluída com sucesso!", ft.colors.GREEN)
+            self.show_snackbar("Ata excluída com sucesso!", ft.Colors.GREEN)
             confirm_dialog.open = False
             self.page.update()
 
