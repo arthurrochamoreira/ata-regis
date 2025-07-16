@@ -1,7 +1,5 @@
-PORT=8080
 REQ=requirements.txt
 VENV=.venv
-URL=http://127.0.0.1:$(PORT)/
 
 # Detecta SO
 OS := $(shell (uname 2>NUL) || echo Windows_NT)
@@ -10,9 +8,8 @@ ifeq ($(OS),Windows_NT)
 	PYTHON=python
 	PYTHON_VENV=$(VENV)\Scripts\python.exe
 	PIP=$(VENV)\Scripts\pip.exe
-	CHECK_VENV=call scripts\check_venv.bat
-	CHECK_REQ=$(PYTHON_VENV) scripts\check_requirements.py
-	OPEN_BROWSER=cmd /c start $(URL)
+        CHECK_VENV=call scripts\check_venv.bat
+        CHECK_REQ=$(PYTHON_VENV) scripts\check_requirements.py
 	CHCP_CMD=chcp 65001 >NUL
 	DEVNULL=NUL
 	COLOR_START=
@@ -24,9 +21,8 @@ else
 	PYTHON=python3
 	PYTHON_VENV=$(VENV)/bin/python3
 	PIP=$(VENV)/bin/pip
-	CHECK_VENV=sh scripts/check_venv.sh
-	CHECK_REQ=$(PYTHON_VENV) scripts/check_requirements.py
-	OPEN_BROWSER=xdg-open $(URL)
+        CHECK_VENV=sh scripts/check_venv.sh
+        CHECK_REQ=$(PYTHON_VENV) scripts/check_requirements.py
 	CHCP_CMD=true
 	DEVNULL=/dev/null
 	COLOR_START=\033[0;32m
@@ -49,7 +45,6 @@ endif
 	@$(BLANK)
 	@$(PRINT) $(QUOTE)$(COLOR_START)===============================================$(COLOR_END)$(QUOTE)
 	@$(PRINT) $(QUOTE)$(COLOR_START)Iniciando build do ambiente da Aplicação Python GUI$(COLOR_END)$(QUOTE)
-	@$(PRINT) $(QUOTE)$(COLOR_START)Porta: $(URL)$(COLOR_END)$(QUOTE)
 	@$(PRINT) $(QUOTE)$(COLOR_START)===============================================$(COLOR_END)$(QUOTE)
 
 	@echo [1/3] Verificando ambiente virtual...
@@ -65,6 +60,5 @@ endif
 	@$(PRINT) $(QUOTE)$(COLOR_START)✅ Ambiente configurado com sucesso!$(COLOR_END)$(QUOTE)
 	@$(BLANK)
 	@echo [3/3] Iniciando Aplicação Python GUI
-	@$(PRINT) $(QUOTE)$(COLOR_START)Acesse: $(URL)$(COLOR_END)$(QUOTE)
-	@$(PYTHON_VENV) main_gui.py --port $(PORT)
+	@$(PYTHON_VENV) main_gui.py
 
