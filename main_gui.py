@@ -129,9 +129,10 @@ class AtaApp:
 
         self.modal = self.create_modal()
         self.page.add(
-            ft.Column([header, main_content], expand=True, spacing=0),
-            self.modal
+            ft.Column([header, main_content], expand=True, spacing=0)
         )
+        # Dialogs devem ser atribuídos à propriedade ``page.dialog`` para serem exibidos corretamente
+        self.page.dialog = self.modal
         self.load_atas()
 
 
@@ -319,11 +320,15 @@ class AtaApp:
         self.current_edit_ata = None
         self.clear_modal_fields()
         self.modal.content.content.controls[0].content.controls[0].value = "Nova Ata"
+        # Garantir que o diálogo esteja atribuído corretamente à página
+        self.page.dialog = self.modal
         self.modal.open = True
         self.page.update()
 
     def close_modal(self, e=None):
         self.modal.open = False
+        # Remove a referência do diálogo para evitar conflitos com outros diálogos
+        self.page.dialog = None
         self.page.update()
 
     def clear_modal_fields(self):
