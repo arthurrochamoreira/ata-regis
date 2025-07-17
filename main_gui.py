@@ -6,50 +6,42 @@ import re
 import copy
 from collections import defaultdict
 from typing import List, Dict, Any
+
+import database
 from matplotlib.figure import Figure
 
 # ===============================================================
-# 1. DATA MANAGER (BACK-END MOCKADO)
+# 1. DATA MANAGER (BACK-END COM BANCO DE DADOS)
 # ===============================================================
 class DataManager:
-    """Gerencia os dados da aplicação (atas) de forma mockada."""
-    def __init__(self):
-        self._records = self._get_mock_data()
-        self._next_id = len(self._records) + 1
+    """Gerencia os dados da aplicação utilizando SQLite."""
 
-    def _get_mock_data(self) -> List[Dict[str, Any]]:
-        # Usando a data atual para tornar os status dinâmicos
-        today = datetime.date.today()
-        return [
-            {'id': 1, 'numeroAta': '0010/2026', 'documentoSei': '12345.6/25-1', 'objeto': 'Aquisição de Monitores de Vídeo', 'fornecedor': 'Tech Solutions LTDA', 'dataAssinatura': (today + datetime.timedelta(days=-200)).strftime('%Y-%m-%d'), 'dataVigencia': (today + datetime.timedelta(days=165)).strftime('%Y-%m-%d'), 'items': [{'descricao': 'Monitor 24"', 'quantidade': 50, 'valor': 899.90}], 'telefonesFornecedor': ['(61) 3333-4444'], 'emailsFornecedor': ['vendas@techsolutions.com.br']},
-            {'id': 2, 'numeroAta': '0015/2026', 'documentoSei': '12345.7/25-2', 'objeto': 'Serviço de Limpeza Predial', 'fornecedor': 'Limpa Tudo Serviços', 'dataAssinatura': (today + datetime.timedelta(days=-150)).strftime('%Y-%m-%d'), 'dataVigencia': (today + datetime.timedelta(days=215)).strftime('%Y-%m-%d'), 'items': [{'descricao': 'Serviço Mensal', 'quantidade': 12, 'valor': 5000}], 'telefonesFornecedor': ['(11) 5555-1234'], 'emailsFornecedor': ['contato@limpatudo.com']},
-            {'id': 3, 'numeroAta': '0008/2025', 'documentoSei': '12345.8/25-3', 'objeto': 'Compra de Cadeiras de Escritório', 'fornecedor': 'Móveis Conforto S.A.', 'dataAssinatura': (today + datetime.timedelta(days=-90)).strftime('%Y-%m-%d'), 'dataVigencia': (today + datetime.timedelta(days=80)).strftime('%Y-%m-%d'), 'items': [{'descricao': 'Cadeira Ergonômica', 'quantidade': 100, 'valor': 450.0}]}, # A vencer
-            {'id': 4, 'numeroAta': '0001/2025', 'documentoSei': '12345.9/25-4', 'objeto': 'Manutenção de Ar Condicionado', 'fornecedor': 'Refrigeração Polar', 'dataAssinatura': (today + datetime.timedelta(days=-400)).strftime('%Y-%m-%d'), 'dataVigencia': (today + datetime.timedelta(days=-35)).strftime('%Y-%m-%d'), 'items': [], 'telefonesFornecedor': ['0800-777-0000']}, # Vencida
-            {'id': 5, 'numeroAta': '0021/2026', 'documentoSei': '12345.0/26-5', 'objeto': 'Licenças de Software', 'fornecedor': 'SoftDev Inc.', 'dataAssinatura': (today + datetime.timedelta(days=-120)).strftime('%Y-%m-%d'), 'dataVigencia': (today + datetime.timedelta(days=245)).strftime('%Y-%m-%d'), 'items': [{'descricao': 'Licença Anual', 'quantidade': 200, 'valor': 350.0}], 'emailsFornecedor': ['suporte@softdev.io']},
-        ]
+    def __init__(self):
+        database.init_db()
 
     def get_all_records(self) -> List[Dict[str, Any]]:
-        return copy.deepcopy(self._records)
-    
+        return database.get_all_atas()
+
     def get_record(self, record_id: int) -> Dict | None:
-        record = next((rec for rec in self._records if rec['id'] == record_id), None)
-        return copy.deepcopy(record) if record else None
+        for record in database.get_all_atas():
+            if record["id"] == record_id:
+                return record
+        return None
 
     def add_record(self, data: Dict[str, Any]) -> None:
-        data['id'] = self._next_id
-        self._records.append(data)
-        self._next_id += 1
+        timestamp = datetime.datetime.now().isoformat()
+        payload = copy.deepcopy(data)
+        payload["createdAt"] = timestamp
+        payload["updatedAt"] = timestamp
+        database.insert_ata(payload)
 
     def update_record(self, record_id: int, data: Dict[str, Any]) -> None:
-        """Encontra um registro pelo ID e atualiza seus dados."""
-        for record in self._records:
-            if record['id'] == record_id:
-                record.update(data)
-                record['id'] = record_id 
-                break
+        payload = copy.deepcopy(data)
+        payload["updatedAt"] = datetime.datetime.now().isoformat()
+        database.update_ata(record_id, payload)
 
     def delete_record(self, record_id: int) -> None:
-        self._records = [rec for rec in self._records if rec['id'] != record_id]
+        database.delete_ata(record_id)
 
 # ===============================================================
 # 2. HELPERS DE MÁSCARA
