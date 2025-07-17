@@ -6,13 +6,13 @@ import re
 from collections import defaultdict
 from typing import List, Dict, Any
 
-from data_manager import DataManager
+from ata_service import AtaService
 from matplotlib.figure import Figure
 
 # ===============================================================
-# 1. DATA MANAGER (BACK-END COM BANCO DE DADOS)
+# 1. SERVIÇO DE DADOS
 # ===============================================================
-# A implementacao da classe esta em ``data_manager.py``
+# A implementação da camada de dados está em ``ata_service.py``
 
 # ===============================================================
 # 2. HELPERS DE MÁSCARA
@@ -46,7 +46,7 @@ def _handler_mascara(app: "AtaApp", mascara: str):
 # 3. CLASSE PRINCIPAL DA APLICAÇÃO FLET
 # ===============================================================
 class AtaApp:
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, ata_service: AtaService | None = None):
         self.page = page
         self.page.title = "Gerenciador de Atas de Registro de Preços"
         self.page.theme_mode = ft.ThemeMode.LIGHT
@@ -55,7 +55,7 @@ class AtaApp:
         self.page.window_min_width = 1200
         self.page.window_min_height = 800
 
-        self.data_manager = DataManager()
+        self.ata_service = ata_service or AtaService()
         self.current_edit_ata_id = None
         self.atas = []
         
@@ -239,7 +239,7 @@ class AtaApp:
         )
 
     def load_and_refresh_all(self):
-        self.atas = self.data_manager.get_all_records()
+        self.atas = self.ata_service.list_atas()
         self._refresh_dashboard_view()
         self._refresh_kanban_view()
         if self.page: self.page.update()
@@ -454,6 +454,96 @@ class AtaApp:
                 item_container.content.controls[0].controls[0].value = f"Item {i + 1}"
         self.page.update()
 
+    def _gather_form_data(self) -> Dict[str, Any] | None:
+        """Valida campos e retorna o dicionário da ata ou None se inválido."""
+        is_valid = True
+        for field in [
+            self.numero_ata_field,
+            self.objeto_field,
+            self.fornecedor_field,
+            self.data_assinatura_field,
+            self.data_vigencia_field,
+        ]:
+            field.error_text = None
+
+        if "N" in self.numero_ata_field.value:
+            self.numero_ata_field.error_text = "Preencha o número completo."
+            is_valid = False
+        if not self.objeto_field.value.strip():
+            self.objeto_field.error_text = "O objeto é obrigatório."
+            is_valid = False
+        if not self.fornecedor_field.value.strip():
+            self.fornecedor_field.error_text = "O fornecedor é obrigatório."
+            is_valid = False
+
+        assinatura_obj = vigencia_obj = None
+        try:
+            assinatura_obj = datetime.datetime.strptime(
+                self.data_assinatura_field.value, "%d/%m/%Y"
+            )
+        except ValueError:
+            self.data_assinatura_field.error_text = "Data de assinatura inválida."
+            is_valid = False
+        try:
+            vigencia_obj = datetime.datetime.strptime(
+                self.data_vigencia_field.value, "%d/%m/%Y"
+            )
+        except ValueError:
+            self.data_vigencia_field.error_text = "Data de vigência inválida."
+            is_valid = False
+
+        if assinatura_obj and vigencia_obj and vigencia_obj < assinatura_obj:
+            self.data_vigencia_field.error_text = (
+                "Vigência não pode ser anterior à assinatura."
+            )
+            is_valid = False
+
+        if not is_valid:
+            return None
+
+        items_data = []
+        for item_container in self.items_list.controls:
+            desc_field = item_container.content.controls[1]
+            qtd_field = item_container.content.controls[2].controls[0]
+            valor_field = item_container.content.controls[2].controls[1]
+            try:
+                quantidade = int(qtd_field.value) if qtd_field.value else 0
+            except (ValueError, TypeError):
+                quantidade = 0
+            try:
+                valor_str = valor_field.value.replace(",", ".") if valor_field.value else "0"
+                valor = float(valor_str)
+            except (ValueError, TypeError):
+                valor = 0.0
+            if desc_field.value or quantidade or valor:
+                items_data.append(
+                    {
+                        "descricao": desc_field.value,
+                        "quantidade": quantidade,
+                        "valor": valor,
+                    }
+                )
+
+        return {
+            "numeroAta": self.numero_ata_field.value.strip(),
+            "documentoSei": self.documento_sei_field.value.strip(),
+            "objeto": self.objeto_field.value.strip(),
+            "dataAssinatura": assinatura_obj.strftime("%Y-%m-%d"),
+            "dataVigencia": vigencia_obj.strftime("%Y-%m-%d"),
+            "fornecedor": self.fornecedor_field.value.strip(),
+            "telefonesFornecedor": [
+                row.controls[0].value.strip()
+                for row in self.telefones_list.controls
+                if row.controls[0].value.strip()
+            ],
+            "emailsFornecedor": [
+                row.controls[0].value.strip()
+                for row in self.emails_list.controls
+                if row.controls[0].value.strip()
+            ],
+            "items": items_data,
+        }
+
     def open_modal(self, e=None):
         self.current_edit_ata_id = None
         self._clear_modal_fields()
@@ -470,85 +560,17 @@ class AtaApp:
     # FUNÇÃO CORRIGIDA
     # ===============================================================
     def save_ata(self, e=None):
-        """Valida os dados do formulário e salva uma nova ata ou atualiza uma existente."""
-        # --- 1. Reset e Validação ---
-        is_valid = True
-        all_fields = [
-            self.numero_ata_field,
-            self.objeto_field,
-            self.fornecedor_field,
-            self.data_assinatura_field,
-            self.data_vigencia_field,
-        ]
-        for field in all_fields:
-            field.error_text = None
-
-        if 'N' in self.numero_ata_field.value:
-            self.numero_ata_field.error_text = "Preencha o número completo."
-            is_valid = False
-        if not self.objeto_field.value.strip():
-            self.objeto_field.error_text = "O objeto é obrigatório."
-            is_valid = False
-
-        if not self.fornecedor_field.value.strip():
-            self.fornecedor_field.error_text = "O fornecedor é obrigatório."
-            is_valid = False
-        
-        data_assinatura_obj, data_vigencia_obj = None, None
-        try:
-            data_assinatura_obj = datetime.datetime.strptime(self.data_assinatura_field.value, "%d/%m/%Y")
-        except ValueError:
-            self.data_assinatura_field.error_text = "Data de assinatura inválida."
-            is_valid = False
-        try:
-            data_vigencia_obj = datetime.datetime.strptime(self.data_vigencia_field.value, "%d/%m/%Y")
-        except ValueError:
-            self.data_vigencia_field.error_text = "Data de vigência inválida."
-            is_valid = False
-
-        if data_assinatura_obj and data_vigencia_obj and data_vigencia_obj < data_assinatura_obj:
-            self.data_vigencia_field.error_text = "Vigência não pode ser anterior à assinatura."
-            is_valid = False
-
-        if not is_valid:
+        """Valida o formulário e salva uma nova ata ou atualiza uma existente."""
+        ata_data = self._gather_form_data()
+        if ata_data is None:
             self.page.update()
             return
 
-        # --- 2. Coleta de Dados ---
-        items_data = []
-        for item_container in self.items_list.controls:
-            desc_field = item_container.content.controls[1]
-            qtd_field = item_container.content.controls[2].controls[0]
-            valor_field = item_container.content.controls[2].controls[1]
-            try:
-                quantidade = int(qtd_field.value) if qtd_field.value else 0
-            except (ValueError, TypeError):
-                quantidade = 0
-            try:
-                valor_str = valor_field.value.replace(',', '.') if valor_field.value else '0'
-                valor = float(valor_str)
-            except (ValueError, TypeError):
-                valor = 0.0
-            if desc_field.value or quantidade or valor:
-                items_data.append({'descricao': desc_field.value, 'quantidade': quantidade, 'valor': valor})
-
-        ata_data = {
-            'numeroAta': self.numero_ata_field.value.strip(),
-            'documentoSei': self.documento_sei_field.value.strip(),
-            'objeto': self.objeto_field.value.strip(),
-            'dataAssinatura': data_assinatura_obj.strftime("%Y-%m-%d"),
-            'dataVigencia': data_vigencia_obj.strftime("%Y-%m-%d"),
-            'fornecedor': self.fornecedor_field.value.strip(),
-            'telefonesFornecedor': [row.controls[0].value.strip() for row in self.telefones_list.controls if row.controls[0].value.strip()],
-            'emailsFornecedor': [row.controls[0].value.strip() for row in self.emails_list.controls if row.controls[0].value.strip()],
-            'items': items_data
-        }
-        
-        # --- 3. Salvar Dados ---
+        # --- Persistência ---
         if self.current_edit_ata_id is not None:
-            self.data_manager.update_record(self.current_edit_ata_id, ata_data)
+            self.ata_service.update_ata(self.current_edit_ata_id, ata_data)
         else:
-            self.data_manager.add_record(ata_data)
+            self.ata_service.add_ata(ata_data)
 
         self.load_and_refresh_all()
         self.close_modal()
@@ -556,7 +578,7 @@ class AtaApp:
 
 
     def edit_ata(self, ata_id: int):
-        ata = self.data_manager.get_record(ata_id)
+        ata = self.ata_service.get_ata(ata_id)
         if ata:
             self.current_edit_ata_id = ata_id
             self._clear_modal_fields()
@@ -597,7 +619,7 @@ class AtaApp:
 
     def delete_ata(self, ata_id: int):
         def confirm_delete(e):
-            self.data_manager.delete_record(ata_id)
+            self.ata_service.delete_ata(ata_id)
             self.load_and_refresh_all()
             self.show_snackbar("Ata excluída!", self.colors['status_active'])
             confirm_dialog.open = False
@@ -629,8 +651,13 @@ class AtaApp:
 # ===============================================================
 # 4. PONTO DE ENTRADA DA APLICAÇÃO
 # ===============================================================
-def main(page: ft.Page):
-    AtaApp(page)
+def create_main(ata_service: AtaService | None = None):
+    def _main(page: ft.Page):
+        AtaApp(page, ata_service=ata_service)
+    return _main
+
+def main():
+    ft.app(target=create_main())
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    main()
