@@ -3,45 +3,16 @@ import flet as ft
 from flet.matplotlib_chart import MatplotlibChart
 import datetime
 import re
-import copy
 from collections import defaultdict
 from typing import List, Dict, Any
 
-import database
+from data_manager import DataManager
 from matplotlib.figure import Figure
 
 # ===============================================================
 # 1. DATA MANAGER (BACK-END COM BANCO DE DADOS)
 # ===============================================================
-class DataManager:
-    """Gerencia os dados da aplicação utilizando SQLite."""
-
-    def __init__(self):
-        database.init_db()
-
-    def get_all_records(self) -> List[Dict[str, Any]]:
-        return database.get_all_atas()
-
-    def get_record(self, record_id: int) -> Dict | None:
-        for record in database.get_all_atas():
-            if record["id"] == record_id:
-                return record
-        return None
-
-    def add_record(self, data: Dict[str, Any]) -> None:
-        timestamp = datetime.datetime.now().isoformat()
-        payload = copy.deepcopy(data)
-        payload["createdAt"] = timestamp
-        payload["updatedAt"] = timestamp
-        database.insert_ata(payload)
-
-    def update_record(self, record_id: int, data: Dict[str, Any]) -> None:
-        payload = copy.deepcopy(data)
-        payload["updatedAt"] = datetime.datetime.now().isoformat()
-        database.update_ata(record_id, payload)
-
-    def delete_record(self, record_id: int) -> None:
-        database.delete_ata(record_id)
+# A implementacao da classe esta em ``data_manager.py``
 
 # ===============================================================
 # 2. HELPERS DE MÁSCARA
