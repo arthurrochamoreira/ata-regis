@@ -6,9 +6,11 @@ from typing import List, Dict, Any
 DATABASE_NAME = 'atas_registro.db'
 
 def connect_db():
-    """Conecta ao banco de dados SQLite."""
+    """Conecta ao banco de dados SQLite com suporte a chaves estrangeiras."""
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row  # Permite acessar colunas como dicionário
+    # Garante que operações de DELETE em cascata funcionem corretamente
+    conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
 def init_db():
@@ -165,6 +167,10 @@ def delete_ata(ata_id: int):
     """Deleta uma ata do banco de dados."""
     conn = connect_db()
     cursor = conn.cursor()
+    # Remove registros relacionados antes de excluir a ata principal
+    cursor.execute('DELETE FROM telefones WHERE ata_id = ?', (ata_id,))
+    cursor.execute('DELETE FROM emails WHERE ata_id = ?', (ata_id,))
+    cursor.execute('DELETE FROM itens WHERE ata_id = ?', (ata_id,))
     cursor.execute('DELETE FROM atas WHERE id = ?', (ata_id,))
     conn.commit()
     conn.close()
