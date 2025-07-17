@@ -487,11 +487,14 @@ class AtaApp:
         self.current_edit_ata_id = None
         self._clear_modal_fields()
         self.modal.content.content.controls[0].content.controls[0].value = "Criar Nova Ata"
+        self.page.dialog = self.modal  # garante que o diálogo correto esteja configurado
         self.modal.open = True
         self.page.update()
         
     def close_modal(self, e=None):
         self.modal.open = False
+        # Remove a referência do diálogo para evitar conflitos com outros diálogos
+        self.page.dialog = None
         self.page.update()
 
     # ===============================================================
