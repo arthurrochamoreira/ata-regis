@@ -493,6 +493,8 @@ class AtaApp:
         
     def close_modal(self, e=None):
         self.modal.open = False
+        # Remove a referência do diálogo para evitar conflitos com outros diálogos
+        self.page.dialog = None
         self.page.update()
 
     # ===============================================================
