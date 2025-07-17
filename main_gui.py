@@ -58,14 +58,23 @@ class AtaApp:
         self.page.window_min_width = 800
         self.page.window_min_height = 600
 
+        # Paleta de cores baseada nas especificações fornecidas
         self.colors = {
-            'primary_blue': '#0078d4', 'secondary_blue': '#deecf9',
-            'status_active': '#107c10', 'status_warning': '#ff8c00',
-            'status_expired': '#d13438', 'gray_50': '#faf9f8',
-            'gray_100': '#f3f2f1', 'gray_200': '#edebe9',
-            'gray_700': '#605e5c', 'gray_800': '#323130', 'white': '#ffffff'
+            'primary_blue': '#2563eb',   # Azul principal / botões
+            'secondary_blue': '#dbeafe',
+            'status_active': '#16a34a',   # Verde
+            'status_warning': '#d97706',  # Âmbar
+            'status_expired': '#dc2626',  # Vermelho
+            'gray_50': '#f8fafc',
+            'gray_100': '#f1f5f9',
+            'gray_200': '#e2e8f0',
+            'gray_700': '#64748b',
+            'gray_800': '#1e293b',
+            'gray_900': '#0f172a',
+            'white': '#ffffff'
         }
-        
+        self.page.bgcolor = self.colors['gray_100']
+
         self.atas = []
         self.current_edit_ata = None
         
@@ -73,13 +82,33 @@ class AtaApp:
         self.proximas_column = None
         self.vencidas_column = None
         self.modal = None
-        
+
+        # Ajusta paddings de forma responsiva
+        self.page.on_resize = self.on_resize
+
         self.setup_ui()
         # self.load_atas() # Carregamento de dados será chamado no final de setup_ui
 
+    def get_base_padding(self) -> int:
+        """Retorna o padding base de acordo com a largura da janela."""
+        width = self.page.window_width or 0
+        if width >= 1024:
+            return 32
+        elif width >= 640:
+            return 24
+        return 16
+
+    def on_resize(self, e):
+        pad = self.get_base_padding()
+        if hasattr(self, 'main_container'):
+            self.main_container.padding = ft.padding.all(pad)
+        if hasattr(self, 'header'):
+            self.header.padding = ft.padding.symmetric(horizontal=pad, vertical=16)
+        self.page.update()
+
     def setup_ui(self):
         """Configura a interface do usuário."""
-        header = ft.Container(
+        self.header = ft.Container(
             content=ft.Row([
                 ft.Row([
                     ft.Container(
@@ -87,8 +116,17 @@ class AtaApp:
                         bgcolor=self.colors['primary_blue'], border_radius=8, padding=12, width=48, height=48
                     ),
                     ft.Column([
-                        ft.Text("Atas de Registro de Preços", size=24, weight=ft.FontWeight.W_600, color=self.colors['gray_800']),
-                        ft.Text("Gerencie as atas em um painel centralizado", size=14, color=self.colors['gray_700'])
+                        ft.Text(
+                            "Atas de Registro de Preços",
+                            size=36,
+                            weight=ft.FontWeight.W_700,
+                            color=self.colors['gray_900'],
+                        ),
+                        ft.Text(
+                            "Gerencie as atas em um painel centralizado",
+                            size=18,
+                            color=self.colors['gray_700'],
+                        )
                     ], spacing=2)
                 ], spacing=16),
                 ft.ElevatedButton(
@@ -96,19 +134,32 @@ class AtaApp:
                     bgcolor=self.colors['primary_blue'], color=self.colors['white']
                 )
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            bgcolor=self.colors['white'], padding=ft.padding.symmetric(horizontal=32, vertical=16),
+            bgcolor=self.colors['white'],
+            padding=ft.padding.symmetric(horizontal=self.get_base_padding(), vertical=16),
+            margin=ft.margin.only(bottom=32),
             border=ft.border.only(bottom=ft.BorderSide(1, self.colors['gray_200']))
         )
 
         board_header = ft.Container(
-            content=ft.Row([
-                ft.Text("Painel de Controle", size=28, weight=ft.FontWeight.W_600, color=self.colors['gray_800']),
-                ft.Row([
-                    ft.OutlinedButton("Filtrar", icon=ft.Icons.FILTER_LIST),
-                    ft.OutlinedButton("Ordenar", icon=ft.Icons.SORT)
-                ], spacing=8)
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            padding=ft.padding.symmetric(horizontal=32, vertical=24)
+            content=ft.Row(
+                [
+                    ft.Text(
+                        "Painel de Controle",
+                        size=28,
+                        weight=ft.FontWeight.W_600,
+                        color=self.colors['gray_800'],
+                    ),
+                    ft.Row(
+                        [
+                            ft.OutlinedButton("Filtrar", icon=ft.Icons.FILTER_LIST),
+                            ft.OutlinedButton("Ordenar", icon=ft.Icons.SORT),
+                        ],
+                        spacing=8,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            padding=ft.padding.symmetric(horizontal=self.get_base_padding(), vertical=24),
         )
 
         self.vigentes_column = self.create_column("Vigentes", self.colors['status_active'], 0)
@@ -122,16 +173,28 @@ class AtaApp:
         main_content = ft.Container(
             content=ft.Column([
                 board_header,
-                ft.Container(content=columns_row, padding=ft.padding.symmetric(horizontal=32), expand=True)
+                ft.Container(
+                    content=columns_row,
+                    padding=ft.padding.symmetric(horizontal=self.get_base_padding()),
+                    expand=True,
+                )
             ], expand=True),
             bgcolor=self.colors['gray_50'], expand=True
         )
 
         self.modal = self.create_modal()
-        self.page.add(
-            ft.Column([header, main_content], expand=True, spacing=0),
-            self.modal
+        self.main_layout = ft.Column([
+            self.header,
+            main_content,
+        ], expand=True, spacing=0)
+        self.main_container = ft.Container(
+            content=self.main_layout,
+            padding=ft.padding.all(self.get_base_padding()),
+            alignment=ft.alignment.top_center,
+            expand=True,
         )
+        self.page.add(self.main_container, self.modal)
+        self.on_resize(None)
         self.load_atas()
 
 
