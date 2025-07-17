@@ -501,7 +501,13 @@ class AtaApp:
         """Valida os dados do formulário e salva uma nova ata ou atualiza uma existente."""
         # --- 1. Reset e Validação ---
         is_valid = True
-        all_fields = [self.numero_ata_field, self.objeto_field, self.data_assinatura_field, self.data_vigencia_field]
+        all_fields = [
+            self.numero_ata_field,
+            self.objeto_field,
+            self.fornecedor_field,
+            self.data_assinatura_field,
+            self.data_vigencia_field,
+        ]
         for field in all_fields:
             field.error_text = None
 
@@ -510,6 +516,10 @@ class AtaApp:
             is_valid = False
         if not self.objeto_field.value.strip():
             self.objeto_field.error_text = "O objeto é obrigatório."
+            is_valid = False
+
+        if not self.fornecedor_field.value.strip():
+            self.fornecedor_field.error_text = "O fornecedor é obrigatório."
             is_valid = False
         
         data_assinatura_obj, data_vigencia_obj = None, None
