@@ -1,8 +1,12 @@
 import flet as ft
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
-from ..models.ata import Ata, Item
-from ..utils.validators import Validators, Formatters, MaskUtils
+try:
+    from ..models.ata import Ata, Item
+    from ..utils.validators import Validators, Formatters, MaskUtils
+except ImportError:  # Execução direta sem pacote
+    from models.ata import Ata, Item
+    from utils.validators import Validators, Formatters, MaskUtils
 
 class AtaForm:
     """Formulário para criação e edição de atas"""
