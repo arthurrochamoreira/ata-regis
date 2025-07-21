@@ -1,161 +1,149 @@
-.PHONY: build-up clean install run test help dev backup restore
+.PHONY: build-up clean install run test help dev backup restore reinstall info update deps-report check-structure clean-temp
 
-# Cores para output
-GREEN=\033[0;32m
-YELLOW=\033[1;33m
-RED=\033[0;31m
-NC=\033[0m # No Color
-
-# Configurações
-PYTHON := $(shell command -v python3 >/dev/null 2>&1 && echo python3 || echo python)
-VENV_DIR=.venv
+# =========================
+# Configurações Gerais
+# =========================
+REQ=requirements.txt
+VENV=.venv
 SRC_DIR=src
-
-ifeq ($(OS),Windows_NT)
-VENV_BIN=$(VENV_DIR)/Scripts
-CHECK_VENV=scripts\\check_venv.bat
-else
-VENV_BIN=$(VENV_DIR)/bin
-CHECK_VENV=bash scripts/check_venv.sh
-endif
 BACKUP_DIR=backups
 DATA_FILE=atas.json
 
-# Comando de ajuda
+# Detecta SO
+OS := $(shell (uname 2>NUL) || echo Windows_NT)
+
+ifeq ($(OS),Windows_NT)
+	PYTHON=python
+	PYTHON_VENV=$(VENV)\Scripts\python.exe
+	PIP=$(VENV)\Scripts\pip.exe
+	CHECK_REQ=$(PYTHON_VENV) scripts\check_requirements.py
+	DEVNULL=NUL
+else
+	PYTHON=python3
+	PYTHON_VENV=$(VENV)/bin/python3
+	PIP=$(VENV)/bin/pip
+	CHECK_REQ=$(PYTHON_VENV) scripts/check_requirements.py
+	DEVNULL=/dev/null
+endif
+
+# =========================
+# Ajuda
+# =========================
 help:
-	@echo "$(GREEN)Ata de Registro de Preços - Sistema de Gerenciamento$(NC)"
+	@echo "Sistema de Gerenciamento - Ata de Registro de Preços"
 	@echo ""
-	@echo "$(YELLOW)Comandos disponíveis:$(NC)"
-	@echo "  $(GREEN)build-up$(NC)     - Configura ambiente e executa aplicação"
-	@echo "  $(GREEN)install$(NC)      - Instala dependências"
-	@echo "  $(GREEN)run$(NC)          - Executa a aplicação"
-	@echo "  $(GREEN)dev$(NC)          - Executa em modo desenvolvimento"
-	@echo "  $(GREEN)test$(NC)         - Executa testes básicos"
-	@echo "  $(GREEN)clean$(NC)        - Remove ambiente virtual"
-	@echo "  $(GREEN)backup$(NC)       - Faz backup dos dados"
-	@echo "  $(GREEN)restore$(NC)      - Restaura backup dos dados"
-	@echo "  $(GREEN)help$(NC)         - Mostra esta ajuda"
-	@echo ""
+	@echo "Comandos disponíveis:"
+	@echo "  build-up      - Configura ambiente e executa aplicação"
+	@echo "  install       - Instala dependências"
+	@echo "  run           - Executa a aplicação"
+	@echo "  dev           - Executa em modo desenvolvimento"
+	@echo "  test          - Executa testes básicos"
+	@echo "  clean         - Remove ambiente virtual"
+	@echo "  backup        - Faz backup dos dados"
+	@echo "  restore       - Lista backups disponíveis"
+	@echo "  reinstall     - Limpa e reinstala tudo"
+	@echo "  info          - Mostra informações do sistema"
+	@echo "  update        - Atualiza dependências"
+	@echo "  deps-report   - Gera relatório de dependências"
 
-# Verifica se Python está instalado
-check-python:
-	@echo "$(YELLOW)Verificando Python...$(NC)"
-	@which $(PYTHON) > /dev/null || (echo "$(RED)Python 3 não encontrado. Instale o Python 3.$(NC)" && exit 1)
-	@echo "$(GREEN)Python 3 encontrado.$(NC)"
-	@$(PYTHON) --version
+# =========================
+# Build completo
+# =========================
+build-up: install run
 
-# Cria o ambiente virtual
-create-venv: check-python
-	@echo "$(YELLOW)Configurando ambiente virtual...$(NC)"
+# =========================
+# Instalação
+# =========================
+install:
+	@echo "[1/3] Verificando se o Python está instalado..."
+	@$(PYTHON) --version >$(DEVNULL) 2>&1 || (echo "Python não encontrado. Instale manualmente." && exit 1)
+	@echo "[2/3] Criando ambiente virtual..."
+	@$(PYTHON) -m venv $(VENV)
+	@$(PIP) install --upgrade pip
+	@echo "[3/3] Instalando dependências..."
+	@$(PIP) install -r $(REQ)
+	@$(CHECK_REQ)
+	@echo "✅ Ambiente configurado com sucesso!"
 
-	@$(CHECK_VENV)
+# =========================
+# Execução
+# =========================
+run:
+	@echo "Executando aplicação..."
+ifeq ($(OS),Windows_NT)
+	@$(PYTHON_VENV) $(SRC_DIR)\main_gui.py
+else
+	@$(PYTHON_VENV) $(SRC_DIR)/main_gui.py
+endif
 
-# Instala as dependências
-install: create-venv
-	@echo "$(YELLOW)Instalando dependências...$(NC)"
-	@$(VENV_BIN)/pip install --upgrade pip
-	@$(VENV_BIN)/pip install -r requirements.txt
-	@$(VENV_BIN)/python scripts/check_requirements.py
-	@echo "$(GREEN)Dependências verificadas com sucesso.$(NC)"
 
-# Executa a aplicação
-run: install
-	@echo "$(YELLOW)Executando aplicação...$(NC)"
-	@cd $(SRC_DIR) && ../$(VENV_BIN)/python main_gui.py
+dev:
+	@echo "Executando em modo desenvolvimento (com logs detalhados)..."
+	@cd $(SRC_DIR) && PYTHONPATH=. $(PYTHON_VENV) -u main_gui.py
 
-# Executa em modo desenvolvimento (com logs detalhados)
-dev: install
-	@echo "$(YELLOW)Executando em modo desenvolvimento...$(NC)"
-	@echo "$(YELLOW)Logs detalhados habilitados$(NC)"
-	@cd $(SRC_DIR) && PYTHONPATH=. ../$(VENV_BIN)/python -u main_gui.py
+test:
+	@echo "Executando testes básicos..."
+	@$(PYTHON_VENV) test_imports.py
 
-# Comando principal
-build-up: run
-
-# Executa testes básicos
-test: install
-	@echo "$(YELLOW)Executando testes básicos...$(NC)"
-	@$(VENV_BIN)/python test_imports.py
-
-# Faz backup dos dados
+# =========================
+# Backup e restauração
+# =========================
 backup:
-	@echo "$(YELLOW)Fazendo backup dos dados...$(NC)"
+	@echo "Criando backup..."
 	@mkdir -p $(BACKUP_DIR)
 	@if [ -f "$(DATA_FILE)" ]; then \
 		cp $(DATA_FILE) $(BACKUP_DIR)/$(DATA_FILE).backup.$$(date +%Y%m%d_%H%M%S); \
-		echo "$(GREEN)Backup criado em $(BACKUP_DIR)/$(NC)"; \
+		echo "Backup de dados criado."; \
 	else \
-		echo "$(YELLOW)Arquivo de dados não encontrado.$(NC)"; \
+		echo "Arquivo $(DATA_FILE) não encontrado."; \
 	fi
-	@if [ -d "$(SRC_DIR)" ]; then \
-		tar -czf $(BACKUP_DIR)/src_backup_$$(date +%Y%m%d_%H%M%S).tar.gz $(SRC_DIR); \
-		echo "$(GREEN)Backup do código fonte criado.$(NC)"; \
-	fi
+	@tar -czf $(BACKUP_DIR)/src_backup_`date +%Y%m%d_%H%M%S`.tar.gz $(SRC_DIR)
 
-# Restaura backup dos dados
 restore:
-	@echo "$(YELLOW)Restaurando backup dos dados...$(NC)"
-	@if [ -d "$(BACKUP_DIR)" ]; then \
-		echo "Backups disponíveis:"; \
-		ls -la $(BACKUP_DIR)/*.backup.* 2>/dev/null || echo "Nenhum backup encontrado"; \
-	else \
-		echo "$(RED)Diretório de backup não encontrado.$(NC)"; \
-	fi
+	@echo "Backups disponíveis:"
+	@ls -la $(BACKUP_DIR)/*.backup.* 2>/dev/null || echo "Nenhum backup encontrado"
 
-# Verifica estrutura do projeto
-check-structure:
-	@echo "$(YELLOW)Verificando estrutura do projeto...$(NC)"
-	@echo "$(GREEN)Arquivos principais:$(NC)"
-	@ls -la requirements.txt Makefile 2>/dev/null || echo "$(RED)Arquivos principais não encontrados$(NC)"
-	@echo "$(GREEN)Diretório src:$(NC)"
-	@ls -la $(SRC_DIR)/ 2>/dev/null || echo "$(RED)Diretório src não encontrado$(NC)"
-	@echo "$(GREEN)Módulos:$(NC)"
-	@ls -la $(SRC_DIR)/models/ $(SRC_DIR)/services/ $(SRC_DIR)/utils/ $(SRC_DIR)/forms/ 2>/dev/null || echo "$(RED)Alguns módulos não encontrados$(NC)"
-
-# Limpa arquivos temporários
+# =========================
+# Limpeza
+# =========================
 clean-temp:
-	@echo "$(YELLOW)Limpando arquivos temporários...$(NC)"
+	@echo "Limpando arquivos temporários..."
 	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	@echo "$(GREEN)Arquivos temporários removidos.$(NC)"
 
-# Limpa o ambiente
 clean: clean-temp
-	@echo "$(YELLOW)Removendo ambiente virtual...$(NC)"
-	@rm -rf $(VENV_DIR)
-	@echo "$(GREEN)Ambiente limpo.$(NC)"
+	@echo "Removendo ambiente virtual..."
+	@rm -rf $(VENV)
+	@echo "Ambiente limpo."
 
-# Reinstala tudo do zero
 reinstall: clean install
-	@echo "$(GREEN)Reinstalação concluída.$(NC)"
+	@echo "Reinstalação concluída."
 
-# Mostra informações do sistema
+# =========================
+# Utilitários
+# =========================
 info:
-	@echo "$(GREEN)Informações do Sistema:$(NC)"
+	@echo "Informações do sistema:"
 	@echo "Python: $$($(PYTHON) --version 2>&1)"
 	@echo "Pip: $$($(PIP) --version 2>&1)"
 	@echo "Sistema: $$(uname -s)"
 	@echo "Arquitetura: $$(uname -m)"
 	@echo "Diretório atual: $$(pwd)"
-	@echo "Ambiente virtual: $(VENV_DIR)"
-	@if [ -d "$(VENV_DIR)" ]; then \
-		echo "Status ambiente: $(GREEN)Criado$(NC)"; \
-		echo "Pacotes instalados: $$($(VENV_DIR)/bin/pip list | wc -l) pacotes"; \
+	@echo "Ambiente virtual: $(VENV)"
+	@if [ -d "$(VENV)" ]; then \
+		echo "Status: Criado"; \
+		$(PIP) list | wc -l | xargs echo "Pacotes instalados:"; \
 	else \
-		echo "Status ambiente: $(RED)Não criado$(NC)"; \
+		echo "Status: Não criado"; \
 	fi
 
-# Atualiza dependências
 update: install
-	@echo "$(YELLOW)Atualizando dependências...$(NC)"
-	@$(VENV_DIR)/bin/pip install --upgrade pip
-	@$(VENV_DIR)/bin/pip install --upgrade -r requirements.txt
-	@echo "$(GREEN)Dependências atualizadas.$(NC)"
+	@echo "Atualizando dependências..."
+	@$(PIP) install --upgrade pip
+	@$(PIP) install --upgrade -r $(REQ)
 
-# Gera relatório de dependências
 deps-report: install
-	@echo "$(YELLOW)Gerando relatório de dependências...$(NC)"
-	@$(VENV_DIR)/bin/pip list > deps_report.txt
-	@$(VENV_DIR)/bin/pip freeze > requirements_freeze.txt
-	@echo "$(GREEN)Relatórios gerados: deps_report.txt, requirements_freeze.txt$(NC)"
-
+	@echo "Gerando relatório de dependências..."
+	@$(PIP) list > deps_report.txt
+	@$(PIP) freeze > requirements_freeze.txt
+	@echo "Relatórios gerados: deps_report.txt, requirements_freeze.txt"
