@@ -279,66 +279,140 @@ class ChartUtils:
         
         # Card Total de Atas
         card_total = ft.Container(
-            content=ft.Column([
-                ft.Text("Total de Atas", size=12, color=ft.colors.SECONDARY),
-                ft.Text(str(total_atas), size=24, weight=ft.FontWeight.BOLD),
-                ft.Text("cadastradas", size=10, color=ft.colors.SECONDARY)
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=4),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        "Total de Atas",
+                        size=12,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                    ft.Text(str(total_atas), size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(
+                        "cadastradas",
+                        size=10,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=4,
+            ),
             padding=ft.padding.all(16),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
             bgcolor=ft.colors.SURFACE_VARIANT,
-            width=120
+            width=160,
         )
         cards.append(card_total)
         
         # Card Valor Total
         value_formatted = f"R$ {total_value:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")
         card_value = ft.Container(
-            content=ft.Column([
-                ft.Text("Valor Total", size=12, color=ft.colors.SECONDARY),
-                ft.Text(value_formatted, size=18, weight=ft.FontWeight.BOLD),
-                ft.Text("em atas", size=10, color=ft.colors.SECONDARY)
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=4),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        "Valor Total",
+                        size=12,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                    ft.Text(value_formatted, size=18, weight=ft.FontWeight.BOLD),
+                    ft.Text(
+                        "em atas",
+                        size=10,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=4,
+            ),
             padding=ft.padding.all(16),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
             bgcolor=ft.colors.SURFACE_VARIANT,
-            width=120
+            width=160,
         )
         cards.append(card_value)
         
         # Card Vigentes
         vigentes_pct = (stats["vigente"] / total_atas * 100) if total_atas > 0 else 0
         card_vigentes = ft.Container(
-            content=ft.Column([
-                ft.Text("Vigentes", size=12, color=ft.colors.SECONDARY),
-                ft.Text(str(stats["vigente"]), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN),
-                ft.Text(f"{vigentes_pct:.1f}%", size=10, color=ft.colors.SECONDARY)
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=4),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        "Vigentes",
+                        size=12,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                    ft.Text(
+                        str(stats["vigente"]),
+                        size=24,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.GREEN,
+                    ),
+                    ft.Text(
+                        f"{vigentes_pct:.1f}%",
+                        size=10,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=4,
+            ),
             padding=ft.padding.all(16),
             border=ft.border.all(1, ft.colors.GREEN),
             border_radius=8,
             bgcolor=ft.colors.GREEN_50,
-            width=120
+            width=160,
         )
         cards.append(card_vigentes)
         
         # Card A Vencer
         vencer_pct = (stats["a_vencer"] / total_atas * 100) if total_atas > 0 else 0
         card_vencer = ft.Container(
-            content=ft.Column([
-                ft.Text("A Vencer", size=12, color=ft.colors.SECONDARY),
-                ft.Text(str(stats["a_vencer"]), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.ORANGE),
-                ft.Text(f"{vencer_pct:.1f}%", size=10, color=ft.colors.SECONDARY)
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=4),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        "A Vencer",
+                        size=12,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                    ft.Text(
+                        str(stats["a_vencer"]),
+                        size=24,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.ORANGE,
+                    ),
+                    ft.Text(
+                        f"{vencer_pct:.1f}%",
+                        size=10,
+                        color=ft.colors.SECONDARY,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    ),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=4,
+            ),
             padding=ft.padding.all(16),
             border=ft.border.all(1, ft.colors.ORANGE),
             border_radius=8,
             bgcolor=ft.colors.ORANGE_50,
-            width=120
+            width=160,
         )
         cards.append(card_vencer)
-        
-        return ft.Row(cards, spacing=16, alignment=ft.MainAxisAlignment.START)
+
+        return ft.Row(cards, spacing=16, alignment=ft.MainAxisAlignment.SPACE_EVENLY)
 
