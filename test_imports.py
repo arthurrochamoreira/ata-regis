@@ -20,7 +20,9 @@ def test_imports():
         
         # Testa serviços
         from services.ata_service import AtaService
+        from services.sqlite_ata_service import SQLiteAtaService
         print("✓ Serviço de Atas OK")
+        print("✓ Serviço SQLite OK")
         
         from services.alert_service import AlertService
         print("✓ Serviço de Alertas OK")
@@ -78,10 +80,16 @@ def test_basic_functionality():
         
         # Testa serviço de atas
         from services.ata_service import AtaService
+        from services.sqlite_ata_service import SQLiteAtaService
         ata_service = AtaService("test_atas.json")
         stats = ata_service.get_estatisticas()
         assert isinstance(stats, dict)
         print("✓ Serviço de Atas OK")
+
+        sqlite_service = SQLiteAtaService(":memory:")
+        stats_db = sqlite_service.get_estatisticas()
+        assert isinstance(stats_db, dict)
+        print("✓ Serviço SQLite OK")
         
         print("\n✅ Todos os testes de funcionalidade passaram!")
         return True

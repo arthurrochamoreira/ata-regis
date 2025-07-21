@@ -5,7 +5,7 @@ import os
 # Adiciona o diretório src ao path para importações
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from services.ata_service import AtaService
+from services.sqlite_ata_service import SQLiteAtaService
 from services.alert_service import AlertService
 from utils.email_service import EmailService
 from utils.validators import Formatters
@@ -23,7 +23,7 @@ from ui.main_view import (
 class AtaApp:
     def __init__(self, page: ft.Page):
         self.page = page
-        self.ata_service = AtaService()
+        self.ata_service = SQLiteAtaService()
         self.email_service = EmailService()
         self.alert_service = AlertService(self.email_service)
         self.scheduler = TaskScheduler(self.ata_service, self.alert_service)
