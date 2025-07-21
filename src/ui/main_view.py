@@ -20,38 +20,31 @@ def build_header(
     status_cb: Callable,
 ) -> ft.Container:
     """Return header container with menu and new ata button."""
-    title = ft.Row([
-        ft.Icon(ft.icons.DESCRIPTION, size=32, color=ft.colors.BLUE),
-        ft.Text("Ata de Registro de Preços", size=24, weight=ft.FontWeight.BOLD),
-    ], spacing=8)
-
-    actions = ft.Row([
-        ft.PopupMenuButton(
-            icon=ft.icons.SETTINGS,
-            tooltip="Ferramentas",
-            items=[
-                ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
-                ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
-                ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
-                ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
-                ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
-            ],
-        ),
-        ft.ElevatedButton(
-            "➕ Nova Ata",
-            on_click=nova_ata_cb,
-            bgcolor=ft.colors.BLUE,
-            color=ft.colors.WHITE,
-            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=6)),
-        ),
-    ], spacing=8)
-
     return ft.Container(
-        content=ft.Row([title, actions], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-        padding=ft.padding.symmetric(vertical=20, horizontal=24),
-        margin=ft.margin.only(bottom=24),
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        border_radius=8,
+        content=ft.Row([
+            ft.Text("📝 Ata de Registro de Preços", size=24, weight=ft.FontWeight.BOLD),
+            ft.Row([
+                ft.PopupMenuButton(
+                    icon=ft.icons.SETTINGS,
+                    tooltip="Ferramentas",
+                    items=[
+                        ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
+                        ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
+                        ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
+                        ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
+                        ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
+                    ],
+                ),
+                ft.ElevatedButton(
+                    "➕ Nova Ata",
+                    on_click=nova_ata_cb,
+                    bgcolor=ft.colors.BLUE,
+                    color=ft.colors.WHITE,
+                ),
+            ], spacing=8),
+        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+        padding=ft.padding.all(16),
+        margin=ft.margin.only(bottom=16),
     )
 
 
@@ -62,23 +55,17 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             label,
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
-            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=6)),
         )
 
     return ft.Container(
-        content=ft.Row(
-            [
-                button("✅ Vigentes", "vigente", ft.colors.GREEN),
-                button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-                button("❌ Vencidas", "vencida", ft.colors.RED),
-                button("📋 Todas", "todos", ft.colors.BLUE),
-            ],
-            spacing=10,
-        ),
+        content=ft.Row([
+            button("✅ Vigentes", "vigente", ft.colors.GREEN),
+            button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
+            button("❌ Vencidas", "vencida", ft.colors.RED),
+            button("📋 Todas", "todos", ft.colors.BLUE),
+        ], spacing=10),
         padding=ft.padding.all(16),
         margin=ft.margin.only(bottom=16),
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        border_radius=8,
     )
 
 
@@ -90,13 +77,7 @@ def build_search(on_change: Callable) -> tuple[ft.Container, ft.TextField]:
         width=400,
     )
     return (
-        ft.Container(
-            content=search_field,
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=16),
-            bgcolor=ft.colors.SURFACE_VARIANT,
-            border_radius=8,
-        ),
+        ft.Container(content=search_field, padding=ft.padding.all(16), margin=ft.margin.only(bottom=16)),
         search_field,
     )
 
@@ -150,8 +131,6 @@ def build_data_table(
         ], spacing=16),
         padding=ft.padding.all(16),
         margin=ft.margin.only(bottom=24),
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        border_radius=8,
     )
 
 
@@ -197,7 +176,6 @@ def build_atas_vencimento(
         padding=ft.padding.all(16),
         border=ft.border.all(1, ft.colors.OUTLINE),
         border_radius=8,
-        bgcolor=ft.colors.SURFACE_VARIANT,
     )
 
 
@@ -247,6 +225,4 @@ def build_stats_panel(ata_service) -> ft.Container:
             [urgency_indicator, summary_cards, charts_section], spacing=16
         ),
         margin=ft.margin.only(bottom=24),
-        bgcolor=ft.colors.SURFACE_VARIANT,
-        border_radius=8,
     )

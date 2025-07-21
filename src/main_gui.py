@@ -42,10 +42,7 @@ class AtaApp:
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.theme = ft.Theme(color_scheme_seed=ft.colors.BLUE)
-        self.page.bgcolor = ft.colors.BLUE_GREY_50
         self.page.padding = 16
-        self.page.scroll = ft.ScrollMode.AUTO
     
     def build_ui(self):
         """Constrói a interface do usuário"""
