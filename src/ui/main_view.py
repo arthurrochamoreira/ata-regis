@@ -97,6 +97,7 @@ def build_data_table(
     visualizar_cb: Callable[[Ata], None],
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
+    title: str = "\ud83d\udccb Lista de Atas",
 ) -> ft.Container:
     rows = []
     for ata in atas:
@@ -136,7 +137,7 @@ def build_data_table(
 
     return ft.Container(
         content=ft.Column(
-            [ft.Text("📋 Lista de Atas", size=18, weight=ft.FontWeight.BOLD), table],
+            [ft.Text(title, size=18, weight=ft.FontWeight.BOLD), table],
             spacing=16,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
@@ -144,6 +145,39 @@ def build_data_table(
         padding=ft.padding.all(16),
         margin=ft.margin.only(bottom=24),
     )
+
+
+def build_grouped_data_tables(
+    atas: List[Ata],
+    visualizar_cb: Callable[[Ata], None],
+    editar_cb: Callable[[Ata], None],
+    excluir_cb: Callable[[Ata], None],
+) -> ft.Column:
+    groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
+    for ata in atas:
+        groups[ata.status].append(ata)
+
+    labels = {
+        "vigente": "\u2705 Atas Vigentes",
+        "a_vencer": "\u26A0\ufe0f Atas a Vencer",
+        "vencida": "\u274c Atas Vencidas",
+    }
+
+    cards: list[ft.Control] = []
+    for status in ["vigente", "a_vencer", "vencida"]:
+        if not groups[status]:
+            continue
+        table = build_data_table(
+            groups[status],
+            visualizar_cb,
+            editar_cb,
+            excluir_cb,
+            title=labels[status],
+        )
+        table.margin = ft.margin.only(bottom=0)
+        cards.append(ft.Card(content=table))
+
+    return ft.Column(cards, spacing=16)
 
 
 def build_atas_vencimento(
