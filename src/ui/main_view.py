@@ -190,23 +190,39 @@ def build_stats_panel(ata_service) -> ft.Container:
     urgency_indicator = ChartUtils.create_urgency_indicator(atas_vencimento)
     value_chart = ChartUtils.create_value_chart(atas)
     monthly_chart = ChartUtils.create_monthly_chart(atas)
-    main_chart_row = ft.Row([
-        ft.Container(
-            content=ft.Column([
-                ft.Text("📊 Situação das Atas", size=18, weight=ft.FontWeight.BOLD),
-                ft.Row([pie_chart, legend], spacing=32, alignment=ft.MainAxisAlignment.START),
-            ], spacing=16),
-            padding=ft.padding.all(16),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            expand=True,
-        ),
-        ft.Container(content=value_chart, width=300),
-    ], spacing=16)
+
+    charts_section = ft.Row(
+        [
+            ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Text(
+                            "📊 Situação das Atas",
+                            size=18,
+                            weight=ft.FontWeight.BOLD,
+                        ),
+                        ft.Row(
+                            [pie_chart, legend],
+                            spacing=32,
+                            alignment=ft.MainAxisAlignment.START,
+                        ),
+                        value_chart,
+                    ],
+                    spacing=16,
+                ),
+                padding=ft.padding.all(16),
+                border=ft.border.all(1, ft.colors.OUTLINE),
+                border_radius=8,
+                expand=True,
+            ),
+            ft.Container(content=monthly_chart, width=360),
+        ],
+        spacing=16,
+    )
 
     return ft.Container(
         content=ft.Column(
-            [summary_cards, urgency_indicator, main_chart_row, monthly_chart], spacing=16
+            [urgency_indicator, summary_cards, charts_section], spacing=16
         ),
         margin=ft.margin.only(bottom=24),
     )
