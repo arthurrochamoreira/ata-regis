@@ -428,14 +428,6 @@ Itens:
         self.page.dialog.open = False
         self.page.update()
 
-def main(page: ft.Page):
-    app = AtaApp(page)
-
-if __name__ == "__main__":
-    ft.app(target=main)
-
-
-    
     def salvar_nova_ata(self, ata_data):
         """Salva uma nova ata"""
         try:
@@ -574,4 +566,12 @@ O sistema está monitorando automaticamente as atas e enviará alertas conforme 
         """Destrutor - para o agendador ao fechar a aplicação"""
         if hasattr(self, 'scheduler'):
             self.scheduler.stop()
+
+
+def main(page: ft.Page):
+    app = AtaApp(page)
+
+
+if __name__ == "__main__":
+    ft.app(target=main)
 
