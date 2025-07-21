@@ -7,10 +7,17 @@ RED=\033[0;31m
 NC=\033[0m # No Color
 
 # Configurações
-PYTHON=python3
-PIP=pip3
+PYTHON := $(shell command -v python3 >/dev/null 2>&1 && echo python3 || echo python)
 VENV_DIR=.venv
 SRC_DIR=src
+
+ifeq ($(OS),Windows_NT)
+VENV_BIN=$(VENV_DIR)/Scripts
+CHECK_VENV=scripts\\check_venv.bat
+else
+VENV_BIN=$(VENV_DIR)/bin
+CHECK_VENV=bash scripts/check_venv.sh
+endif
 BACKUP_DIR=backups
 DATA_FILE=atas.json
 
@@ -40,30 +47,26 @@ check-python:
 # Cria o ambiente virtual
 create-venv: check-python
 	@echo "$(YELLOW)Configurando ambiente virtual...$(NC)"
-	@if [ ! -d "$(VENV_DIR)" ]; then \
-		echo "Criando ambiente virtual..."; \
-		$(PYTHON) -m venv $(VENV_DIR); \
-	else \
-		echo "$(GREEN)Ambiente virtual já existe.$(NC)"; \
-	fi
+	@$(CHECK_VENV)
 
 # Instala as dependências
 install: create-venv
 	@echo "$(YELLOW)Instalando dependências...$(NC)"
-	@$(VENV_DIR)/bin/pip install --upgrade pip
-	@$(VENV_DIR)/bin/pip install -r requirements.txt
-	@echo "$(GREEN)Dependências instaladas com sucesso.$(NC)"
+	@$(VENV_BIN)/pip install --upgrade pip
+	@$(VENV_BIN)/pip install -r requirements.txt
+	@$(VENV_BIN)/python scripts/check_requirements.py
+	@echo "$(GREEN)Dependências verificadas com sucesso.$(NC)"
 
 # Executa a aplicação
 run: install
 	@echo "$(YELLOW)Executando aplicação...$(NC)"
-	@cd $(SRC_DIR) && ../$(VENV_DIR)/bin/python main_gui.py
+	@cd $(SRC_DIR) && ../$(VENV_BIN)/python main_gui.py
 
 # Executa em modo desenvolvimento (com logs detalhados)
 dev: install
 	@echo "$(YELLOW)Executando em modo desenvolvimento...$(NC)"
 	@echo "$(YELLOW)Logs detalhados habilitados$(NC)"
-	@cd $(SRC_DIR) && PYTHONPATH=. ../$(VENV_DIR)/bin/python -u main_gui.py
+	@cd $(SRC_DIR) && PYTHONPATH=. ../$(VENV_BIN)/python -u main_gui.py
 
 # Comando principal
 build-up: run
@@ -71,7 +74,7 @@ build-up: run
 # Executa testes básicos
 test: install
 	@echo "$(YELLOW)Executando testes básicos...$(NC)"
-	@$(VENV_DIR)/bin/python test_imports.py
+	@$(VENV_BIN)/python test_imports.py
 
 # Faz backup dos dados
 backup:
