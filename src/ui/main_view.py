@@ -125,10 +125,12 @@ def build_data_table(
     )
 
     return ft.Container(
-        content=ft.Column([
-            ft.Text("📋 Lista de Atas", size=18, weight=ft.FontWeight.BOLD),
-            table,
-        ], spacing=16),
+        content=ft.Column(
+            [ft.Text("📋 Lista de Atas", size=18, weight=ft.FontWeight.BOLD), table],
+            spacing=16,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        alignment=ft.alignment.center,
         padding=ft.padding.all(16),
         margin=ft.margin.only(bottom=24),
     )
@@ -169,10 +171,15 @@ def build_atas_vencimento(
         items.append(item)
 
     return ft.Container(
-        content=ft.Column([
-            ft.Text("🔔 Atas Próximas do Vencimento", size=18, weight=ft.FontWeight.BOLD),
-            ft.Column(items, spacing=0),
-        ], spacing=16),
+        content=ft.Column(
+            [
+                ft.Text("🔔 Atas Próximas do Vencimento", size=18, weight=ft.FontWeight.BOLD),
+                ft.Column(items, spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ],
+            spacing=16,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        alignment=ft.alignment.center,
         padding=ft.padding.all(16),
         border=ft.border.all(1, ft.colors.OUTLINE),
         border_radius=8,
