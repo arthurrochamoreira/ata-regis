@@ -302,13 +302,41 @@ class AtaApp:
     
     def excluir_ata(self, ata):
         """Exclui uma ata"""
+        icon = ft.Container(
+            content=ft.Icon(ft.icons.WARNING_ROUNDED, color=ft.colors.RED, size=40),
+            bgcolor=ft.colors.RED_100,
+            width=40,
+            height=40,
+            border_radius=20,
+            alignment=ft.alignment.center,
+        )
+
+        text_column = ft.Column(
+            [
+                ft.Text("Excluir Ata", weight=ft.FontWeight.BOLD),
+                ft.Text(
+                    f"Tem certeza que deseja excluir a ata {ata.numero_ata}? Esta ação não pode ser desfeita.",
+                    color=ft.colors.GREY_600,
+                ),
+            ],
+            spacing=8,
+        )
+
+        content = ft.Row([icon, text_column], spacing=16)
+
         self.page.dialog = ft.AlertDialog(
-            title=ft.Text("Excluir Ata"),
-            content=ft.Text(f"Deseja realmente excluir a ata {ata.numero_ata}?"),
+            modal=True,
+            content=content,
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: self.close_dialog()),
-                ft.TextButton("Excluir", on_click=lambda e: self.confirmar_exclusao(ata.numero_ata))
-            ]
+                ft.ElevatedButton(
+                    "Excluir",
+                    bgcolor=ft.colors.RED,
+                    color=ft.colors.WHITE,
+                    on_click=lambda e: self.confirmar_exclusao(ata.numero_ata),
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
         )
         self.page.dialog.open = True
         self.page.update()
