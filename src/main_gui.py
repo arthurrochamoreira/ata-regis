@@ -73,18 +73,35 @@ class AtaApp:
             self.enviar_alerta,
         )
 
-        main_content = ft.Column(
-            [
-                header,
-                self.stats_container,
-                filtros,
-                search_container,
-                self.data_table,
-                self.atas_vencimento_container,
-            ],
-            spacing=0,
-            expand=True,
+        dashboard_tab = ft.Tab(
+            text="Dashboard",
+            content=ft.Column([self.stats_container], spacing=0, expand=True),
         )
+
+        atas_tab = ft.Tab(
+            text="Atas",
+            content=ft.Column(
+                [filtros, search_container, self.data_table],
+                spacing=0,
+                expand=True,
+            ),
+        )
+
+        venc_tab = ft.Tab(
+            text="Vencimentos",
+            content=ft.Column(
+                [self.atas_vencimento_container],
+                spacing=0,
+                expand=True,
+            ),
+        )
+
+        tabs = ft.Tabs(tabs=[dashboard_tab, atas_tab, venc_tab], expand=True)
+
+        main_content = ft.Column([
+            header,
+            tabs,
+        ], spacing=0, expand=True)
         
         self.page.add(main_content)
         self.page.update()
