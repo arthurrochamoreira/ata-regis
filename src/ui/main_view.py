@@ -18,33 +18,32 @@ def build_header(
     relatorio_mensal_cb: Callable,
     testar_email_cb: Callable,
     status_cb: Callable,
-) -> ft.Container:
-    """Return header container with menu and new ata button."""
-    return ft.Container(
-        content=ft.Row([
-            ft.Text("📝 Ata de Registro de Preços", size=24, weight=ft.FontWeight.BOLD),
-            ft.Row([
-                ft.PopupMenuButton(
-                    icon=ft.icons.SETTINGS,
-                    tooltip="Ferramentas",
-                    items=[
-                        ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
-                        ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
-                        ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
-                        ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
-                        ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
-                    ],
-                ),
-                ft.ElevatedButton(
-                    "➕ Nova Ata",
-                    on_click=nova_ata_cb,
-                    bgcolor=ft.colors.BLUE,
-                    color=ft.colors.WHITE,
-                ),
-            ], spacing=8),
-        ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-        padding=ft.padding.all(16),
-        margin=ft.margin.only(bottom=16),
+) -> ft.AppBar:
+    """Return AppBar with menu actions and new ata button."""
+    return ft.AppBar(
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
+        leading_width=40,
+        title=ft.Text("Ata de Registro de Preços"),
+        bgcolor=ft.colors.INVERSE_PRIMARY,
+        actions=[
+            ft.PopupMenuButton(
+                icon=ft.icons.SETTINGS,
+                tooltip="Ferramentas",
+                items=[
+                    ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
+                    ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
+                    ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
+                    ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
+                    ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
+                ],
+            ),
+            ft.ElevatedButton(
+                "➕ Nova Ata",
+                on_click=nova_ata_cb,
+                bgcolor=ft.colors.BLUE,
+                color=ft.colors.WHITE,
+            ),
+        ],
     )
 
 

@@ -19,6 +19,7 @@ from ui.main_view import (
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
 )
+from ui.navigation_menu import LeftNavigationMenu
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -45,8 +46,8 @@ class AtaApp:
         self.page.padding = 16
     
     def build_ui(self):
-        """Constrói a interface do usuário"""
-        header = build_header(
+        """Constrói a interface do usuário usando navegação lateral"""
+        self.page.appbar = build_header(
             nova_ata_cb=self.nova_ata_click,
             verificar_alertas_cb=self.verificar_alertas_manual,
             relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
@@ -55,77 +56,16 @@ class AtaApp:
             status_cb=self.mostrar_status_sistema,
         )
 
-        self.stats_container = ui_build_stats_panel(self.ata_service)
+        self.navigation_menu = LeftNavigationMenu(self)
+        self.body_container = ft.Container(expand=True)
+        self.update_body()
 
-        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
-
-        search_container, self.search_field = build_search(
-            self.buscar_atas, self.texto_busca
-        )
-
-        # Ajusta margens para uso em linha
-        filtros.margin = ft.margin.only(bottom=0)
-        search_container.margin = ft.margin.only(bottom=0)
-
-        filtros_search_row = ft.Container(
-            content=ft.Row(
-                [filtros, search_container],
-                spacing=16,
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            ),
-            margin=ft.margin.only(bottom=16),
+        layout = ft.Row(
+            [self.navigation_menu, ft.VerticalDivider(width=1), self.body_container],
             expand=True,
         )
 
-        self.data_table = build_data_table(
-            self.get_atas_filtradas(),
-            self.visualizar_ata,
-            self.editar_ata,
-            self.excluir_ata,
-        )
-
-        self.atas_vencimento_container = build_atas_vencimento(
-            self.ata_service.get_atas_vencimento_proximo(),
-            self.visualizar_ata,
-            self.enviar_alerta,
-        )
-
-        dashboard_tab = ft.Tab(
-            text="Dashboard",
-            content=ft.Column([self.stats_container], spacing=0, expand=True),
-        )
-
-        atas_tab = ft.Tab(
-            text="Atas",
-            content=ft.Column(
-                [filtros_search_row, self.data_table],
-                spacing=0,
-                expand=True,
-            ),
-        )
-
-        venc_tab = ft.Tab(
-            text="Vencimentos",
-            content=ft.Column(
-                [self.atas_vencimento_container],
-                spacing=0,
-                expand=True,
-            ),
-        )
-
-        tabs = ft.Tabs(
-            tabs=[dashboard_tab, atas_tab, venc_tab],
-            expand=True,
-            selected_index=self.current_tab,
-            on_change=self.on_tab_change,
-        )
-
-        main_content = ft.Column([
-            header,
-            tabs,
-        ], spacing=0, expand=True)
-        
-        self.page.add(main_content)
+        self.page.add(layout)
         self.page.update()
     
     def build_stats_panel(self):
@@ -148,6 +88,56 @@ class AtaApp:
             self.visualizar_ata,
             self.enviar_alerta,
         )
+
+    def build_dashboard_view(self):
+        self.stats_container = ui_build_stats_panel(self.ata_service)
+        return ft.Column([self.stats_container], spacing=0, expand=True)
+
+    def build_atas_view(self):
+        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
+        search_container, self.search_field = build_search(
+            self.buscar_atas, self.texto_busca
+        )
+        filtros.margin = ft.margin.only(bottom=0)
+        search_container.margin = ft.margin.only(bottom=0)
+        filtros_search_row = ft.Container(
+            content=ft.Row(
+                [filtros, search_container],
+                spacing=16,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            margin=ft.margin.only(bottom=16),
+            expand=True,
+        )
+        self.data_table = build_data_table(
+            self.get_atas_filtradas(),
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
+        )
+        return ft.Column([filtros_search_row, self.data_table], spacing=0, expand=True)
+
+    def build_vencimentos_view(self):
+        self.atas_vencimento_container = build_atas_vencimento(
+            self.ata_service.get_atas_vencimento_proximo(),
+            self.visualizar_ata,
+            self.enviar_alerta,
+        )
+        return ft.Column([self.atas_vencimento_container], spacing=0, expand=True)
+
+    def update_body(self):
+        if self.current_tab == 0:
+            content = self.build_dashboard_view()
+        elif self.current_tab == 1:
+            content = self.build_atas_view()
+        else:
+            content = self.build_vencimentos_view()
+        self.body_container.content = content
+        self.page.update()
+
+    def navigate_to(self, index: int):
+        self.current_tab = index
+        self.update_body()
     
     def get_atas_filtradas(self):
         """Retorna as atas filtradas baseado no filtro atual e busca"""
@@ -182,12 +172,8 @@ class AtaApp:
     
     def refresh_ui(self):
         """Atualiza a interface"""
-        self.page.controls.clear()
-        self.build_ui()
+        self.update_body()
 
-    def on_tab_change(self, e):
-        """Atualiza o índice da aba atual"""
-        self.current_tab = e.control.selected_index
     
     def nova_ata_click(self, e):
         """Abre o formulário para nova ata"""
