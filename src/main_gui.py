@@ -61,6 +61,20 @@ class AtaApp:
 
         search_container, self.search_field = build_search(self.buscar_atas)
 
+        # Ajusta margens para uso em linha
+        filtros.margin = ft.margin.only(bottom=0)
+        search_container.margin = ft.margin.only(bottom=0)
+
+        filtros_search_row = ft.Container(
+            content=ft.Row(
+                [filtros, search_container],
+                spacing=16,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            margin=ft.margin.only(bottom=16),
+            expand=True,
+        )
+
         self.data_table = build_data_table(
             self.get_atas_filtradas(),
             self.visualizar_ata,
@@ -82,7 +96,7 @@ class AtaApp:
         atas_tab = ft.Tab(
             text="Atas",
             content=ft.Column(
-                [filtros, search_container, self.data_table],
+                [filtros_search_row, self.data_table],
                 spacing=0,
                 expand=True,
             ),
