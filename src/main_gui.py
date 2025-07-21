@@ -15,7 +15,7 @@ from ui.main_view import (
     build_header,
     build_filters,
     build_search,
-    build_data_table,
+    build_grouped_data_tables,
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
 )
@@ -72,14 +72,6 @@ class AtaApp:
         """Retorna o painel de estatísticas"""
         return ui_build_stats_panel(self.ata_service)
     
-    def build_data_table(self):
-        """Retorna a tabela de atas"""
-        return build_data_table(
-            self.get_atas_filtradas(),
-            self.visualizar_ata,
-            self.editar_ata,
-            self.excluir_ata,
-        )
     
     def build_atas_vencimento(self):
         """Retorna atas próximas do vencimento"""
@@ -109,13 +101,13 @@ class AtaApp:
             margin=ft.margin.only(bottom=16),
             expand=True,
         )
-        self.data_table = build_data_table(
+        self.grouped_tables = build_grouped_data_tables(
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
         )
-        return ft.Column([filtros_search_row, self.data_table], spacing=0, expand=True)
+        return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
 
     def build_vencimentos_view(self):
         self.atas_vencimento_container = build_atas_vencimento(
@@ -165,8 +157,13 @@ class AtaApp:
         """Busca atas por texto"""
         self.texto_busca = e.control.value.strip()
         # Atualiza apenas a tabela mantendo o texto digitado
-        new_table = self.build_data_table()
-        self.data_table.content = new_table.content
+        new_table = build_grouped_data_tables(
+            self.get_atas_filtradas(),
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
+        )
+        self.grouped_tables.controls = new_table.controls
         self.search_field.value = self.texto_busca
         self.page.update()
     
