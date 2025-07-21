@@ -11,7 +11,6 @@ from utils.email_service import EmailService
 from utils.validators import Formatters
 from utils.scheduler import TaskScheduler
 from forms.ata_form import AtaForm
-from ui.theme import Theme
 from ui.main_view import (
     build_header,
     build_filters,
@@ -45,12 +44,6 @@ class AtaApp:
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.padding = 16
-        self.page.bgcolor = Theme.GREY
-        self.page.fonts = {
-            Theme.FONT_TITLE: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap",
-            Theme.FONT_TEXT: "https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap",
-        }
-        self.page.drawer_open = True
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
@@ -68,9 +61,8 @@ class AtaApp:
         self.update_body()
 
         layout = ft.Row(
-            [self.navigation_menu, self.body_container],
+            [self.navigation_menu, ft.VerticalDivider(width=1), self.body_container],
             expand=True,
-            spacing=0,
         )
 
         self.page.add(layout)
