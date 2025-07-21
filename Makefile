@@ -47,6 +47,7 @@ check-python:
 # Cria o ambiente virtual
 create-venv: check-python
 	@echo "$(YELLOW)Configurando ambiente virtual...$(NC)"
+
 	@$(CHECK_VENV)
 
 # Instala as dependências
