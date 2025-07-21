@@ -55,6 +55,7 @@ Sistema desktop desenvolvido em Python com Flet para gerenciar Atas de Registro 
 - **Dataclasses**: Modelagem de dados
 - **Threading**: Agendamento de tarefas
 - **JSON**: Persistência de dados
+- **SQLite**: Alternativa de banco de dados
 
 ## 📦 Instalação e Execução
 
@@ -102,6 +103,7 @@ ata_registro_precos_app/
 │   ├── services/          # Serviços de negócio
 │   │   ├── __init__.py
 │   │   ├── ata_service.py # CRUD das atas
+│   │   ├── sqlite_ata_service.py # CRUD usando SQLite
 │   │   └── alert_service.py # Alertas automáticos
 │   ├── utils/             # Utilitários
 │   │   ├── __init__.py
