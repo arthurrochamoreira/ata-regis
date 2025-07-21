@@ -15,7 +15,7 @@ from ui.main_view import (
     build_header,
     build_filters,
     build_search,
-    build_grouped_data_tables,
+    build_planner_board,
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
 )
@@ -101,13 +101,13 @@ class AtaApp:
             margin=ft.margin.only(bottom=16),
             expand=True,
         )
-        self.grouped_tables = build_grouped_data_tables(
+        self.atas_board = build_planner_board(
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
         )
-        return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
+        return ft.Column([filtros_search_row, self.atas_board], spacing=0, expand=True)
 
     def build_vencimentos_view(self):
         self.atas_vencimento_container = build_atas_vencimento(
@@ -156,14 +156,14 @@ class AtaApp:
     def buscar_atas(self, e):
         """Busca atas por texto"""
         self.texto_busca = e.control.value.strip()
-        # Atualiza apenas a tabela mantendo o texto digitado
-        new_table = build_grouped_data_tables(
+        # Atualiza apenas o board mantendo o texto digitado
+        new_board = build_planner_board(
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
         )
-        self.grouped_tables.controls = new_table.controls
+        self.atas_board.controls = new_board.controls
         self.search_field.value = self.texto_busca
         self.page.update()
     
