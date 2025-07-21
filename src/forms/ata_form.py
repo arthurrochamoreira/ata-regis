@@ -159,37 +159,40 @@ class AtaForm:
             margin=ft.margin.only(bottom=16)
         )
         
-        # Botões de ação
-        botoes = [
-            ft.TextButton("Cancelar", on_click=lambda e: self.on_cancel()),
+        # Botões
+        botoes = ft.Row([
+            ft.ElevatedButton(
+                "Cancelar",
+                on_click=lambda e: self.on_cancel(),
+                color=ft.colors.ON_SURFACE
+            ),
             ft.ElevatedButton(
                 "Salvar",
                 on_click=self.save_ata,
                 bgcolor=ft.colors.PRIMARY,
-                color=ft.colors.ON_PRIMARY,
-            ),
-        ]
+                color=ft.colors.ON_PRIMARY
+            )
+        ], alignment=ft.MainAxisAlignment.END, spacing=16)
         
         # Layout principal
-        content = ft.Column(
-            [
-                ft.Text(titulo, size=20, weight=ft.FontWeight.BOLD),
-                dados_gerais,
-                telefones_section,
-                emails_section,
-                itens_section,
-            ],
-            spacing=0,
-            scroll=ft.ScrollMode.AUTO,
-        )
+        content = ft.Column([
+            ft.Text(titulo, size=20, weight=ft.FontWeight.BOLD),
+            dados_gerais,
+            telefones_section,
+            emails_section,
+            itens_section,
+            botoes
+        ], spacing=0, scroll=ft.ScrollMode.AUTO)
         
         # Dialog
         self.dialog = ft.AlertDialog(
-            modal=True,
             title=ft.Text(titulo),
-            content=ft.Container(content=content, width=800, height=600),
-            actions=botoes,
-            actions_alignment=ft.MainAxisAlignment.END,
+            content=ft.Container(
+                content=content,
+                width=800,
+                height=600
+            ),
+            actions_alignment=ft.MainAxisAlignment.END
         )
         
         self.page.dialog = self.dialog
