@@ -1,6 +1,4 @@
 import flet as ft
-import datetime
-from typing import List, Dict, Any
 import sys
 import os
 
@@ -11,9 +9,16 @@ from services.ata_service import AtaService
 from services.alert_service import AlertService
 from utils.email_service import EmailService
 from utils.validators import Formatters
-from utils.chart_utils import ChartUtils
 from utils.scheduler import TaskScheduler
 from forms.ata_form import AtaForm
+from ui.main_view import (
+    build_header,
+    build_filters,
+    build_search,
+    build_data_table,
+    build_atas_vencimento,
+    build_stats_panel as ui_build_stats_panel,
+)
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -40,277 +45,69 @@ class AtaApp:
     
     def build_ui(self):
         """Constrói a interface do usuário"""
-        # Header
-        header = ft.Container(
-            content=ft.Row([
-                ft.Text("📝 Ata de Registro de Preços", size=24, weight=ft.FontWeight.BOLD),
-                ft.Row([
-                    ft.PopupMenuButton(
-                        icon=ft.icons.SETTINGS,
-                        tooltip="Ferramentas",
-                        items=[
-                            ft.PopupMenuItem(
-                                text="🔍 Verificar Alertas",
-                                on_click=self.verificar_alertas_manual
-                            ),
-                            ft.PopupMenuItem(
-                                text="📊 Relatório Semanal",
-                                on_click=lambda e: self.gerar_relatorio_manual("semanal")
-                            ),
-                            ft.PopupMenuItem(
-                                text="📈 Relatório Mensal",
-                                on_click=lambda e: self.gerar_relatorio_manual("mensal")
-                            ),
-                            ft.PopupMenuItem(
-                                text="📧 Testar Email",
-                                on_click=self.testar_email
-                            ),
-                            ft.PopupMenuItem(
-                                text="ℹ️ Status Sistema",
-                                on_click=self.mostrar_status_sistema
-                            )
-                        ]
-                    ),
-                    ft.ElevatedButton(
-                        "➕ Nova Ata",
-                        on_click=self.nova_ata_click,
-                        bgcolor=ft.colors.BLUE,
-                        color=ft.colors.WHITE
-                    )
-                ], spacing=8)
-            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=16)
+        header = build_header(
+            nova_ata_cb=self.nova_ata_click,
+            verificar_alertas_cb=self.verificar_alertas_manual,
+            relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
+            relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
+            testar_email_cb=self.testar_email,
+            status_cb=self.mostrar_status_sistema,
         )
-        
-        # Painel de estatísticas
-        self.stats_container = self.build_stats_panel()
-        
-        # Filtros
-        filtros = ft.Container(
-            content=ft.Row([
-                ft.ElevatedButton(
-                    "✅ Vigentes",
-                    on_click=lambda e: self.filtrar_atas("vigente"),
-                    bgcolor=ft.colors.GREEN if self.filtro_atual == "vigente" else ft.colors.SURFACE_VARIANT
-                ),
-                ft.ElevatedButton(
-                    "⚠️ A Vencer",
-                    on_click=lambda e: self.filtrar_atas("a_vencer"),
-                    bgcolor=ft.colors.ORANGE if self.filtro_atual == "a_vencer" else ft.colors.SURFACE_VARIANT
-                ),
-                ft.ElevatedButton(
-                    "❌ Vencidas",
-                    on_click=lambda e: self.filtrar_atas("vencida"),
-                    bgcolor=ft.colors.RED if self.filtro_atual == "vencida" else ft.colors.SURFACE_VARIANT
-                ),
-                ft.ElevatedButton(
-                    "📋 Todas",
-                    on_click=lambda e: self.filtrar_atas("todos"),
-                    bgcolor=ft.colors.BLUE if self.filtro_atual == "todos" else ft.colors.SURFACE_VARIANT
-                )
-            ], spacing=10),
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=16)
+
+        self.stats_container = ui_build_stats_panel(self.ata_service)
+
+        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
+
+        search_container, self.search_field = build_search(self.buscar_atas)
+
+        self.data_table = build_data_table(
+            self.get_atas_filtradas(),
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
         )
-        
-        # Campo de busca
-        self.search_field = ft.TextField(
-            label="Buscar atas...",
-            prefix_icon=ft.icons.SEARCH,
-            on_change=self.buscar_atas,
-            width=400
+
+        self.atas_vencimento_container = build_atas_vencimento(
+            self.ata_service.get_atas_vencimento_proximo(),
+            self.visualizar_ata,
+            self.enviar_alerta,
         )
-        
-        search_container = ft.Container(
-            content=self.search_field,
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=16)
+
+        main_content = ft.Column(
+            [
+                header,
+                self.stats_container,
+                filtros,
+                search_container,
+                self.data_table,
+                self.atas_vencimento_container,
+            ],
+            spacing=0,
+            expand=True,
         )
-        
-        # Tabela de atas
-        self.data_table = self.build_data_table()
-        
-        # Seção de atas próximas do vencimento
-        self.atas_vencimento_container = self.build_atas_vencimento()
-        
-        # Layout principal
-        main_content = ft.Column([
-            header,
-            self.stats_container,
-            filtros,
-            search_container,
-            self.data_table,
-            self.atas_vencimento_container
-        ], spacing=0, expand=True)
         
         self.page.add(main_content)
         self.page.update()
     
     def build_stats_panel(self):
-        """Constrói o painel de estatísticas com gráficos melhorados"""
-        stats = self.ata_service.get_estatisticas()
-        atas = self.ata_service.listar_todas()
-        atas_vencimento = self.ata_service.get_atas_vencimento_proximo()
-        
-        total_value = sum(ata.valor_total for ata in atas)
-        
-        # Cards de resumo
-        summary_cards = ChartUtils.create_summary_cards(stats, total_value)
-        
-        # Gráfico de pizza e legenda
-        pie_chart = ChartUtils.create_status_pie_chart(stats)
-        legend = ChartUtils.create_status_legend(stats)
-        
-        # Indicador de urgência
-        urgency_indicator = ChartUtils.create_urgency_indicator(atas_vencimento)
-        
-        # Gráfico de valores por status
-        value_chart = ChartUtils.create_value_chart(atas)
-        
-        # Gráfico mensal
-        monthly_chart = ChartUtils.create_monthly_chart(atas)
-        
-        # Layout principal do painel
-        main_chart_row = ft.Row([
-            ft.Container(
-                content=ft.Column([
-                    ft.Text("📊 Situação das Atas", size=18, weight=ft.FontWeight.BOLD),
-                    ft.Row([pie_chart, legend], spacing=32, alignment=ft.MainAxisAlignment.START)
-                ], spacing=16),
-                padding=ft.padding.all(16),
-                border=ft.border.all(1, ft.colors.OUTLINE),
-                border_radius=8,
-                expand=True
-            ),
-            ft.Container(
-                content=value_chart,
-                width=300
-            )
-        ], spacing=16)
-        
-        return ft.Container(
-            content=ft.Column([
-                summary_cards,
-                urgency_indicator,
-                main_chart_row,
-                monthly_chart
-            ], spacing=16),
-            margin=ft.margin.only(bottom=24)
-        )
+        """Retorna o painel de estatísticas"""
+        return ui_build_stats_panel(self.ata_service)
     
     def build_data_table(self):
-        """Constrói a tabela de dados das atas"""
-        rows = []
-        atas_filtradas = self.get_atas_filtradas()
-        
-        for ata in atas_filtradas:
-            status_icon = "✅" if ata.status == "vigente" else "⚠️" if ata.status == "a_vencer" else "❌"
-            
-            # Formatação da data
-            data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
-            
-            row = ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(ata.numero_ata)),
-                    ft.DataCell(ft.Text(data_formatada)),
-                    ft.DataCell(ft.Text(ata.objeto)),
-                    ft.DataCell(ft.Text(ata.fornecedor)),
-                    ft.DataCell(ft.Text(f"{status_icon} {ata.status.replace('_', ' ').title()}")),
-                    ft.DataCell(
-                        ft.Row([
-                            ft.IconButton(
-                                icon=ft.icons.VISIBILITY,
-                                tooltip="Visualizar",
-                                on_click=lambda e, ata=ata: self.visualizar_ata(ata)
-                            ),
-                            ft.IconButton(
-                                icon=ft.icons.EDIT,
-                                tooltip="Editar",
-                                on_click=lambda e, ata=ata: self.editar_ata(ata)
-                            ),
-                            ft.IconButton(
-                                icon=ft.icons.DELETE,
-                                tooltip="Excluir",
-                                on_click=lambda e, ata=ata: self.excluir_ata(ata)
-                            )
-                        ], spacing=0)
-                    )
-                ]
-            )
-            rows.append(row)
-        
-        table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Número")),
-                ft.DataColumn(ft.Text("Vigência")),
-                ft.DataColumn(ft.Text("Objeto")),
-                ft.DataColumn(ft.Text("Fornecedor")),
-                ft.DataColumn(ft.Text("Situação")),
-                ft.DataColumn(ft.Text("Ações"))
-            ],
-            rows=rows,
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8
-        )
-        
-        return ft.Container(
-            content=ft.Column([
-                ft.Text("📋 Lista de Atas", size=18, weight=ft.FontWeight.BOLD),
-                table
-            ], spacing=16),
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=24)
+        """Retorna a tabela de atas"""
+        return build_data_table(
+            self.get_atas_filtradas(),
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
         )
     
     def build_atas_vencimento(self):
-        """Constrói a seção de atas próximas do vencimento"""
-        atas_vencimento = self.ata_service.get_atas_vencimento_proximo()
-        
-        if not atas_vencimento:
-            return ft.Container()
-        
-        items = []
-        for ata in atas_vencimento:
-            data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
-            
-            item = ft.Container(
-                content=ft.Row([
-                    ft.Column([
-                        ft.Text(f"Ata: {ata.numero_ata}", weight=ft.FontWeight.BOLD),
-                        ft.Text(f"Vencimento: {data_formatada}"),
-                        ft.Text(f"Faltam {ata.dias_restantes} dias", 
-                               color=ft.colors.RED if ata.dias_restantes <= 30 else ft.colors.ORANGE)
-                    ], spacing=4),
-                    ft.Row([
-                        ft.IconButton(
-                            icon=ft.icons.VISIBILITY,
-                            tooltip="Visualizar",
-                            on_click=lambda e, ata=ata: self.visualizar_ata(ata)
-                        ),
-                        ft.IconButton(
-                            icon=ft.icons.EMAIL,
-                            tooltip="Enviar Alerta",
-                            on_click=lambda e, ata=ata: self.enviar_alerta(ata)
-                        )
-                    ])
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                padding=ft.padding.all(12),
-                margin=ft.margin.only(bottom=8),
-                border=ft.border.all(1, ft.colors.ORANGE),
-                border_radius=8,
-                bgcolor=ft.colors.ORANGE_50
-            )
-            items.append(item)
-        
-        return ft.Container(
-            content=ft.Column([
-                ft.Text("🔔 Atas Próximas do Vencimento", size=18, weight=ft.FontWeight.BOLD),
-                ft.Column(items, spacing=0)
-            ], spacing=16),
-            padding=ft.padding.all(16),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8
+        """Retorna atas próximas do vencimento"""
+        return build_atas_vencimento(
+            self.ata_service.get_atas_vencimento_proximo(),
+            self.visualizar_ata,
+            self.enviar_alerta,
         )
     
     def get_atas_filtradas(self):
