@@ -59,7 +59,9 @@ class AtaApp:
 
         filtros = build_filters(self.filtro_atual, self.filtrar_atas)
 
-        search_container, self.search_field = build_search(self.buscar_atas)
+        search_container, self.search_field = build_search(
+            self.buscar_atas, self.texto_busca
+        )
 
         # Ajusta margens para uso em linha
         filtros.margin = ft.margin.only(bottom=0)
