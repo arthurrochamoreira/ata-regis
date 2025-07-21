@@ -160,18 +160,24 @@ class AtaForm:
         )
         
         # Botões
+        btn_style = ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=8),
+            padding=ft.padding.symmetric(horizontal=16, vertical=8),
+        )
         botoes = ft.Row([
             ft.ElevatedButton(
                 "Cancelar",
                 on_click=lambda e: self.on_cancel(),
-                color=ft.colors.ON_SURFACE
+                color=ft.colors.ON_SURFACE,
+                style=btn_style,
             ),
             ft.ElevatedButton(
                 "Salvar",
                 on_click=self.save_ata,
                 bgcolor=ft.colors.PRIMARY,
-                color=ft.colors.ON_PRIMARY
-            )
+                color=ft.colors.ON_PRIMARY,
+                style=btn_style,
+            ),
         ], alignment=ft.MainAxisAlignment.END, spacing=16)
         
         # Layout principal

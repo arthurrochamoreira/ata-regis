@@ -37,6 +37,35 @@ class AtaApp:
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.padding = 16
+        self.apply_apple_theme()
+
+    def apply_apple_theme(self):
+        """Aplica um tema minimalista inspirado no visual do macOS/iOS"""
+        self.page.theme = ft.Theme(
+            font_family="Helvetica",
+            color_scheme=ft.ColorScheme(
+                primary=ft.colors.BLUE,
+                on_primary=ft.colors.WHITE,
+                background=ft.colors.WHITE,
+                surface=ft.colors.WHITE,
+                on_surface=ft.colors.BLACK,
+                outline=ft.colors.GREY_300,
+            ),
+        )
+        self.page.update()
+
+    def apple_button(self, text: str, on_click, bgcolor=ft.colors.BLUE, color=ft.colors.WHITE):
+        """Cria um botão no estilo iOS/macOS"""
+        return ft.ElevatedButton(
+            text,
+            on_click=on_click,
+            bgcolor=bgcolor,
+            color=color,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=8),
+                padding=ft.padding.symmetric(horizontal=16, vertical=8),
+            ),
+        )
     
     def build_ui(self):
         """Constrói a interface do usuário"""
@@ -71,11 +100,9 @@ class AtaApp:
                             )
                         ]
                     ),
-                    ft.ElevatedButton(
+                    self.apple_button(
                         "➕ Nova Ata",
-                        on_click=self.nova_ata_click,
-                        bgcolor=ft.colors.BLUE,
-                        color=ft.colors.WHITE
+                        on_click=self.nova_ata_click
                     )
                 ], spacing=8)
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
@@ -89,25 +116,29 @@ class AtaApp:
         # Filtros
         filtros = ft.Container(
             content=ft.Row([
-                ft.ElevatedButton(
+                self.apple_button(
                     "✅ Vigentes",
                     on_click=lambda e: self.filtrar_atas("vigente"),
-                    bgcolor=ft.colors.GREEN if self.filtro_atual == "vigente" else ft.colors.SURFACE_VARIANT
+                    bgcolor=ft.colors.GREEN if self.filtro_atual == "vigente" else ft.colors.SURFACE_VARIANT,
+                    color=ft.colors.BLACK if self.filtro_atual != "vigente" else ft.colors.WHITE,
                 ),
-                ft.ElevatedButton(
+                self.apple_button(
                     "⚠️ A Vencer",
                     on_click=lambda e: self.filtrar_atas("a_vencer"),
-                    bgcolor=ft.colors.ORANGE if self.filtro_atual == "a_vencer" else ft.colors.SURFACE_VARIANT
+                    bgcolor=ft.colors.ORANGE if self.filtro_atual == "a_vencer" else ft.colors.SURFACE_VARIANT,
+                    color=ft.colors.BLACK if self.filtro_atual != "a_vencer" else ft.colors.WHITE,
                 ),
-                ft.ElevatedButton(
+                self.apple_button(
                     "❌ Vencidas",
                     on_click=lambda e: self.filtrar_atas("vencida"),
-                    bgcolor=ft.colors.RED if self.filtro_atual == "vencida" else ft.colors.SURFACE_VARIANT
+                    bgcolor=ft.colors.RED if self.filtro_atual == "vencida" else ft.colors.SURFACE_VARIANT,
+                    color=ft.colors.BLACK if self.filtro_atual != "vencida" else ft.colors.WHITE,
                 ),
-                ft.ElevatedButton(
+                self.apple_button(
                     "📋 Todas",
                     on_click=lambda e: self.filtrar_atas("todos"),
-                    bgcolor=ft.colors.BLUE if self.filtro_atual == "todos" else ft.colors.SURFACE_VARIANT
+                    bgcolor=ft.colors.BLUE if self.filtro_atual == "todos" else ft.colors.SURFACE_VARIANT,
+                    color=ft.colors.BLACK if self.filtro_atual != "todos" else ft.colors.WHITE,
                 )
             ], spacing=10),
             padding=ft.padding.all(16),
