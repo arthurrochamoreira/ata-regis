@@ -40,19 +40,15 @@ check-python:
 # Cria o ambiente virtual
 create-venv: check-python
 	@echo "$(YELLOW)Configurando ambiente virtual...$(NC)"
-	@if [ ! -d "$(VENV_DIR)" ]; then \
-		echo "Criando ambiente virtual..."; \
-		$(PYTHON) -m venv $(VENV_DIR); \
-	else \
-		echo "$(GREEN)Ambiente virtual já existe.$(NC)"; \
-	fi
+	@bash scripts/check_venv.sh
 
 # Instala as dependências
 install: create-venv
-	@echo "$(YELLOW)Instalando dependências...$(NC)"
-	@$(VENV_DIR)/bin/pip install --upgrade pip
-	@$(VENV_DIR)/bin/pip install -r requirements.txt
-	@echo "$(GREEN)Dependências instaladas com sucesso.$(NC)"
+	       @echo "$(YELLOW)Instalando dependências...$(NC)"
+	       @$(VENV_DIR)/bin/pip install --upgrade pip
+	       @$(VENV_DIR)/bin/pip install -r requirements.txt
+	       @$(VENV_DIR)/bin/python scripts/check_requirements.py
+	       @echo "$(GREEN)Dependências verificadas com sucesso.$(NC)"
 
 # Executa a aplicação
 run: install
