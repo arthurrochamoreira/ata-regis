@@ -1,0 +1,67 @@
+[
+  {
+    "numero_ata": "0016/2024",
+    "documento_sei": "23106.033566/2023-30",
+    "data_vigencia": "2024-12-31",
+    "objeto": "Micro Tipo I",
+    "itens": [
+      {
+        "descricao": "Notebook com SSD",
+        "quantidade": 15,
+        "valor": 3500.0
+      }
+    ],
+    "fornecedor": "Empresa XYZ Ltda",
+    "telefones_fornecedor": [
+      "(61) 99999-0000"
+    ],
+    "emails_fornecedor": [
+      "contato@empresa.com"
+    ]
+  },
+  {
+    "numero_ata": "0015/2024",
+    "documento_sei": "23106.033566/2023-29",
+    "data_vigencia": "2024-08-15",
+    "objeto": "Material de Escritório",
+    "itens": [
+      {
+        "descricao": "Papel A4",
+        "quantidade": 100,
+        "valor": 25.0
+      },
+      {
+        "descricao": "Canetas",
+        "quantidade": 50,
+        "valor": 2.5
+      }
+    ],
+    "fornecedor": "Papelaria ABC",
+    "telefones_fornecedor": [
+      "(61) 88888-1111"
+    ],
+    "emails_fornecedor": [
+      "vendas@papelaria.com"
+    ]
+  },
+  {
+    "numero_ata": "0014/2024",
+    "documento_sei": "23106.033566/2023-28",
+    "data_vigencia": "2023-12-31",
+    "objeto": "Equipamentos de TI",
+    "itens": [
+      {
+        "descricao": "Monitor 24 polegadas",
+        "quantidade": 20,
+        "valor": 800.0
+      }
+    ],
+    "fornecedor": "TechCorp Ltda",
+    "telefones_fornecedor": [
+      "(61) 77777-2222"
+    ],
+    "emails_fornecedor": [
+      "tech@techcorp.com"
+    ]
+  }
+]

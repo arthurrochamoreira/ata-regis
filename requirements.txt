@@ -1,2 +1,2 @@
-flet
-matplotlib
+flet==0.22.0
+
