@@ -73,11 +73,13 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
 
 
-def build_search(on_change: Callable) -> tuple[ft.Container, ft.TextField]:
+def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
+    """Return a search container and field pre-populated with ``value``."""
     search_field = ft.TextField(
         label="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
+        value=value,
         expand=True,
     )
     return (
