@@ -58,14 +58,18 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
         )
 
     return ft.Container(
-        content=ft.Row([
-            button("✅ Vigentes", "vigente", ft.colors.GREEN),
-            button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-            button("❌ Vencidas", "vencida", ft.colors.RED),
-            button("📋 Todas", "todos", ft.colors.BLUE),
-        ], spacing=10),
+        content=ft.Row(
+            [
+                button("✅ Vigentes", "vigente", ft.colors.GREEN),
+                button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
+                button("❌ Vencidas", "vencida", ft.colors.RED),
+                button("📋 Todas", "todos", ft.colors.BLUE),
+            ],
+            spacing=10,
+        ),
         padding=ft.padding.all(16),
         margin=ft.margin.only(bottom=16),
+        expand=True,
     )
 
 
@@ -74,10 +78,15 @@ def build_search(on_change: Callable) -> tuple[ft.Container, ft.TextField]:
         label="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
-        width=400,
+        expand=True,
     )
     return (
-        ft.Container(content=search_field, padding=ft.padding.all(16), margin=ft.margin.only(bottom=16)),
+        ft.Container(
+            content=search_field,
+            padding=ft.padding.all(16),
+            margin=ft.margin.only(bottom=16),
+            expand=True,
+        ),
         search_field,
     )
 
