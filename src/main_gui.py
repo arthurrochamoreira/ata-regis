@@ -29,6 +29,7 @@ class AtaApp:
         self.scheduler = TaskScheduler(self.ata_service, self.alert_service)
         self.filtro_atual = "todos"
         self.texto_busca = ""
+        self.current_tab = 0
         self.setup_page()
         self.build_ui()
         
@@ -96,7 +97,12 @@ class AtaApp:
             ),
         )
 
-        tabs = ft.Tabs(tabs=[dashboard_tab, atas_tab, venc_tab], expand=True)
+        tabs = ft.Tabs(
+            tabs=[dashboard_tab, atas_tab, venc_tab],
+            expand=True,
+            selected_index=self.current_tab,
+            on_change=self.on_tab_change,
+        )
 
         main_content = ft.Column([
             header,
@@ -158,6 +164,10 @@ class AtaApp:
         """Atualiza a interface"""
         self.page.controls.clear()
         self.build_ui()
+
+    def on_tab_change(self, e):
+        """Atualiza o índice da aba atual"""
+        self.current_tab = e.control.selected_index
     
     def nova_ata_click(self, e):
         """Abre o formulário para nova ata"""
