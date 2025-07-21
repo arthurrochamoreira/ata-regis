@@ -174,7 +174,11 @@ class AtaApp:
     def buscar_atas(self, e):
         """Busca atas por texto"""
         self.texto_busca = e.control.value.strip()
-        self.refresh_ui()
+        # Atualiza apenas a tabela mantendo o texto digitado
+        new_table = self.build_data_table()
+        self.data_table.content = new_table.content
+        self.search_field.value = self.texto_busca
+        self.page.update()
     
     def refresh_ui(self):
         """Atualiza a interface"""
