@@ -179,26 +179,94 @@ class AtaApp:
     
     def visualizar_ata(self, ata):
         """Visualiza uma ata"""
-        content = f"""
-Número: {ata.numero_ata}
-SEI: {ata.documento_sei}
-Vigência: {Formatters.formatar_data_brasileira(ata.data_vigencia)}
-Objeto: {ata.objeto}
-Fornecedor: {ata.fornecedor}
-Telefones: {', '.join(ata.telefones_fornecedor)}
-E-mails: {', '.join(ata.emails_fornecedor)}
+        dados_gerais = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("📋 Dados Gerais", size=16, weight=ft.FontWeight.BOLD),
+                    ft.Row(
+                        [
+                            ft.Text(f"Número: {ata.numero_ata}"),
+                            ft.Text(f"SEI: {ata.documento_sei}"),
+                        ],
+                        spacing=16,
+                    ),
+                    ft.Text(
+                        f"Vigência: {Formatters.formatar_data_brasileira(ata.data_vigencia)}"
+                    ),
+                    ft.Text(f"Objeto: {ata.objeto}"),
+                    ft.Text(f"Fornecedor: {ata.fornecedor}"),
+                ],
+                spacing=8,
+            ),
+            padding=ft.padding.all(16),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=16),
+        )
 
-Valor Total: {Formatters.formatar_valor_monetario(ata.valor_total)}
+        telefones = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("📞 Telefones", size=16, weight=ft.FontWeight.BOLD),
+                    ft.Column([ft.Text(t) for t in ata.telefones_fornecedor], spacing=4),
+                ],
+                spacing=8,
+            ),
+            padding=ft.padding.all(16),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=16),
+        )
 
-Itens:
-"""
-        for i, item in enumerate(ata.itens, 1):
-            content += f"{i}. {item.descricao}: {item.quantidade} x {Formatters.formatar_valor_monetario(item.valor)} = {Formatters.formatar_valor_monetario(item.valor_total)}\n"
-        
+        emails = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("📧 E-mails", size=16, weight=ft.FontWeight.BOLD),
+                    ft.Column([ft.Text(e) for e in ata.emails_fornecedor], spacing=4),
+                ],
+                spacing=8,
+            ),
+            padding=ft.padding.all(16),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=16),
+        )
+
+        itens_list = [
+            ft.Text(
+                f"{i+1}. {item.descricao}: {item.quantidade} x {Formatters.formatar_valor_monetario(item.valor)} = {Formatters.formatar_valor_monetario(item.valor_total)}"
+            )
+            for i, item in enumerate(ata.itens)
+        ]
+        itens = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("🧾 Itens", size=16, weight=ft.FontWeight.BOLD),
+                    ft.Column(itens_list, spacing=4),
+                    ft.Text(
+                        f"Valor Total: {Formatters.formatar_valor_monetario(ata.valor_total)}",
+                        weight=ft.FontWeight.BOLD,
+                    ),
+                ],
+                spacing=8,
+            ),
+            padding=ft.padding.all(16),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=16),
+        )
+
+        content = ft.Column(
+            [dados_gerais, telefones, emails, itens],
+            spacing=0,
+            scroll=ft.ScrollMode.AUTO,
+        )
+
         self.page.dialog = ft.AlertDialog(
             title=ft.Text(f"Ata {ata.numero_ata}"),
-            content=ft.Text(content),
-            actions=[ft.TextButton("Fechar", on_click=lambda e: self.close_dialog())]
+            content=ft.Container(content=content, width=800, height=600),
+            actions=[ft.TextButton("Fechar", on_click=lambda e: self.close_dialog())],
+            actions_alignment=ft.MainAxisAlignment.END,
         )
         self.page.dialog.open = True
         self.page.update()
