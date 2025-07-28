@@ -36,6 +36,26 @@ CARD_SHADOW_HOVER = ft.BoxShadow(
     offset=ft.Offset(0, 4),
 )
 
+CARD_BG = ft.colors.WHITE
+APP_BG = ft.colors.GREY_100
+
+# Card shadow (Style Guide)
+CARD_SHADOW = ft.BoxShadow(
+    spread_radius=1,
+    blur_radius=5,
+    color=ft.colors.with_opacity(0.1, "black"),
+    offset=ft.Offset(0, 2),
+)
+
+# Card shadow hover (Style Guide)
+CARD_SHADOW_HOVER = ft.BoxShadow(
+    spread_radius=2,
+    blur_radius=10,
+    color=ft.colors.with_opacity(0.15, "black"),
+    offset=ft.Offset(0, 4),
+)
+
+
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     """Reusable card following the Style Guide."""
     header = ft.Row(
