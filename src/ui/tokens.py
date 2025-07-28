@@ -12,6 +12,37 @@ DANGER = ft.colors.RED
 SUCCESS = ft.colors.GREEN
 WARNING = ft.colors.ORANGE
 GREY_LIGHT = ft.colors.GREY_300
+CARD_BG = "#F8FAFC"
+
+def build_section(
+    title: str,
+    icon_name: str,
+    icon_color: str,
+    icon_bg: str,
+    body: ft.Control,
+) -> ft.Container:
+    """Return standard section container used across views."""
+
+    header = ft.Row(
+        [
+            ft.Container(
+                content=ft.Icon(icon_name, color=icon_color),
+                bgcolor=icon_bg,
+                padding=SPACE_2,
+                border_radius=8,
+            ),
+            ft.Text(title, size=20, weight=ft.FontWeight.BOLD, color="#1F2937"),
+        ],
+        spacing=SPACE_3,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    return ft.Container(
+        content=ft.Column([header, body], spacing=SPACE_5),
+        bgcolor=CARD_BG,
+        padding=SPACE_5,
+        border_radius=12,
+    )
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     header = ft.Row(
