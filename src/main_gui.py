@@ -44,6 +44,9 @@ class AtaApp:
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
         self.page.padding = 16
+        self.page.bgcolor = "#F3F4F6"
+        self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
+        self.page.theme = ft.Theme(font_family="Inter")
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
@@ -163,7 +166,7 @@ class AtaApp:
             self.editar_ata,
             self.excluir_ata,
         )
-        self.grouped_tables.controls = new_table.controls
+        self.grouped_tables.content = new_table.content
         self.search_field.value = self.texto_busca
         self.page.update()
     
