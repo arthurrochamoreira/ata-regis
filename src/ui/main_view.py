@@ -128,10 +128,24 @@ def build_data_table(
     for index, ata in enumerate(atas):
         data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
         text_cells = [
-            ft.Text(ata.numero_ata, weight=ft.FontWeight.W_500, color="#111827"),
-            ft.Text(data_formatada),
-            ft.Text(ata.objeto),
-            ft.Text(ata.fornecedor),
+            ft.Text(
+                ata.numero_ata,
+                weight=ft.FontWeight.W_500,
+                color="#111827",
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
+            ft.Text(
+                ata.objeto,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            ft.Text(
+                ata.fornecedor,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
@@ -197,7 +211,7 @@ def build_data_table(
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
         border=ft.border.all(1, "#E5E7EB"),
-        clip_behavior=ft.ClipBehavior.NONE,
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
     )
 
     return table
