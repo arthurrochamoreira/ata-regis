@@ -287,7 +287,12 @@ def build_grouped_data_tables(
         run_spacing=24,
     )
 
-    container = ft.Container(content=row, alignment=ft.alignment.center, padding=0, expand=True, max_width=1280)
+    container = ft.Container(
+        content=row,
+        alignment=ft.alignment.center,
+        padding=0,
+        expand=True,
+    )
     return container
 
 
