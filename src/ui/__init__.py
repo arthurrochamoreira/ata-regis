@@ -1,0 +1,1 @@
+from .ata_detail_view import build_ata_detail_view
