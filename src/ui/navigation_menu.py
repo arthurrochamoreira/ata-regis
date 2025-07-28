@@ -104,7 +104,7 @@ class LeftNavigationMenu(ft.Column):
         self.controls = [
             self.rail,
             ft.Container(
-                padding=ft.padding.only(top=SPACE_5),
+                padding=ft.padding.all(SPACE_5),  # padding inferior consistente
                 content=ft.Column(
                     expand=1,
                     spacing=SPACE_3,
@@ -146,3 +146,6 @@ class LeftNavigationMenu(ft.Column):
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
+
+# Checklist final NavigationRail
+# - [x] Padding inferior consistente
