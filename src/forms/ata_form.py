@@ -299,17 +299,19 @@ class AtaForm:
         card = ft.Container(
             content=ft.Column(
                 [
-                    ft.Column(
-                        [
-                            ft.Text(
-                                titulo,
-                                size=30,
-                                weight=ft.FontWeight.BOLD,
-                                color="#111827",
-                            ),
-                            ft.Divider(height=1, color="#E5E7EB"),
-                        ],
-                        spacing=0,
+                    ft.Container(
+                        content=ft.Column(
+                            [
+                                ft.Text(
+                                    titulo,
+                                    size=30,
+                                    weight=ft.FontWeight.BOLD,
+                                    color="#111827",
+                                ),
+                                ft.Divider(height=1, color="#E5E7EB"),
+                            ],
+                            spacing=0,
+                        ),
                         margin=ft.margin.only(bottom=32),
                     ),
                     dados_gerais,
