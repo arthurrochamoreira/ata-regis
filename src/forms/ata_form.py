@@ -246,7 +246,8 @@ class AtaForm:
     def remove_telefone(self, field, row):
         """Remove campo de telefone"""
         self.telefones = [(f, r) for f, r in self.telefones if f != field]
-        self.telefones_container.controls.remove(row)
+        if row in self.telefones_container.controls:
+            self.telefones_container.controls.remove(row)
         self.page.update()
     
     def add_email(self, valor: str = ""):
@@ -272,7 +273,8 @@ class AtaForm:
     def remove_email(self, field, row):
         """Remove campo de e-mail"""
         self.emails = [(f, r) for f, r in self.emails if f != field]
-        self.emails_container.controls.remove(row)
+        if row in self.emails_container.controls:
+            self.emails_container.controls.remove(row)
         self.page.update()
     
     def add_item(self, item: Optional[Item] = None):
@@ -318,7 +320,8 @@ class AtaForm:
     def remove_item(self, descricao_field, row):
         """Remove campos de item"""
         self.itens = [(d, q, v, r) for d, q, v, r in self.itens if d != descricao_field]
-        self.itens_container.controls.remove(row)
+        if row in self.itens_container.controls:
+            self.itens_container.controls.remove(row)
         self.page.update()
     
     def on_numero_ata_change(self, e):
