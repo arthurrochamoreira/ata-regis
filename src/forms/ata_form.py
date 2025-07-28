@@ -200,16 +200,8 @@ class AtaForm:
                             size=30,
                             weight=ft.FontWeight.BOLD,
                             color="#111827",
-                            max_lines=2,
-                            overflow=ft.TextOverflow.ELLIPSIS,
                         ),
-                        ft.Text(
-                            titulo,
-                            size=16,
-                            color="#6B7280",
-                            max_lines=1,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        ),
+                        ft.Text(titulo, size=16, color="#6B7280"),
                     ],
                 )
             ],
@@ -469,29 +461,11 @@ class AtaForm:
         if erros:
             # Mostra erros
             erro_dialog = ft.AlertDialog(
-                title=ft.Text(
-                    "Erros de Validação",
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-                content=ft.Column(
-                    [
-                        ft.Text(
-                            "Corrija os seguintes erros:",
-                            max_lines=1,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        ),
-                        *[
-                            ft.Text(
-                                f"• {erro}",
-                                max_lines=1,
-                                overflow=ft.TextOverflow.ELLIPSIS,
-                            )
-                            for erro in erros
-                        ],
-                    ],
-                    tight=True,
-                ),
+                title=ft.Text("Erros de Validação"),
+                content=ft.Column([
+                    ft.Text("Corrija os seguintes erros:"),
+                    *[ft.Text(f"• {erro}") for erro in erros]
+                ], tight=True),
                 actions=[ft.TextButton("OK", on_click=lambda e: self.close_error_dialog())]
             )
             self.page.dialog = erro_dialog
