@@ -51,34 +51,34 @@ class AtaForm:
             label="Número da Ata",
             hint_text="0000/0000",
             on_change=self.on_numero_ata_change,
-            width=200
+            expand=True,
         )
         
         self.documento_sei_field = ft.TextField(
             label="Documento SEI",
             hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
-            width=300
+            expand=True,
         )
         
         self.data_vigencia_field = ft.TextField(
             label="Data de Vigência",
             hint_text="DD/MM/AAAA",
-            width=200
+            expand=True,
         )
         
         self.objeto_field = ft.TextField(
             label="Objeto",
             hint_text="Descrição do objeto da ata",
-            width=400,
             multiline=True,
-            max_lines=3
+            max_lines=3,
+            expand=True,
         )
         
         self.fornecedor_field = ft.TextField(
             label="Fornecedor",
             hint_text="Nome da empresa fornecedora",
-            width=400
+            expand=True,
         )
         
         # Containers para listas dinâmicas
@@ -96,14 +96,22 @@ class AtaForm:
             self.add_item()
         
         # Seções do formulário
-        dados_gerais_body = ft.Column(
+        self.numero_ata_field.col = {"xs": 12, "md": 6}
+        self.documento_sei_field.col = {"xs": 12, "md": 6}
+        self.data_vigencia_field.col = {"xs": 12, "md": 6}
+        self.objeto_field.col = {"xs": 12, "md": 6}
+        self.fornecedor_field.col = {"xs": 12, "md": 6}
+        dados_gerais_body = ft.ResponsiveRow(
             [
-                ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_4),
-                ft.Row([self.data_vigencia_field], spacing=SPACE_4),
+                self.numero_ata_field,
+                self.documento_sei_field,
+                self.data_vigencia_field,
                 self.objeto_field,
                 self.fornecedor_field,
             ],
+            columns=12,
             spacing=SPACE_4,
+            run_spacing=SPACE_4,
         )
         dados_gerais = build_section(
             "Dados Gerais",

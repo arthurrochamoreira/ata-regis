@@ -85,16 +85,17 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             ),
         )
 
+    buttons = [
+        button("✅ Vigentes", "vigente", ft.colors.GREEN),
+        button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
+        button("❌ Vencidas", "vencida", ft.colors.RED),
+        button("📋 Todas", "todos", ft.colors.BLUE),
+    ]
+    for b in buttons:
+        b.col = {"xs": 6, "md": 3}
+    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
     return ft.Container(
-        content=ft.Row(
-            [
-                button("✅ Vigentes", "vigente", ft.colors.GREEN),
-                button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-                button("❌ Vencidas", "vencida", ft.colors.RED),
-                button("📋 Todas", "todos", ft.colors.BLUE),
-            ],
-            spacing=SPACE_3,
-        ),
+        content=row,
         padding=ft.padding.all(SPACE_4),
         margin=ft.margin.only(bottom=SPACE_5),
         expand=True,
@@ -402,33 +403,36 @@ def build_stats_panel(ata_service) -> ft.Container:
     value_chart = ChartUtils.create_value_chart(atas)
     monthly_chart = ChartUtils.create_monthly_chart(atas)
 
-    charts_section = ft.Row(
-        [
-            ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Text(
-                            "📊 Situação das Atas",
-                            size=18,
-                            weight=ft.FontWeight.BOLD,
-                        ),
-                        ft.Row(
-                            [pie_chart, legend],
-                            spacing=32,
-                            alignment=ft.MainAxisAlignment.START,
-                        ),
-                        value_chart,
-                    ],
-                    spacing=SPACE_4,
+    chart_left = ft.Container(
+        content=ft.Column(
+            [
+                ft.Text(
+                    "📊 Situação das Atas",
+                    size=18,
+                    weight=ft.FontWeight.BOLD,
                 ),
-                padding=ft.padding.all(SPACE_4),
-                border=ft.border.all(1, ft.colors.OUTLINE),
-                border_radius=8,
-                expand=True,
-            ),
-            ft.Container(content=monthly_chart, width=360),
-        ],
+                ft.Row(
+                    [pie_chart, legend],
+                    spacing=32,
+                    alignment=ft.MainAxisAlignment.START,
+                ),
+                value_chart,
+            ],
+            spacing=SPACE_4,
+        ),
+        padding=ft.padding.all(SPACE_4),
+        border=ft.border.all(1, ft.colors.OUTLINE),
+        border_radius=8,
+        expand=True,
+    )
+    chart_left.col = {"xs": 12, "lg": 8}
+    chart_right = ft.Container(content=monthly_chart, width=360)
+    chart_right.col = {"xs": 12, "lg": 4}
+    charts_section = ft.ResponsiveRow(
+        [chart_left, chart_right],
+        columns=12,
         spacing=SPACE_4,
+        run_spacing=SPACE_4,
     )
 
     return ft.Container(
