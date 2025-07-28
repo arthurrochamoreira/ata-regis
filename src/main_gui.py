@@ -21,7 +21,7 @@ from ui.main_view import (
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.tokens import SPACE_4
-from ui.responsive import get_breakpoint
+from ui.responsive import get_breakpoint, padding_for, font_size_for
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -46,7 +46,8 @@ class AtaApp:
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.padding = SPACE_4
+        # responsive padding
+        self.page.padding = padding_for(self.page.width)
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
@@ -61,6 +62,7 @@ class AtaApp:
             relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
             testar_email_cb=self.testar_email,
             status_cb=self.mostrar_status_sistema,
+            width=self.page.width,
         )
 
         self.navigation_menu = LeftNavigationMenu(self)
@@ -147,6 +149,16 @@ class AtaApp:
         if new_bp != self.breakpoint:
             self.breakpoint = new_bp
             self.navigation_menu.update_layout(self.page.width)
+            self.page.padding = padding_for(self.page.width)  # responsive padding
+            self.page.appbar = build_header(
+                nova_ata_cb=self.nova_ata_click,
+                verificar_alertas_cb=self.verificar_alertas_manual,
+                relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
+                relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
+                testar_email_cb=self.testar_email,
+                status_cb=self.mostrar_status_sistema,
+                width=self.page.width,
+            )
             self.refresh_ui()
     
     def get_atas_filtradas(self):
