@@ -349,8 +349,9 @@ def build_ata_detail_view(
         content=ft.Column([header, layout], spacing=32),
         width=1152,
         bgcolor="#FFFFFF",
-        padding=SPACE_6,
+        padding=SPACE_5,
         border_radius=16,
+        alignment=ft.alignment.center,
         shadow=ft.BoxShadow(
             spread_radius=1,
             blur_radius=15,
@@ -359,11 +360,4 @@ def build_ata_detail_view(
         ),
     )
 
-    page_container = ft.Container(
-        content=ft.Column([card], expand=True),
-        padding=SPACE_6,
-        bgcolor="#F1F5F9",
-        alignment=ft.alignment.top_center,
-    )
-
-    return page_container
+    return card
