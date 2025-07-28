@@ -26,7 +26,6 @@ class AtaForm:
         
         # Campos do formulário
         self.numero_ata_field = None
-        self.numero_ata_value = ""
         self.documento_sei_field = None
         self.data_vigencia_field = None
         self.objeto_field = None
@@ -39,308 +38,168 @@ class AtaForm:
         self.telefones = []
         self.emails = []
         self.itens = []
-
+        
         self.build_form()
-
-    def create_textfield(self, label: str, hint: str = "", **kwargs) -> ft.TextField:
-        """Retorna um ``TextField`` com estilo padrao."""
-        return ft.TextField(
-            label=label,
-            hint_text=hint,
-            label_style=ft.TextStyle(
-                color="#4B5563",
-                size=12,
-                weight=ft.FontWeight.W_500,
-            ),
-            bgcolor="#FFFFFF",
-            content_padding=ft.padding.symmetric(horizontal=12, vertical=14),
-            border=ft.InputBorder.OUTLINE,
-            border_radius=8,
-            border_color="#9CA3AF",
-            focused_border_color="#3B82F6",
-            **kwargs,
-        )
     
     def build_form(self):
-        """Constrói o formulário seguindo o layout moderno."""
+        """Constrói o formulário"""
+        # Título
         titulo = "Editar Ata" if self.is_edit_mode else "Nova Ata"
-
-        # Campos
-        if self.is_edit_mode and self.ata:
-            self.numero_ata_value = self.ata.numero_ata
-            numero_ata_control = ft.Column(
-                spacing=4,
-                controls=[
-                    ft.Text(
-                        "Número da Ata",
-                        size=12,
-                        color="#6B7280",
-                        weight=ft.FontWeight.W_500,
-                    ),
-                    ft.Container(
-                        content=ft.Text(self.numero_ata_value, color="#374151"),
-                        bgcolor="#E5E7EB",
-                        padding=14,
-                        border_radius=8,
-                        border=ft.border.all(1, "#D1D5DB"),
-                    ),
-                ],
-            )
-        else:
-            self.numero_ata_field = self.create_textfield(
-                "Número da Ata",
-                "0000/0000",
-                on_change=self.on_numero_ata_change,
-            )
-            numero_ata_control = self.numero_ata_field
-
-        self.documento_sei_field = self.create_textfield(
-            "Documento SEI",
-            "00000.000000/0000-00",
+        
+        # Campos básicos
+        self.numero_ata_field = ft.TextField(
+            label="Número da Ata",
+            hint_text="0000/0000",
+            on_change=self.on_numero_ata_change,
+            width=200
+        )
+        
+        self.documento_sei_field = ft.TextField(
+            label="Documento SEI",
+            hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
+            width=300
         )
-        self.data_vigencia_field = self.create_textfield("Data de Vigência", "DD/MM/AAAA")
-        self.objeto_field = self.create_textfield(
-            "Objeto",
-            "Descrição do objeto da ata",
+        
+        self.data_vigencia_field = ft.TextField(
+            label="Data de Vigência",
+            hint_text="DD/MM/AAAA",
+            width=200
+        )
+        
+        self.objeto_field = ft.TextField(
+            label="Objeto",
+            hint_text="Descrição do objeto da ata",
+            width=400,
             multiline=True,
-            max_lines=3,
+            max_lines=3
         )
-        self.fornecedor_field = self.create_textfield("Fornecedor", "Nome da empresa fornecedora")
-
-        # Containers dinâmicos
-        self.telefones_container = ft.Column(spacing=8)
-        self.emails_container = ft.Column(spacing=8)
-        self.itens_container = ft.Column(spacing=8)
-
+        
+        self.fornecedor_field = ft.TextField(
+            label="Fornecedor",
+            hint_text="Nome da empresa fornecedora",
+            width=400
+        )
+        
+        # Containers para listas dinâmicas
+        self.telefones_container = ft.Column(spacing=SPACE_2)
+        self.emails_container = ft.Column(spacing=SPACE_2)
+        self.itens_container = ft.Column(spacing=SPACE_2)
+        
+        # Preenche campos se estiver editando
         if self.is_edit_mode:
             self.populate_fields()
         else:
+            # Adiciona campos vazios para nova ata
             self.add_telefone()
             self.add_email()
             self.add_item()
-
-        dados_grid = ft.GridView(
-            runs_count=2,
-            max_extent=400,
-            spacing=24,
-            controls=[
-                numero_ata_control,
-                self.documento_sei_field,
-                self.data_vigencia_field,
-                self.fornecedor_field,
-            ],
-        )
-
+        
+        # Seções do formulário
         dados_gerais = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.Container(
-                                content=ft.Icon(ft.icons.DESCRIPTION_OUTLINED, color="#4F46E5"),
-                                bgcolor="#E0E7FF",
-                                padding=6,
-                                border_radius=8,
-                            ),
-                            ft.Text(
-                                "Dados Gerais",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color="#1F2937",
-                            ),
-                        ],
-                        spacing=12,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    ),
-                    dados_grid,
-                    self.objeto_field,
-                ],
-                spacing=24,
-            ),
-            bgcolor="#F8FAFC",
-            padding=24,
-            border_radius=12,
+            content=ft.Column([
+                ft.Text("📋 Dados Gerais", size=16, weight=ft.FontWeight.BOLD),
+                ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_4),
+                ft.Row([self.data_vigencia_field], spacing=SPACE_4),
+                self.objeto_field,
+                self.fornecedor_field
+            ], spacing=SPACE_4),
+            padding=ft.padding.all(SPACE_4),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=SPACE_4)
         )
-
+        
         telefones_section = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.Container(
-                                content=ft.Icon(ft.icons.PHONE_OUTLINED, color="#14B8A6"),
-                                bgcolor="#CCFBF1",
-                                padding=6,
-                                border_radius=8,
-                            ),
-                            ft.Text(
-                                "Telefones",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color="#1F2937",
-                            ),
-                        ],
-                        spacing=12,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    ),
-                    self.telefones_container,
-                    ft.TextButton(
-                        text="Adicionar telefone",
-                        icon=ft.icons.ADD_CIRCLE_OUTLINE,
-                        style=ft.ButtonStyle(color="#3B82F6"),
-                        on_click=lambda e: self.add_telefone(),
-                    ),
-                ],
-                spacing=24,
-            ),
-            bgcolor="#F8FAFC",
-            padding=24,
-            border_radius=12,
+            content=ft.Column([
+            ft.Row([
+                    ft.Text("📞 Telefones", size=16, weight=ft.FontWeight.BOLD),
+                    ft.IconButton(
+                        icon=ft.icons.ADD,
+                        tooltip="Adicionar telefone",
+                        on_click=lambda e: self.add_telefone()
+                    )
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                self.telefones_container
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=SPACE_4)
         )
-
+        
         emails_section = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.Container(
-                                content=ft.Icon(ft.icons.EMAIL_OUTLINED, color="#E11D48"),
-                                bgcolor="#FFE4E6",
-                                padding=6,
-                                border_radius=8,
-                            ),
-                            ft.Text(
-                                "E-mails",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color="#1F2937",
-                            ),
-                        ],
-                        spacing=12,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    ),
-                    self.emails_container,
-                    ft.TextButton(
-                        text="Adicionar e-mail",
-                        icon=ft.icons.ADD_CIRCLE_OUTLINE,
-                        style=ft.ButtonStyle(color="#3B82F6"),
-                        on_click=lambda e: self.add_email(),
-                    ),
-                ],
-                spacing=24,
-            ),
-            bgcolor="#F8FAFC",
-            padding=24,
-            border_radius=12,
+            content=ft.Column([
+                ft.Row([
+                    ft.Text("📧 E-mails", size=16, weight=ft.FontWeight.BOLD),
+                    ft.IconButton(
+                        icon=ft.icons.ADD,
+                        tooltip="Adicionar e-mail",
+                        on_click=lambda e: self.add_email()
+                    )
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                self.emails_container
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=SPACE_4)
         )
-
+        
         itens_section = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.Container(
-                                content=ft.Icon(ft.icons.LIST_ALT_OUTLINED, color="#16A34A"),
-                                bgcolor="#D1FAE5",
-                                padding=6,
-                                border_radius=8,
-                            ),
-                            ft.Text(
-                                "Itens da Ata",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color="#1F2937",
-                            ),
-                        ],
-                        spacing=12,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    ),
-                    self.itens_container,
-                    ft.TextButton(
-                        text="Adicionar item",
-                        icon=ft.icons.ADD_CIRCLE_OUTLINE,
-                        style=ft.ButtonStyle(color="#3B82F6"),
-                        on_click=lambda e: self.add_item(),
-                    ),
-                ],
-                spacing=24,
+            content=ft.Column([
+                ft.Row([
+                    ft.Text("🧾 Itens", size=16, weight=ft.FontWeight.BOLD),
+                    ft.IconButton(
+                        icon=ft.icons.ADD,
+                        tooltip="Adicionar item",
+                        on_click=lambda e: self.add_item()
+                    )
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                self.itens_container
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
+            border=ft.border.all(1, ft.colors.OUTLINE),
+            border_radius=8,
+            margin=ft.margin.only(bottom=SPACE_4)
+        )
+        
+        # Botões
+        botoes = ft.Row([
+            ft.ElevatedButton(
+                "Cancelar",
+                on_click=lambda e: self.on_cancel(),
+                color=ft.colors.ON_SURFACE
             ),
-            bgcolor="#F8FAFC",
-            padding=24,
-            border_radius=12,
-        )
-
-        botoes = ft.Row(
-            [
-                ft.OutlinedButton(
-                    text="Cancelar",
-                    on_click=lambda e: self.on_cancel(),
-                    style=ft.ButtonStyle(
-                        padding=14,
-                        shape=ft.RoundedRectangleBorder(radius=8),
-                    ),
-                ),
-                ft.ElevatedButton(
-                    text="Salvar",
-                    on_click=self.save_ata,
-                    bgcolor="#3B82F6",
-                    color="#FFFFFF",
-                    style=ft.ButtonStyle(
-                        padding=14,
-                        shape=ft.RoundedRectangleBorder(radius=8),
-                    ),
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.END,
-            spacing=16,
-        )
-
-        card = ft.Container(
-            content=ft.Column(
-                [
-                    ft.Column(
-                        [
-                            ft.Text(
-                                titulo,
-                                size=30,
-                                weight=ft.FontWeight.BOLD,
-                                color="#111827",
-                            ),
-                            ft.Divider(height=1, color="#E5E7EB"),
-                        ],
-                        spacing=0,
-                        margin=ft.margin.only(bottom=32),
-                    ),
-                    dados_gerais,
-                    telefones_section,
-                    emails_section,
-                    itens_section,
-                    botoes,
-                ],
-                spacing=32,
+            ft.ElevatedButton(
+                "Salvar",
+                on_click=self.save_ata,
+                bgcolor=ft.colors.PRIMARY,
+                color=ft.colors.ON_PRIMARY
+            )
+        ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_4)
+        
+        # Layout principal
+        content = ft.Column([
+            ft.Text(titulo, size=20, weight=ft.FontWeight.BOLD),
+            dados_gerais,
+            telefones_section,
+            emails_section,
+            itens_section,
+            botoes
+        ], spacing=0, scroll=ft.ScrollMode.AUTO)
+        
+        # Dialog
+        self.dialog = ft.AlertDialog(
+            title=ft.Text(titulo),
+            content=ft.Container(
+                content=content,
+                width=800,
+                height=600
             ),
-            width=896,
-            bgcolor="#FFFFFF",
-            padding=32,
-            border_radius=16,
-            shadow=ft.BoxShadow(
-                spread_radius=1,
-                blur_radius=20,
-                color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                offset=ft.Offset(0, 10),
-            ),
+            actions_alignment=ft.MainAxisAlignment.END
         )
-
-        page_container = ft.Container(
-            content=ft.Column([card], expand=True),
-            padding=32,
-            bgcolor="#F1F5F9",
-            alignment=ft.alignment.top_center,
-        )
-
-        self.dialog = ft.AlertDialog(content=page_container, modal=True)
-
+        
         self.page.dialog = self.dialog
         self.dialog.open = True
         self.page.update()
@@ -349,10 +208,8 @@ class AtaForm:
         """Preenche os campos com dados da ata existente"""
         if not self.ata:
             return
-        if self.is_edit_mode:
-            self.numero_ata_value = self.ata.numero_ata
-        else:
-            self.numero_ata_field.value = self.ata.numero_ata
+        
+        self.numero_ata_field.value = self.ata.numero_ata
         self.documento_sei_field.value = self.ata.documento_sei
         self.data_vigencia_field.value = self.ata.data_vigencia.strftime("%d/%m/%Y")
         self.objeto_field.value = self.ata.objeto
@@ -372,25 +229,20 @@ class AtaForm:
     
     def add_telefone(self, valor: str = ""):
         """Adiciona campo de telefone"""
-        telefone_field = self.create_textfield(
+        telefone_field = ft.TextField(
             label=f"Telefone {len(self.telefones) + 1}",
-            hint="(XX) XXXXX-XXXX",
+            hint_text="(XX) XXXXX-XXXX",
             value=valor,
             on_change=self.on_telefone_change,
-            expand=True,
+            width=200
         )
-
+        
         remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE_OUTLINE,
-            icon_color="#9CA3AF",
-            tooltip="Remover telefone",
+            icon=ft.icons.DELETE,
+            tooltip="Remover telefone"
         )
 
-        row = ft.Row(
-            [telefone_field, remove_btn],
-            spacing=8,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        row = ft.Row([telefone_field, remove_btn], spacing=SPACE_2)
         remove_btn.on_click = lambda e, field=telefone_field, r=row: self.remove_telefone(field, r)
         self.telefones.append((telefone_field, row))
         self.telefones_container.controls.append(row)
@@ -405,24 +257,19 @@ class AtaForm:
     
     def add_email(self, valor: str = ""):
         """Adiciona campo de e-mail"""
-        email_field = self.create_textfield(
+        email_field = ft.TextField(
             label=f"E-mail {len(self.emails) + 1}",
-            hint="email@exemplo.com",
+            hint_text="email@exemplo.com",
             value=valor,
-            expand=True,
+            width=300
         )
-
+        
         remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE_OUTLINE,
-            icon_color="#9CA3AF",
-            tooltip="Remover e-mail",
+            icon=ft.icons.DELETE,
+            tooltip="Remover e-mail"
         )
 
-        row = ft.Row(
-            [email_field, remove_btn],
-            spacing=8,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        row = ft.Row([email_field, remove_btn], spacing=SPACE_2)
         remove_btn.on_click = lambda e, field=email_field, r=row: self.remove_email(field, r)
         self.emails.append((email_field, row))
         self.emails_container.controls.append(row)
@@ -437,39 +284,39 @@ class AtaForm:
     
     def add_item(self, item: Optional[Item] = None):
         """Adiciona campos de item"""
-        descricao_field = self.create_textfield(
-            "Descrição",
-            "Descrição do item",
+        descricao_field = ft.TextField(
+            label="Descrição",
+            hint_text="Descrição do item",
             value=item.descricao if item else "",
-            expand=True,
+            width=300
         )
-
-        quantidade_field = self.create_textfield(
-            "Quantidade",
-            "0",
+        
+        quantidade_field = ft.TextField(
+            label="Quantidade",
+            hint_text="0",
             value=str(item.quantidade) if item else "",
-            width=100,
+            width=100
         )
-
-        valor_field = self.create_textfield(
-            "Valor Unitário",
-            "0,00",
+        
+        valor_field = ft.TextField(
+            label="Valor Unitário",
+            hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
-            width=120,
+            width=150
         )
-
+        
         remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE_OUTLINE,
-            icon_color="#9CA3AF",
+            icon=ft.icons.DELETE,
             tooltip="Remover item",
-            on_click=lambda e: self.remove_item(descricao_field, row),
+            on_click=lambda e: self.remove_item(descricao_field, row)
         )
-
-        row = ft.Row(
-            [descricao_field, quantidade_field, valor_field, remove_btn],
-            spacing=8,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
+        
+        row = ft.Row([
+            descricao_field,
+            quantidade_field,
+            valor_field,
+            remove_btn
+        ], spacing=SPACE_2)
         
         self.itens.append((descricao_field, quantidade_field, valor_field, row))
         self.itens_container.controls.append(row)
@@ -501,10 +348,10 @@ class AtaForm:
         """Valida o formulário e retorna lista de erros"""
         erros = []
         
-        numero = self.numero_ata_value if self.is_edit_mode else self.numero_ata_field.value
-        if not numero:
+        # Valida número da ata
+        if not self.numero_ata_field.value:
             erros.append("Número da ata é obrigatório")
-        elif not Validators.validar_numero_ata(numero):
+        elif not Validators.validar_numero_ata(self.numero_ata_field.value):
             erros.append("Número da ata deve seguir o formato XXXX/AAAA")
         
         # Valida documento SEI
@@ -608,9 +455,8 @@ class AtaForm:
                     "valor": float(val_field.value.replace(",", "."))
                 })
         
-        numero = self.numero_ata_value if self.is_edit_mode else self.numero_ata_field.value
         ata_data = {
-            "numero_ata": numero,
+            "numero_ata": self.numero_ata_field.value,
             "documento_sei": self.documento_sei_field.value,
             "data_vigencia": data_vigencia.isoformat(),
             "objeto": self.objeto_field.value.strip(),
