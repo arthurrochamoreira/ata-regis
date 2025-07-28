@@ -17,24 +17,6 @@ TEXT_SECONDARY = ft.colors.GREY_500
 SIDEBAR_BG = ft.colors.GREY_800
 SIDEBAR_TEXT = ft.colors.GREY_200
 GREY_LIGHT = ft.colors.GREY_300
-CARD_BG = ft.colors.WHITE
-APP_BG = ft.colors.GREY_100
-
-# Card shadow (Style Guide)
-CARD_SHADOW = ft.BoxShadow(
-    spread_radius=1,
-    blur_radius=5,
-    color=ft.colors.with_opacity(0.1, "black"),
-    offset=ft.Offset(0, 2),
-)
-
-# Card shadow hover (Style Guide)
-CARD_SHADOW_HOVER = ft.BoxShadow(
-    spread_radius=2,
-    blur_radius=10,
-    color=ft.colors.with_opacity(0.15, "black"),
-    offset=ft.Offset(0, 4),
-)
 
 CARD_BG = ft.colors.WHITE
 APP_BG = ft.colors.GREY_100
