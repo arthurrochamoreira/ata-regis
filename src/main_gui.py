@@ -20,8 +20,8 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.tokens import SPACE_4, SPACE_5
-from ui.responsive import get_breakpoint, get_padding
+from ui.tokens import SPACE_4
+from ui.responsive import get_breakpoint
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -46,7 +46,7 @@ class AtaApp:
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.padding = get_padding(self.page.width)  # padding responsivo
+        self.page.padding = SPACE_4
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
@@ -103,12 +103,13 @@ class AtaApp:
         filtros.col = {"xs": 12, "md": 4, "lg": 4}
         search_container.col = {"xs": 12, "md": 8, "lg": 8}
         filtros_search_row = ft.Container(
-            content=ft.Row(
+            content=ft.ResponsiveRow(
                 [filtros, search_container],
-                spacing=SPACE_5,  # alinhamento chips/busca
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                columns=12,
+                spacing=16,
+                run_spacing=16,
             ),
-            margin=ft.margin.only(bottom=SPACE_5),
+            margin=ft.margin.only(bottom=16),
             expand=True,
         )
         self.grouped_tables = build_grouped_data_tables(
@@ -147,8 +148,6 @@ class AtaApp:
             self.breakpoint = new_bp
             self.navigation_menu.update_layout(self.page.width)
             self.refresh_ui()
-        self.page.padding = get_padding(self.page.width)
-        self.page.update()
     
     def get_atas_filtradas(self):
         """Retorna as atas filtradas baseado no filtro atual e busca"""
