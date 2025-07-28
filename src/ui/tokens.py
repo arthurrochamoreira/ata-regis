@@ -31,14 +31,7 @@ def build_section(
                 padding=SPACE_2,
                 border_radius=8,
             ),
-            ft.Text(
-                title,
-                size=20,
-                weight=ft.FontWeight.BOLD,
-                color="#1F2937",
-                max_lines=1,
-                overflow=ft.TextOverflow.ELLIPSIS,
-            ),
+            ft.Text(title, size=20, weight=ft.FontWeight.BOLD, color="#1F2937"),
         ],
         spacing=SPACE_3,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -53,16 +46,7 @@ def build_section(
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     header = ft.Row(
-        [
-            icon,
-            ft.Text(
-                title,
-                size=16,
-                weight=ft.FontWeight.W_600,
-                max_lines=1,
-                overflow=ft.TextOverflow.ELLIPSIS,
-            ),
-        ],
+        [icon, ft.Text(title, size=16, weight=ft.FontWeight.W_600)],
         spacing=SPACE_2,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )

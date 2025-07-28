@@ -17,16 +17,6 @@ FONT_SCALE = {
     "lg": 1.1,
 }
 
-# helpers to expose intuitive API
-def font_size_for(width: int, base: int) -> int:
-    """Return scaled font size for given ``width``."""  # responsive font
-    return get_font_size(width, base)
-
-
-def padding_for(width: int) -> int:
-    """Return padding size for given ``width``."""  # responsive padding
-    return get_padding(width)
-
 def get_breakpoint(width: int) -> str:
     """Return breakpoint name based on ``width``."""
     if width < BREAKPOINT_SM:
@@ -51,7 +41,3 @@ def get_font_size(width: int, base: int) -> int:
 # - componentes expansíveis usando col/expand
 # - fontes e paddings dinâmicos via helpers
 # - overflow horizontal evitado
-# - max_lines/overflow nos textos críticos
-# - fontes/paddings por breakpoint
-# - sem overflow horizontal
-# - DataTable e badges tratados

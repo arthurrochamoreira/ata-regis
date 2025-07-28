@@ -18,11 +18,7 @@ class ChartUtils:
         
         if total == 0:
             return ft.Container(
-                content=ft.Text(
-                    "Nenhuma ata cadastrada",
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
+                content=ft.Text("Nenhuma ata cadastrada"),
                 width=width,
                 height=height,
                 alignment=ft.alignment.center
@@ -68,15 +64,7 @@ class ChartUtils:
         total = sum(stats.values())
         
         if total == 0:
-            return ft.Column(
-                [
-                    ft.Text(
-                        "Nenhuma ata cadastrada",
-                        max_lines=1,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                    )
-                ]
-            )
+            return ft.Column([ft.Text("Nenhuma ata cadastrada")])
         
         # Ícones e cores para cada status
         status_info = {
@@ -178,11 +166,7 @@ class ChartUtils:
         
         if total_value == 0:
             return ft.Container(
-                content=ft.Text(
-                    "Nenhum valor cadastrado",
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
+                content=ft.Text("Nenhum valor cadastrado"),
                 padding=ft.padding.all(16)
             )
         
@@ -210,25 +194,14 @@ class ChartUtils:
                 
                 bar = ft.Container(
                     content=ft.Row([
-                        ft.Text(
-                            labels[status],
-                            width=80,
-                            max_lines=1,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                            no_wrap=True,
-                        ),
+                        ft.Text(labels[status], width=80),
                         ft.Container(
                             width=bar_width,
                             height=20,
                             bgcolor=colors[status],
                             border_radius=2
                         ),
-                        ft.Text(
-                            f"{percentage:.1f}% ({value_formatted})",
-                            size=12,
-                            max_lines=1,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        )
+                        ft.Text(f"{percentage:.1f}% ({value_formatted})", size=12)
                     ], spacing=8, alignment=ft.MainAxisAlignment.START),
                     margin=ft.margin.only(bottom=8)
                 )
@@ -251,18 +224,10 @@ class ChartUtils:
         """Cria indicador de urgência para atas próximas do vencimento"""
         if not atas_vencimento:
             return ft.Container(
-                content=ft.Row(
-                    [
-                        ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=24),
-                        ft.Text(
-                            "Nenhuma ata próxima do vencimento",
-                            color=ft.colors.GREEN,
-                            max_lines=1,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        ),
-                    ],
-                    spacing=8,
-                ),
+                content=ft.Row([
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=24),
+                    ft.Text("Nenhuma ata próxima do vencimento", color=ft.colors.GREEN)
+                ], spacing=8),
                 padding=ft.padding.all(16),
                 border=ft.border.all(1, ft.colors.GREEN),
                 border_radius=8,

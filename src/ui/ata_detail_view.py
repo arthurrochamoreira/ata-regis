@@ -33,22 +33,8 @@ def build_ata_detail_view(
     def info_row(label: str, value: str) -> ft.Row:
         return ft.Row(
             [
-                ft.Text(
-                    label,
-                    weight=ft.FontWeight.W_500,
-                    color="#6B7280",
-                    width=128,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-                ft.Text(
-                    value,
-                    color="#1F2937",
-                    expand=True,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                    no_wrap=True,
-                ),
+                ft.Text(label, weight=ft.FontWeight.W_500, color="#6B7280", width=128),
+                ft.Text(value, color="#1F2937", expand=True),
             ]
         )
 
@@ -161,35 +147,12 @@ def build_ata_detail_view(
     item_rows = [
         ft.DataRow(
             cells=[
+                ft.DataCell(ft.Text(item.descricao)),
+                ft.DataCell(ft.Text(str(item.quantidade))),
+                ft.DataCell(ft.Text(Formatters.formatar_valor_monetario(item.valor))),
                 ft.DataCell(
                     ft.Text(
-                        item.descricao,
-                        max_lines=1,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        str(item.quantidade),
-                        max_lines=1,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                        no_wrap=True,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor),
-                        max_lines=1,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                        no_wrap=True,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor_total),
-                        max_lines=1,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                        no_wrap=True,
+                        Formatters.formatar_valor_monetario(item.valor_total)
                     )
                 ),
             ]
@@ -199,40 +162,15 @@ def build_ata_detail_view(
 
     itens_table = ft.DataTable(
         columns=[
+            ft.DataColumn(ft.Text("Descrição", weight=ft.FontWeight.W_600)),
             ft.DataColumn(
-                ft.Text(
-                    "Descrição",
-                    weight=ft.FontWeight.W_600,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                )
+                ft.Text("Qtd.", weight=ft.FontWeight.W_600), numeric=True
             ),
             ft.DataColumn(
-                ft.Text(
-                    "Qtd.",
-                    weight=ft.FontWeight.W_600,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-                numeric=True,
+                ft.Text("Valor Unit.", weight=ft.FontWeight.W_600), numeric=True
             ),
             ft.DataColumn(
-                ft.Text(
-                    "Valor Unit.",
-                    weight=ft.FontWeight.W_600,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-                numeric=True,
-            ),
-            ft.DataColumn(
-                ft.Text(
-                    "Subtotal",
-                    weight=ft.FontWeight.W_600,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-                numeric=True,
+                ft.Text("Subtotal", weight=ft.FontWeight.W_600), numeric=True
             ),
         ],
         rows=item_rows,
