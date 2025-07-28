@@ -226,6 +226,91 @@ def build_data_table(
     return table
 
 
+def build_ata_list(
+    atas: List[Ata],
+    visualizar_cb: Callable[[Ata], None],
+    editar_cb: Callable[[Ata], None],
+    excluir_cb: Callable[[Ata], None],
+) -> ft.Container:
+    """Return a scrollable list of atas."""
+
+    badge_colors = {
+        "vigente": ("#14532D", "#D1FAE5"),
+        "a_vencer": ("#713F12", "#FEF9C3"),
+        "vencida": ("#991B1B", "#FEE2E2"),
+    }
+
+    items: list[ft.Control] = []
+    for ata in atas:
+        data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
+        badge_text_color, badge_bg_color = badge_colors[ata.status]
+        badge = ft.Container(
+            ft.Text(
+                ata.status.replace("_", " ").title(),
+                size=12,
+                weight=ft.FontWeight.W_500,
+                color=badge_text_color,
+            ),
+            padding=ft.padding.symmetric(vertical=2, horizontal=8),
+            bgcolor=badge_bg_color,
+            border_radius=6,
+        )
+
+        actions = ft.Row(
+            [
+                ft.IconButton(
+                    icon=ft.icons.VISIBILITY,
+                    tooltip="Visualizar",
+                    on_click=lambda e, ata=ata: visualizar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                    ),
+                    icon_size=20,
+                ),
+                ft.IconButton(
+                    icon=ft.icons.EDIT,
+                    tooltip="Editar",
+                    on_click=lambda e, ata=ata: editar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                    ),
+                    icon_size=20,
+                ),
+                ft.IconButton(
+                    icon=ft.icons.DELETE,
+                    tooltip="Excluir",
+                    on_click=lambda e, ata=ata: excluir_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                    ),
+                    icon_size=20,
+                ),
+            ],
+            spacing=8,
+            alignment=ft.MainAxisAlignment.END,
+        )
+
+        tile = ft.ListTile(
+            title=ft.Text(ata.objeto, weight=ft.FontWeight.W_500),
+            subtitle=ft.Text(
+                f"Ata {ata.numero_ata} • {ata.fornecedor} • {data_formatada}"
+            ),
+            trailing=ft.Row([badge, actions], spacing=16),
+            dense=True,
+        )
+        items.append(
+            ft.Container(
+                content=tile,
+                border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+            )
+        )
+
+    return ft.Container(
+        content=ft.Column(items, spacing=0, scroll=ft.ScrollMode.AUTO, expand=True),
+        expand=True,
+    )
+
+
 def build_grouped_data_tables(
     atas: List[Ata],
     visualizar_cb: Callable[[Ata], None],
