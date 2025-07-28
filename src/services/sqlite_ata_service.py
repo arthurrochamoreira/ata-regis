@@ -14,6 +14,8 @@ class SQLiteAtaService:
         self.db_file = db_file
         self.conn = sqlite3.connect(self.db_file, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
+        # Garante que chaves estrangeiras executem os comandos ON DELETE CASCADE
+        self.conn.execute("PRAGMA foreign_keys = ON")
         self._create_tables()
         if not self._has_atas():
             self.load_mock_data()

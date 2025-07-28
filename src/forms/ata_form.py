@@ -234,11 +234,11 @@ class AtaForm:
         
         remove_btn = ft.IconButton(
             icon=ft.icons.DELETE,
-            tooltip="Remover telefone",
-            on_click=lambda e: self.remove_telefone(telefone_field, remove_btn)
+            tooltip="Remover telefone"
         )
-        
+
         row = ft.Row([telefone_field, remove_btn], spacing=8)
+        remove_btn.on_click = lambda e, field=telefone_field, r=row: self.remove_telefone(field, r)
         self.telefones.append((telefone_field, row))
         self.telefones_container.controls.append(row)
         self.page.update()
@@ -261,11 +261,11 @@ class AtaForm:
         
         remove_btn = ft.IconButton(
             icon=ft.icons.DELETE,
-            tooltip="Remover e-mail",
-            on_click=lambda e: self.remove_email(email_field, remove_btn)
+            tooltip="Remover e-mail"
         )
-        
+
         row = ft.Row([email_field, remove_btn], spacing=8)
+        remove_btn.on_click = lambda e, field=email_field, r=row: self.remove_email(field, r)
         self.emails.append((email_field, row))
         self.emails_container.controls.append(row)
         self.page.update()
