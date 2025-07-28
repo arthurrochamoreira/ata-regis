@@ -15,7 +15,7 @@ from ui.main_view import (
     build_header,
     build_filters,
     build_search,
-    build_ata_list,
+    build_grouped_data_tables,
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
 )
@@ -104,7 +104,7 @@ class AtaApp:
             margin=ft.margin.only(bottom=16),
             expand=True,
         )
-        self.grouped_tables = build_ata_list(
+        self.grouped_tables = build_grouped_data_tables(
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
@@ -160,7 +160,7 @@ class AtaApp:
         """Busca atas por texto"""
         self.texto_busca = e.control.value.strip()
         # Atualiza apenas a tabela mantendo o texto digitado
-        new_table = build_ata_list(
+        new_table = build_grouped_data_tables(
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
