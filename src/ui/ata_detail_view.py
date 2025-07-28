@@ -256,7 +256,12 @@ def build_ata_detail_view(
     )
 
     card = ft.Container(
-        content=ft.Column([header, layout], spacing=32),
+        content=ft.Column(
+            [header, layout],
+            spacing=32,
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+        ),
         width=1152,
         bgcolor="#FFFFFF",
         padding=SPACE_5,
@@ -268,6 +273,7 @@ def build_ata_detail_view(
             color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
             offset=ft.Offset(0, 5),
         ),
+        expand=True,
     )
 
     return card
