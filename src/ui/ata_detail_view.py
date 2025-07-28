@@ -10,9 +10,10 @@ try:
         SPACE_4,
         SPACE_5,
         SPACE_6,
+        build_section,
     )
 except Exception:  # pragma: no cover
-    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5, SPACE_6
+    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5, SPACE_6, build_section
 
 try:
     from ..models.ata import Ata
@@ -125,43 +126,22 @@ def build_ata_detail_view(
         ],
     )
 
-    dados_gerais = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Container(
-                            content=ft.Icon(
-                                ft.icons.DESCRIPTION_OUTLINED, color="#4F46E5"
-                            ),
-                            bgcolor="#E0E7FF",
-                            padding=SPACE_2,
-                            border_radius=8,
-                        ),
-                        ft.Text(
-                            "Dados Gerais",
-                            size=20,
-                            weight=ft.FontWeight.BOLD,
-                            color="#1F2937",
-                        ),
-                    ],
-                    spacing=SPACE_3,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                ft.Column(
-                    [
-                        info_row("Documento SEI:", ata.documento_sei),
-                        info_row("Objeto:", ata.objeto),
-                    ],
-                    spacing=SPACE_4,
-                ),
-                timeline,
-            ],
-            spacing=SPACE_5,
-        ),
-        bgcolor="#F8FAFC",
-        padding=SPACE_5,
-        border_radius=12,
+    dados_gerais_body = ft.Column(
+        [
+            ft.Column(
+                [info_row("Documento SEI:", ata.documento_sei), info_row("Objeto:", ata.objeto)],
+                spacing=SPACE_4,
+            ),
+            timeline,
+        ],
+        spacing=SPACE_5,
+    )
+    dados_gerais = build_section(
+        "Dados Gerais",
+        ft.icons.DESCRIPTION_OUTLINED,
+        "#4F46E5",
+        "#E0E7FF",
+        dados_gerais_body,
     )
 
     item_rows = [
@@ -215,69 +195,22 @@ def build_ata_detail_view(
         border_radius=8,
     )
 
-    itens_section = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Container(
-                            content=ft.Icon(
-                                ft.icons.LIST_ALT_OUTLINED, color="#4F46E5"
-                            ),
-                            bgcolor="#E0E7FF",
-                            padding=SPACE_2,
-                            border_radius=8,
-                        ),
-                        ft.Text(
-                            "Itens da Ata",
-                            size=20,
-                            weight=ft.FontWeight.BOLD,
-                            color="#1F2937",
-                        ),
-                    ],
-                    spacing=SPACE_3,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                itens_table,
-                resumo_financeiro,
-            ],
-            spacing=SPACE_5,
-        ),
-        bgcolor="#F8FAFC",
-        padding=SPACE_5,
-        border_radius=12,
+    itens_body = ft.Column([itens_table, resumo_financeiro], spacing=SPACE_5)
+    itens_section = build_section(
+        "Itens da Ata",
+        ft.icons.LIST_ALT_OUTLINED,
+        "#4F46E5",
+        "#E0E7FF",
+        itens_body,
     )
 
-    fornecedor_section = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Container(
-                            content=ft.Icon(
-                                ft.icons.BUSINESS_OUTLINED, color="#EA580C"
-                            ),
-                            bgcolor="#FFEDD5",
-                            padding=SPACE_2,
-                            border_radius=8,
-                        ),
-                        ft.Text(
-                            "Fornecedor",
-                            size=20,
-                            weight=ft.FontWeight.BOLD,
-                            color="#1F2937",
-                        ),
-                    ],
-                    spacing=SPACE_3,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                ft.Text(ata.fornecedor, size=18),
-            ],
-            spacing=SPACE_4,
-        ),
-        bgcolor="#F8FAFC",
-        padding=SPACE_5,
-        border_radius=12,
+    fornecedor_body = ft.Column([ft.Text(ata.fornecedor, size=18)], spacing=SPACE_4)
+    fornecedor_section = build_section(
+        "Fornecedor",
+        ft.icons.BUSINESS_OUTLINED,
+        "#EA580C",
+        "#FFEDD5",
+        fornecedor_body,
     )
 
     contatos_list = []
@@ -304,36 +237,13 @@ def build_ata_detail_view(
             )
         )
 
-    contatos_section = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Container(
-                            content=ft.Icon(
-                                ft.icons.HEADSET_MIC_OUTLINED, color="#0F766E"
-                            ),
-                            bgcolor="#CCFBF1",
-                            padding=SPACE_2,
-                            border_radius=8,
-                        ),
-                        ft.Text(
-                            "Contatos",
-                            size=20,
-                            weight=ft.FontWeight.BOLD,
-                            color="#1F2937",
-                        ),
-                    ],
-                    spacing=SPACE_3,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                ft.Column(contatos_list, spacing=12),
-            ],
-            spacing=SPACE_4,
-        ),
-        bgcolor="#F8FAFC",
-        padding=SPACE_5,
-        border_radius=12,
+    contatos_body = ft.Column(contatos_list, spacing=12)
+    contatos_section = build_section(
+        "Contatos",
+        ft.icons.HEADSET_MIC_OUTLINED,
+        "#0F766E",
+        "#CCFBF1",
+        contatos_body,
     )
 
     layout = ft.Row(

@@ -17,6 +17,7 @@ TEXT_SECONDARY = ft.colors.GREY_500
 SIDEBAR_BG = ft.colors.GREY_800
 SIDEBAR_TEXT = ft.colors.GREY_200
 GREY_LIGHT = ft.colors.GREY_300
+
 CARD_BG = ft.colors.WHITE
 APP_BG = ft.colors.GREY_100
 
@@ -35,6 +36,7 @@ CARD_SHADOW_HOVER = ft.BoxShadow(
     color=ft.colors.with_opacity(0.15, "black"),
     offset=ft.Offset(0, 4),
 )
+
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     """Reusable card following the Style Guide."""

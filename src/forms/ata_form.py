@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
+
     from ..ui.tokens import (
         SPACE_2,
         SPACE_3,
@@ -12,6 +13,7 @@ try:
     )
 except Exception:  # pragma: no cover
     from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, PRIMARY
+
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -107,6 +109,7 @@ class AtaForm:
             self.add_item()
         
         # Seções do formulário
+
         dados_gerais = ft.Container(
             content=ft.Column(
                 [
@@ -212,7 +215,7 @@ class AtaForm:
                 style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
             )
         ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_5)
-        
+
         # Layout principal
         content = ft.Column([
             ft.Text(titulo, size=24, weight=ft.FontWeight.SEMI_BOLD),
@@ -230,9 +233,11 @@ class AtaForm:
                 content=content,
                 width=800,
                 height=600
+
             ),
-            actions_alignment=ft.MainAxisAlignment.END
         )
+
+        self.dialog = ft.AlertDialog(content=card, modal=True)
         
         self.page.dialog = self.dialog
         self.dialog.open = True
