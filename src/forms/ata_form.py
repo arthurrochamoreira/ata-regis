@@ -204,10 +204,11 @@ class AtaForm:
             [dados_gerais, telefones_section, emails_section, itens_section, botoes],
             spacing=SPACE_5,
             scroll=ft.ScrollMode.AUTO,
+            expand=True,
         )
 
         card = ft.Container(
-            content=ft.Column([header, content], spacing=32),
+            content=ft.Column([header, content], spacing=32, expand=True),
             width=1152,
             bgcolor="#FFFFFF",
             padding=SPACE_5,
@@ -219,6 +220,7 @@ class AtaForm:
                 color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
                 offset=ft.Offset(0, 5),
             ),
+            expand=True,
         )
 
         self.dialog = ft.AlertDialog(content=card, modal=True)
