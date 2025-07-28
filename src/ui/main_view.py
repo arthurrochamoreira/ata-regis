@@ -105,7 +105,7 @@ def build_data_table(
 
     header_cells = [
         ft.Container(
-            ft.Text(lbl.upper(), size=12, weight=ft.FontWeight.W600, color="#6B7280"),
+            ft.Text(lbl.upper(), size=12, weight=ft.FontWeight.W_600, color="#6B7280"),
             expand=1,
         )
         for lbl in header_labels
@@ -128,14 +128,14 @@ def build_data_table(
     for index, ata in enumerate(atas):
         data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
         text_cells = [
-            ft.Text(ata.numero_ata, weight=ft.FontWeight.W500, color="#111827"),
+            ft.Text(ata.numero_ata, weight=ft.FontWeight.W_500, color="#111827"),
             ft.Text(data_formatada),
             ft.Text(ata.objeto),
             ft.Text(ata.fornecedor),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
-            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W500, color=badge_text_color),
+            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
             padding=ft.padding.symmetric(vertical=2, horizontal=8),
             bgcolor=badge_bg_color,
             border_radius=6,
