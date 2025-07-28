@@ -3,9 +3,9 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
-    from ..ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from ..ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, build_section
 except Exception:  # pragma: no cover
-    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, build_section
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -96,72 +96,75 @@ class AtaForm:
             self.add_item()
         
         # Seções do formulário
-        dados_gerais = ft.Container(
-            content=ft.Column([
-                ft.Text("📋 Dados Gerais", size=16, weight=ft.FontWeight.BOLD),
+        dados_gerais_body = ft.Column(
+            [
                 ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_4),
                 ft.Row([self.data_vigencia_field], spacing=SPACE_4),
                 self.objeto_field,
-                self.fornecedor_field
-            ], spacing=SPACE_4),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+                self.fornecedor_field,
+            ],
+            spacing=SPACE_4,
+        )
+        dados_gerais = build_section(
+            "Dados Gerais",
+            ft.icons.DESCRIPTION_OUTLINED,
+            "#4F46E5",
+            "#E0E7FF",
+            dados_gerais_body,
         )
         
-        telefones_section = ft.Container(
-            content=ft.Column([
-            ft.Row([
-                    ft.Text("📞 Telefones", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar telefone",
-                        on_click=lambda e: self.add_telefone()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.telefones_container
-            ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+        telefones_header_btn = ft.IconButton(
+            icon=ft.icons.ADD,
+            tooltip="Adicionar telefone",
+            on_click=lambda e: self.add_telefone(),
         )
-        
-        emails_section = ft.Container(
-            content=ft.Column([
+        telefones_section = build_section(
+            "Telefones",
+            ft.icons.PHONE_OUTLINED,
+            "#6B7280",
+            "#E5E7EB",
+            ft.Column([
                 ft.Row([
-                    ft.Text("📧 E-mails", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar e-mail",
-                        on_click=lambda e: self.add_email()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.emails_container
+                    telefones_header_btn
+                ], alignment=ft.MainAxisAlignment.END),
+                self.telefones_container,
             ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
         )
         
-        itens_section = ft.Container(
-            content=ft.Column([
+        emails_header_btn = ft.IconButton(
+            icon=ft.icons.ADD,
+            tooltip="Adicionar e-mail",
+            on_click=lambda e: self.add_email(),
+        )
+        emails_section = build_section(
+            "E-mails",
+            ft.icons.EMAIL_OUTLINED,
+            "#6B7280",
+            "#E5E7EB",
+            ft.Column([
                 ft.Row([
-                    ft.Text("🧾 Itens", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar item",
-                        on_click=lambda e: self.add_item()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.itens_container
+                    emails_header_btn
+                ], alignment=ft.MainAxisAlignment.END),
+                self.emails_container,
             ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+        )
+        
+        itens_header_btn = ft.IconButton(
+            icon=ft.icons.ADD,
+            tooltip="Adicionar item",
+            on_click=lambda e: self.add_item(),
+        )
+        itens_section = build_section(
+            "Itens",
+            ft.icons.LIST_ALT_OUTLINED,
+            "#4F46E5",
+            "#E0E7FF",
+            ft.Column([
+                ft.Row([
+                    itens_header_btn
+                ], alignment=ft.MainAxisAlignment.END),
+                self.itens_container,
+            ], spacing=SPACE_2),
         )
         
         # Botões
@@ -179,26 +182,46 @@ class AtaForm:
             )
         ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_4)
         
-        # Layout principal
-        content = ft.Column([
-            ft.Text(titulo, size=20, weight=ft.FontWeight.BOLD),
-            dados_gerais,
-            telefones_section,
-            emails_section,
-            itens_section,
-            botoes
-        ], spacing=0, scroll=ft.ScrollMode.AUTO)
-        
-        # Dialog
-        self.dialog = ft.AlertDialog(
-            title=ft.Text(titulo),
-            content=ft.Container(
-                content=content,
-                width=800,
-                height=600
-            ),
-            actions_alignment=ft.MainAxisAlignment.END
+        header = ft.Row(
+            [
+                ft.Column(
+                    spacing=2,
+                    controls=[
+                        ft.Text(
+                            "Ata de Registro de Preços",
+                            size=30,
+                            weight=ft.FontWeight.BOLD,
+                            color="#111827",
+                        ),
+                        ft.Text(titulo, size=16, color="#6B7280"),
+                    ],
+                )
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         )
+
+        content = ft.Column(
+            [dados_gerais, telefones_section, emails_section, itens_section, botoes],
+            spacing=SPACE_5,
+            scroll=ft.ScrollMode.AUTO,
+        )
+
+        card = ft.Container(
+            content=ft.Column([header, content], spacing=32),
+            width=1152,
+            bgcolor="#FFFFFF",
+            padding=SPACE_5,
+            border_radius=16,
+            alignment=ft.alignment.center,
+            shadow=ft.BoxShadow(
+                spread_radius=1,
+                blur_radius=15,
+                color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
+                offset=ft.Offset(0, 5),
+            ),
+        )
+
+        self.dialog = ft.AlertDialog(content=card, modal=True)
         
         self.page.dialog = self.dialog
         self.dialog.open = True
