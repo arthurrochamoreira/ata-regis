@@ -39,6 +39,11 @@ class NavigationItem(ft.Container):
         )
         self.on_click = item_clicked
 
+    def set_collapsed(self, collapsed: bool):
+        """Show only icon when collapsed"""
+        self.content.controls[1].visible = not collapsed
+        self.width = None
+
 class NavigationColumn(ft.Column):
     def __init__(self, app, destinations: list[NavigationDestination]):
         super().__init__()
@@ -50,6 +55,14 @@ class NavigationColumn(ft.Column):
         self.scroll = ft.ScrollMode.ALWAYS
         self.width = 200
         self.controls = self.get_navigation_items()
+
+    def update_layout(self, width: int):
+        from .responsive import get_breakpoint
+        bp = get_breakpoint(width)
+        collapsed = bp == "xs"
+        self.width = 60 if collapsed else 200
+        for item in self.controls:
+            item.set_collapsed(collapsed)
 
     def before_update(self):
         super().before_update()
@@ -130,3 +143,6 @@ class LeftNavigationMenu(ft.Column):
             self.dark_light_text.value = "Light theme"
             self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
         self.page.update()
+
+    def update_layout(self, width: int):
+        self.rail.update_layout(width)

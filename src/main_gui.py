@@ -21,6 +21,7 @@ from ui.main_view import (
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.tokens import SPACE_4
+from ui.responsive import get_breakpoint
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -32,6 +33,7 @@ class AtaApp:
         self.filtro_atual = "todos"
         self.texto_busca = ""
         self.current_tab = 0
+        self.breakpoint = get_breakpoint(page.width)
         self.setup_page()
         self.build_ui()
         
@@ -48,6 +50,7 @@ class AtaApp:
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
+        self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
@@ -61,6 +64,7 @@ class AtaApp:
         )
 
         self.navigation_menu = LeftNavigationMenu(self)
+        self.navigation_menu.update_layout(self.page.width)
         self.body_container = ft.Container(expand=True)
         self.update_body()
 
@@ -96,11 +100,14 @@ class AtaApp:
         )
         filtros.margin = ft.margin.only(bottom=0)
         search_container.margin = ft.margin.only(bottom=0)
+        filtros.col = {"xs": 12, "md": 4, "lg": 4}
+        search_container.col = {"xs": 12, "md": 8, "lg": 8}
         filtros_search_row = ft.Container(
-            content=ft.Row(
+            content=ft.ResponsiveRow(
                 [filtros, search_container],
+                columns=12,
                 spacing=16,
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                run_spacing=16,
             ),
             margin=ft.margin.only(bottom=16),
             expand=True,
@@ -134,6 +141,13 @@ class AtaApp:
     def navigate_to(self, index: int):
         self.current_tab = index
         self.update_body()
+
+    def on_page_resize(self, e):
+        new_bp = get_breakpoint(self.page.width)
+        if new_bp != self.breakpoint:
+            self.breakpoint = new_bp
+            self.navigation_menu.update_layout(self.page.width)
+            self.refresh_ui()
     
     def get_atas_filtradas(self):
         """Retorna as atas filtradas baseado no filtro atual e busca"""
