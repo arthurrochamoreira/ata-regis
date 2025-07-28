@@ -1,9 +1,15 @@
 import flet as ft
 
 try:
-    from .tokens import SPACE_2, SPACE_3, SPACE_5
+    from .tokens import (
+        SPACE_2,
+        SPACE_3,
+        SPACE_5,
+        SIDEBAR_BG,
+        SIDEBAR_TEXT,
+    )
 except Exception:  # pragma: no cover
-    from tokens import SPACE_2, SPACE_3, SPACE_5
+    from tokens import SPACE_2, SPACE_3, SPACE_5, SIDEBAR_BG, SIDEBAR_TEXT
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
@@ -32,9 +38,12 @@ class NavigationItem(ft.Container):
         self.destination = destination
         self.ink = True
         self.padding = SPACE_3
-        self.border_radius = 5
+        self.border_radius = 8  # inputs/botões radius=8 (Style Guide)
         self.content = ft.Row(
-            [ft.Icon(destination.icon), ft.Text(destination.label)],
+            [
+                ft.Icon(destination.icon, color=SIDEBAR_TEXT),
+                ft.Text(destination.label, color=SIDEBAR_TEXT),
+            ],
             spacing=SPACE_2,
         )
         self.on_click = item_clicked
@@ -48,7 +57,7 @@ class NavigationColumn(ft.Column):
         self.expand = 4
         self.spacing = 0
         self.scroll = ft.ScrollMode.ALWAYS
-        self.width = 200
+        self.width = 256  # width=256 (Style Guide)
         self.controls = self.get_navigation_items()
 
     def before_update(self):
@@ -71,7 +80,7 @@ class NavigationColumn(ft.Column):
             item.bgcolor = None
             item.content.controls[0].name = item.destination.icon
         sel = self.controls[self.selected_index]
-        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
+        sel.bgcolor = ft.colors.GREY_700  # highlight (Style Guide)
         sel.content.controls[0].name = sel.destination.selected_icon
 
 class LeftNavigationMenu(ft.Column):
@@ -84,7 +93,9 @@ class LeftNavigationMenu(ft.Column):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.rail = NavigationColumn(app, self.destinations)
-        self.dark_light_text = ft.Text("Light theme")
+        self.rail.bgcolor = SIDEBAR_BG
+        self.rail.padding = SPACE_5  # padding=24 (Style Guide)
+        self.dark_light_text = ft.Text("Light theme", color=SIDEBAR_TEXT)
         self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
         self.padding = SPACE_5
         self.spacing = SPACE_3
@@ -113,7 +124,7 @@ class LeftNavigationMenu(ft.Column):
                                     PopupColorItem(color="pink", name="Pink"),
                                 ],
                             ),
-                            ft.Text("Seed color"),
+                            ft.Text("Seed color", color=SIDEBAR_TEXT),
                         ], spacing=SPACE_2)
                     ],
                 ),

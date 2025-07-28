@@ -3,9 +3,15 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
-    from ..ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from ..ui.tokens import (
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        PRIMARY,
+    )
 except Exception:  # pragma: no cover
-    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, PRIMARY
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -51,20 +57,23 @@ class AtaForm:
             label="Número da Ata",
             hint_text="0000/0000",
             on_change=self.on_numero_ata_change,
-            width=200
+            width=200,
+            border_radius=8,  # inputs radius=8 (Style Guide)
         )
         
         self.documento_sei_field = ft.TextField(
             label="Documento SEI",
             hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
-            width=300
+            width=300,
+            border_radius=8,
         )
         
         self.data_vigencia_field = ft.TextField(
             label="Data de Vigência",
             hint_text="DD/MM/AAAA",
-            width=200
+            width=200,
+            border_radius=8,
         )
         
         self.objeto_field = ft.TextField(
@@ -72,13 +81,15 @@ class AtaForm:
             hint_text="Descrição do objeto da ata",
             width=400,
             multiline=True,
-            max_lines=3
+            max_lines=3,
+            border_radius=8,
         )
         
         self.fornecedor_field = ft.TextField(
             label="Fornecedor",
             hint_text="Nome da empresa fornecedora",
-            width=400
+            width=400,
+            border_radius=8,
         )
         
         # Containers para listas dinâmicas
@@ -97,71 +108,92 @@ class AtaForm:
         
         # Seções do formulário
         dados_gerais = ft.Container(
-            content=ft.Column([
-                ft.Text("📋 Dados Gerais", size=16, weight=ft.FontWeight.BOLD),
-                ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_4),
-                ft.Row([self.data_vigencia_field], spacing=SPACE_4),
-                self.objeto_field,
-                self.fornecedor_field
-            ], spacing=SPACE_4),
-            padding=ft.padding.all(SPACE_4),
+            content=ft.Column(
+                [
+                    ft.Text("📋 Dados Gerais", size=18, weight=ft.FontWeight.SEMI_BOLD),
+                    ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_5),
+                    ft.Row([self.data_vigencia_field], spacing=SPACE_5),
+                    self.objeto_field,
+                    self.fornecedor_field,
+                ],
+                spacing=SPACE_5,
+            ),
+            padding=ft.padding.all(SPACE_5),  # padding=24 (Style Guide)
             border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+            border_radius=12,  # cards radius=12 (Style Guide)
+            margin=ft.margin.only(bottom=SPACE_5)
         )
         
         telefones_section = ft.Container(
-            content=ft.Column([
-            ft.Row([
-                    ft.Text("📞 Telefones", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar telefone",
-                        on_click=lambda e: self.add_telefone()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.telefones_container
-            ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
+            content=ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Text("📞 Telefones", size=18, weight=ft.FontWeight.SEMI_BOLD),
+                            ft.IconButton(
+                                icon=ft.icons.ADD,
+                                tooltip="Adicionar telefone",
+                                on_click=lambda e: self.add_telefone(),
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    self.telefones_container,
+                ],
+                spacing=SPACE_2,
+            ),
+            padding=ft.padding.all(SPACE_5),
             border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+            border_radius=12,
+            margin=ft.margin.only(bottom=SPACE_5),
         )
         
         emails_section = ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Text("📧 E-mails", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar e-mail",
-                        on_click=lambda e: self.add_email()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.emails_container
-            ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
+            content=ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Text("📧 E-mails", size=18, weight=ft.FontWeight.SEMI_BOLD),
+                            ft.IconButton(
+                                icon=ft.icons.ADD,
+                                tooltip="Adicionar e-mail",
+                                on_click=lambda e: self.add_email(),
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    self.emails_container,
+                ],
+                spacing=SPACE_2,
+            ),
+            padding=ft.padding.all(SPACE_5),
             border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+            border_radius=12,
+            margin=ft.margin.only(bottom=SPACE_5),
         )
         
         itens_section = ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.Text("🧾 Itens", size=16, weight=ft.FontWeight.BOLD),
-                    ft.IconButton(
-                        icon=ft.icons.ADD,
-                        tooltip="Adicionar item",
-                        on_click=lambda e: self.add_item()
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                self.itens_container
-            ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
+            content=ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Text("🧾 Itens", size=18, weight=ft.FontWeight.SEMI_BOLD),
+                            ft.IconButton(
+                                icon=ft.icons.ADD,
+                                tooltip="Adicionar item",
+                                on_click=lambda e: self.add_item(),
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    self.itens_container,
+                ],
+                spacing=SPACE_2,
+            ),
+            padding=ft.padding.all(SPACE_5),
             border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            margin=ft.margin.only(bottom=SPACE_4)
+            border_radius=12,
+            margin=ft.margin.only(bottom=SPACE_5),
         )
         
         # Botões
@@ -169,19 +201,21 @@ class AtaForm:
             ft.ElevatedButton(
                 "Cancelar",
                 on_click=lambda e: self.on_cancel(),
-                color=ft.colors.ON_SURFACE
+                color=ft.colors.ON_SURFACE,
+                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
             ),
             ft.ElevatedButton(
                 "Salvar",
                 on_click=self.save_ata,
-                bgcolor=ft.colors.PRIMARY,
-                color=ft.colors.ON_PRIMARY
+                bgcolor=PRIMARY,
+                color=ft.colors.WHITE,
+                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
             )
-        ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_4)
+        ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_5)
         
         # Layout principal
         content = ft.Column([
-            ft.Text(titulo, size=20, weight=ft.FontWeight.BOLD),
+            ft.Text(titulo, size=24, weight=ft.FontWeight.SEMI_BOLD),
             dados_gerais,
             telefones_section,
             emails_section,
@@ -234,7 +268,8 @@ class AtaForm:
             hint_text="(XX) XXXXX-XXXX",
             value=valor,
             on_change=self.on_telefone_change,
-            width=200
+            width=200,
+            border_radius=8,
         )
         
         remove_btn = ft.IconButton(
@@ -261,7 +296,8 @@ class AtaForm:
             label=f"E-mail {len(self.emails) + 1}",
             hint_text="email@exemplo.com",
             value=valor,
-            width=300
+            width=300,
+            border_radius=8,
         )
         
         remove_btn = ft.IconButton(
@@ -288,21 +324,24 @@ class AtaForm:
             label="Descrição",
             hint_text="Descrição do item",
             value=item.descricao if item else "",
-            width=300
+            width=300,
+            border_radius=8,
         )
         
         quantidade_field = ft.TextField(
             label="Quantidade",
             hint_text="0",
             value=str(item.quantidade) if item else "",
-            width=100
+            width=100,
+            border_radius=8,
         )
         
         valor_field = ft.TextField(
             label="Valor Unitário",
             hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
-            width=150
+            width=150,
+            border_radius=8,
         )
         
         remove_btn = ft.IconButton(
