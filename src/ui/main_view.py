@@ -211,7 +211,9 @@ def build_data_table(
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
         border=ft.border.all(1, "#E5E7EB"),
+        119uxv-codex/ajuste-layout-tela-de-atas
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
+
     )
 
     return table
