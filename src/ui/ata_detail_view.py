@@ -183,7 +183,7 @@ def build_ata_detail_view(
         ],
         rows=item_rows,
         heading_row_height=32,
-        data_row_height=32,
+        data_row_min_height=32,
         column_spacing=12,
     )
 
