@@ -2,6 +2,27 @@ import flet as ft
 from typing import Callable, List
 
 try:
+    from .tokens import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        SPACE_6,
+        build_card,
+    )
+except Exception:  # pragma: no cover - fallback for standalone execution
+    from tokens import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        SPACE_6,
+        build_card,
+    )
+
+try:
     from ..models.ata import Ata
     from ..utils.validators import Formatters
     from ..utils.chart_utils import ChartUtils
@@ -42,6 +63,10 @@ def build_header(
                 on_click=nova_ata_cb,
                 bgcolor=ft.colors.BLUE,
                 color=ft.colors.WHITE,
+                style=ft.ButtonStyle(
+                    padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=SPACE_2),
+                    shape=ft.RoundedRectangleBorder(radius=8),
+                ),
             ),
         ],
     )
@@ -54,6 +79,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             label,
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                shape=ft.RoundedRectangleBorder(radius=8),
+            ),
         )
 
     return ft.Container(
@@ -64,10 +93,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
                 button("❌ Vencidas", "vencida", ft.colors.RED),
                 button("📋 Todas", "todos", ft.colors.BLUE),
             ],
-            spacing=10,
+            spacing=SPACE_3,
         ),
-        padding=ft.padding.all(16),
-        margin=ft.margin.only(bottom=16),
+        padding=ft.padding.all(SPACE_4),
+        margin=ft.margin.only(bottom=SPACE_5),
         expand=True,
     )
 
@@ -80,12 +109,14 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         on_change=on_change,
         value=value,
         expand=True,
+        height=44,
+        content_padding=ft.padding.symmetric(horizontal=SPACE_4),
     )
     return (
         ft.Container(
             content=search_field,
-            padding=ft.padding.all(16),
-            margin=ft.margin.only(bottom=16),
+            padding=ft.padding.all(SPACE_4),
+            margin=ft.margin.only(bottom=SPACE_6),
             expand=True,
         ),
         search_field,
@@ -116,8 +147,8 @@ def build_data_table(
         for lbl in header_labels
     ]
     header_row = ft.Container(
-        content=ft.Row(header_cells, spacing=16),
-        padding=ft.padding.symmetric(vertical=12, horizontal=16),
+        content=ft.Row(header_cells, spacing=SPACE_4),
+        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_4),
         bgcolor="#F9FAFB",
         border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
     )
@@ -155,7 +186,7 @@ def build_data_table(
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
             ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
-            padding=ft.padding.symmetric(vertical=2, horizontal=8),
+            padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
             border_radius=6,
         )
@@ -190,7 +221,7 @@ def build_data_table(
                     icon_size=20,
                 ),
             ],
-            spacing=8,
+            spacing=SPACE_3,
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
@@ -206,10 +237,10 @@ def build_data_table(
         row_container = ft.Container(
             content=ft.Row(
                 cells,
-                spacing=12,
+                spacing=SPACE_3,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.all(12),
+            padding=ft.padding.all(SPACE_3),
             border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
@@ -263,29 +294,17 @@ def build_grouped_data_tables(
     for status in ["vigente", "a_vencer", "vencida"]:
         atas_status = groups[status]
 
-        header = ft.Row(
-            [
-                ft.Container(
-                    content=ft.Icon(
-                        status_info[status]["icon"],
-                        color=status_info[status]["icon_color"],
-                        size=20,
-                    ),
-                    width=28,
-                    height=28,
-                    padding=ft.padding.all(4),
-                    bgcolor=status_info[status]["icon_bg"],
-                    border_radius=4,
-                ),
-                ft.Text(
-                    status_info[status]["title"],
-                    size=18,
-                    weight=ft.FontWeight.BOLD,
-                    color="#1F2937",
-                ),
-            ],
-            spacing=12,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        icon = ft.Container(
+            content=ft.Icon(
+                status_info[status]["icon"],
+                color=status_info[status]["icon_color"],
+                size=20,
+            ),
+            width=28,
+            height=28,
+            padding=ft.padding.all(SPACE_1),
+            bgcolor=status_info[status]["icon_bg"],
+            border_radius=4,
         )
 
         table = build_data_table(
@@ -296,18 +315,7 @@ def build_grouped_data_tables(
             status,
         )
 
-        card = ft.Container(
-            content=ft.Column([header, table], spacing=16),
-            bgcolor="#FFFFFF",
-            padding=24,
-            shadow=ft.BoxShadow(
-                spread_radius=-1,
-                blur_radius=6,
-                color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
-                offset=ft.Offset(0, 4),
-            ),
-            width=float("inf"),
-        )
+        card = build_card(status_info[status]["title"], icon, table)
         card.col = {"xs": 12, "lg": 4}
         card_controls.append(card)
 
@@ -315,8 +323,8 @@ def build_grouped_data_tables(
         card_controls,
         columns=12,
         alignment=ft.MainAxisAlignment.CENTER,
-        spacing=16,
-        run_spacing=16,
+        spacing=SPACE_6,
+        run_spacing=SPACE_6,
     )
 
     container = ft.Container(
@@ -354,8 +362,8 @@ def build_atas_vencimento(
                     ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
                 ]),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            padding=ft.padding.all(12),
-            margin=ft.margin.only(bottom=8),
+            padding=ft.padding.all(SPACE_3),
+            margin=ft.margin.only(bottom=SPACE_2),
             border=ft.border.all(1, ft.colors.ORANGE),
             border_radius=8,
             bgcolor=ft.colors.ORANGE_50,
@@ -372,11 +380,11 @@ def build_atas_vencimento(
                 ),
                 ft.Column(items, spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
-            spacing=12,
+            spacing=SPACE_3,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         alignment=ft.alignment.center,
-        padding=ft.padding.all(16),
+        padding=ft.padding.all(SPACE_4),
         border=ft.border.all(1, ft.colors.OUTLINE),
         border_radius=8,
     )
@@ -411,21 +419,21 @@ def build_stats_panel(ata_service) -> ft.Container:
                         ),
                         value_chart,
                     ],
-                    spacing=16,
+                    spacing=SPACE_4,
                 ),
-                padding=ft.padding.all(16),
+                padding=ft.padding.all(SPACE_4),
                 border=ft.border.all(1, ft.colors.OUTLINE),
                 border_radius=8,
                 expand=True,
             ),
             ft.Container(content=monthly_chart, width=360),
         ],
-        spacing=16,
+        spacing=SPACE_4,
     )
 
     return ft.Container(
         content=ft.Column(
-            [urgency_indicator, summary_cards, charts_section], spacing=16
+            [urgency_indicator, summary_cards, charts_section], spacing=SPACE_4
         ),
-        margin=ft.margin.only(bottom=24),
+        margin=ft.margin.only(bottom=SPACE_5),
     )

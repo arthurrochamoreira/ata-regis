@@ -1,6 +1,11 @@
 import flet as ft
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
+
+try:
+    from ..ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+except Exception:  # pragma: no cover
+    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -77,9 +82,9 @@ class AtaForm:
         )
         
         # Containers para listas dinâmicas
-        self.telefones_container = ft.Column(spacing=8)
-        self.emails_container = ft.Column(spacing=8)
-        self.itens_container = ft.Column(spacing=8)
+        self.telefones_container = ft.Column(spacing=SPACE_2)
+        self.emails_container = ft.Column(spacing=SPACE_2)
+        self.itens_container = ft.Column(spacing=SPACE_2)
         
         # Preenche campos se estiver editando
         if self.is_edit_mode:
@@ -94,20 +99,20 @@ class AtaForm:
         dados_gerais = ft.Container(
             content=ft.Column([
                 ft.Text("📋 Dados Gerais", size=16, weight=ft.FontWeight.BOLD),
-                ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=16),
-                ft.Row([self.data_vigencia_field], spacing=16),
+                ft.Row([self.numero_ata_field, self.documento_sei_field], spacing=SPACE_4),
+                ft.Row([self.data_vigencia_field], spacing=SPACE_4),
                 self.objeto_field,
                 self.fornecedor_field
-            ], spacing=16),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_4),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
-            margin=ft.margin.only(bottom=16)
+            margin=ft.margin.only(bottom=SPACE_4)
         )
         
         telefones_section = ft.Container(
             content=ft.Column([
-                ft.Row([
+            ft.Row([
                     ft.Text("📞 Telefones", size=16, weight=ft.FontWeight.BOLD),
                     ft.IconButton(
                         icon=ft.icons.ADD,
@@ -116,11 +121,11 @@ class AtaForm:
                     )
                 ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 self.telefones_container
-            ], spacing=8),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
-            margin=ft.margin.only(bottom=16)
+            margin=ft.margin.only(bottom=SPACE_4)
         )
         
         emails_section = ft.Container(
@@ -134,11 +139,11 @@ class AtaForm:
                     )
                 ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 self.emails_container
-            ], spacing=8),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
-            margin=ft.margin.only(bottom=16)
+            margin=ft.margin.only(bottom=SPACE_4)
         )
         
         itens_section = ft.Container(
@@ -152,11 +157,11 @@ class AtaForm:
                     )
                 ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                 self.itens_container
-            ], spacing=8),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
-            margin=ft.margin.only(bottom=16)
+            margin=ft.margin.only(bottom=SPACE_4)
         )
         
         # Botões
@@ -172,7 +177,7 @@ class AtaForm:
                 bgcolor=ft.colors.PRIMARY,
                 color=ft.colors.ON_PRIMARY
             )
-        ], alignment=ft.MainAxisAlignment.END, spacing=16)
+        ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_4)
         
         # Layout principal
         content = ft.Column([
@@ -237,7 +242,7 @@ class AtaForm:
             tooltip="Remover telefone"
         )
 
-        row = ft.Row([telefone_field, remove_btn], spacing=8)
+        row = ft.Row([telefone_field, remove_btn], spacing=SPACE_2)
         remove_btn.on_click = lambda e, field=telefone_field, r=row: self.remove_telefone(field, r)
         self.telefones.append((telefone_field, row))
         self.telefones_container.controls.append(row)
@@ -264,7 +269,7 @@ class AtaForm:
             tooltip="Remover e-mail"
         )
 
-        row = ft.Row([email_field, remove_btn], spacing=8)
+        row = ft.Row([email_field, remove_btn], spacing=SPACE_2)
         remove_btn.on_click = lambda e, field=email_field, r=row: self.remove_email(field, r)
         self.emails.append((email_field, row))
         self.emails_container.controls.append(row)
@@ -311,7 +316,7 @@ class AtaForm:
             quantidade_field,
             valor_field,
             remove_btn
-        ], spacing=8)
+        ], spacing=SPACE_2)
         
         self.itens.append((descricao_field, quantidade_field, valor_field, row))
         self.itens_container.controls.append(row)

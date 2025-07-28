@@ -3,6 +3,17 @@ from datetime import timedelta
 from typing import Callable
 
 try:
+    from .tokens import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+    )
+except Exception:  # pragma: no cover
+    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5
+
+try:
     from ..models.ata import Ata
     from ..utils.validators import Formatters
 except ImportError:  # standalone execution
@@ -40,7 +51,7 @@ def build_ata_detail_view(
                 ],
             ),
             ft.Row(
-                spacing=12,
+                spacing=SPACE_3,
                 controls=[
                     ft.OutlinedButton(
                         text="Voltar",
@@ -51,9 +62,9 @@ def build_ata_detail_view(
                             color="#4B5563",
                             side=ft.BorderSide(1, "#D1D5DB"),
                         ),
-                    ),
-                    ft.ElevatedButton(
-                        text="Editar",
+                        ),
+                        ft.ElevatedButton(
+                            text="Editar",
                         icon=ft.icons.EDIT_OUTLINED,
                         on_click=on_edit,
                         bgcolor="#3B82F6",
@@ -61,7 +72,7 @@ def build_ata_detail_view(
                         style=ft.ButtonStyle(
                             shape=ft.RoundedRectangleBorder(radius=8)
                         ),
-                    ),
+                        ),
                 ],
             ),
         ],
@@ -123,7 +134,7 @@ def build_ata_detail_view(
                                 ft.icons.DESCRIPTION_OUTLINED, color="#4F46E5"
                             ),
                             bgcolor="#E0E7FF",
-                            padding=8,
+                            padding=SPACE_2,
                             border_radius=8,
                         ),
                         ft.Text(
@@ -133,7 +144,7 @@ def build_ata_detail_view(
                             color="#1F2937",
                         ),
                     ],
-                    spacing=12,
+                    spacing=SPACE_3,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 ft.Column(
@@ -141,14 +152,14 @@ def build_ata_detail_view(
                         info_row("Documento SEI:", ata.documento_sei),
                         info_row("Objeto:", ata.objeto),
                     ],
-                    spacing=16,
+                    spacing=SPACE_4,
                 ),
                 timeline,
             ],
-            spacing=24,
+            spacing=SPACE_5,
         ),
         bgcolor="#F8FAFC",
-        padding=24,
+        padding=SPACE_5,
         border_radius=12,
     )
 
@@ -184,7 +195,7 @@ def build_ata_detail_view(
         rows=item_rows,
         heading_row_height=32,
         data_row_min_height=32,
-        column_spacing=12,
+        column_spacing=SPACE_3,
     )
 
     resumo_financeiro = ft.Container(
@@ -199,7 +210,7 @@ def build_ata_detail_view(
             ],
         ),
         bgcolor="#EEF2FF",
-        padding=16,
+        padding=SPACE_4,
         border_radius=8,
     )
 
@@ -213,7 +224,7 @@ def build_ata_detail_view(
                                 ft.icons.LIST_ALT_OUTLINED, color="#4F46E5"
                             ),
                             bgcolor="#E0E7FF",
-                            padding=8,
+                            padding=SPACE_2,
                             border_radius=8,
                         ),
                         ft.Text(
@@ -223,16 +234,16 @@ def build_ata_detail_view(
                             color="#1F2937",
                         ),
                     ],
-                    spacing=12,
+                    spacing=SPACE_3,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 itens_table,
                 resumo_financeiro,
             ],
-            spacing=24,
+            spacing=SPACE_5,
         ),
         bgcolor="#F8FAFC",
-        padding=24,
+        padding=SPACE_5,
         border_radius=12,
     )
 
@@ -246,7 +257,7 @@ def build_ata_detail_view(
                                 ft.icons.BUSINESS_OUTLINED, color="#EA580C"
                             ),
                             bgcolor="#FFEDD5",
-                            padding=8,
+                            padding=SPACE_2,
                             border_radius=8,
                         ),
                         ft.Text(
@@ -256,15 +267,15 @@ def build_ata_detail_view(
                             color="#1F2937",
                         ),
                     ],
-                    spacing=12,
+                    spacing=SPACE_3,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 ft.Text(ata.fornecedor, size=18),
             ],
-            spacing=16,
+            spacing=SPACE_4,
         ),
         bgcolor="#F8FAFC",
-        padding=24,
+        padding=SPACE_5,
         border_radius=12,
     )
 
@@ -302,7 +313,7 @@ def build_ata_detail_view(
                                 ft.icons.HEADSET_MIC_OUTLINED, color="#0F766E"
                             ),
                             bgcolor="#CCFBF1",
-                            padding=8,
+                            padding=SPACE_2,
                             border_radius=8,
                         ),
                         ft.Text(
@@ -312,24 +323,24 @@ def build_ata_detail_view(
                             color="#1F2937",
                         ),
                     ],
-                    spacing=12,
+                    spacing=SPACE_3,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
                 ft.Column(contatos_list, spacing=12),
             ],
-            spacing=16,
+            spacing=SPACE_4,
         ),
         bgcolor="#F8FAFC",
-        padding=24,
+        padding=SPACE_5,
         border_radius=12,
     )
 
     layout = ft.Row(
         [
-            ft.Column([dados_gerais, itens_section], spacing=24, expand=2),
-            ft.Column([fornecedor_section, contatos_section], spacing=24, expand=1),
+            ft.Column([dados_gerais, itens_section], spacing=SPACE_5, expand=2),
+            ft.Column([fornecedor_section, contatos_section], spacing=SPACE_5, expand=1),
         ],
-        spacing=32,
+        spacing=SPACE_6,
         vertical_alignment=ft.CrossAxisAlignment.START,
     )
 
@@ -337,7 +348,7 @@ def build_ata_detail_view(
         content=ft.Column([header, layout], spacing=32),
         width=1152,
         bgcolor="#FFFFFF",
-        padding=32,
+        padding=SPACE_6,
         border_radius=16,
         shadow=ft.BoxShadow(
             spread_radius=1,
@@ -349,7 +360,7 @@ def build_ata_detail_view(
 
     page_container = ft.Container(
         content=ft.Column([card], expand=True),
-        padding=32,
+        padding=SPACE_6,
         bgcolor="#F1F5F9",
         alignment=ft.alignment.top_center,
     )
