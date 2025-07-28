@@ -1,5 +1,10 @@
 import flet as ft
 
+try:
+    from .tokens import SPACE_2, SPACE_3, SPACE_5
+except Exception:  # pragma: no cover
+    from tokens import SPACE_2, SPACE_3, SPACE_5
+
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
         super().__init__()
@@ -26,9 +31,12 @@ class NavigationItem(ft.Container):
         super().__init__()
         self.destination = destination
         self.ink = True
-        self.padding = 10
+        self.padding = SPACE_3
         self.border_radius = 5
-        self.content = ft.Row([ft.Icon(destination.icon), ft.Text(destination.label)])
+        self.content = ft.Row(
+            [ft.Icon(destination.icon), ft.Text(destination.label)],
+            spacing=SPACE_2,
+        )
         self.on_click = item_clicked
 
 class NavigationColumn(ft.Column):
@@ -78,12 +86,16 @@ class LeftNavigationMenu(ft.Column):
         self.rail = NavigationColumn(app, self.destinations)
         self.dark_light_text = ft.Text("Light theme")
         self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
+        self.padding = SPACE_5
+        self.spacing = SPACE_3
         self.controls = [
             self.rail,
             ft.Column(
                 expand=1,
+                spacing=SPACE_3,
+                alignment=ft.MainAxisAlignment.END,
                 controls=[
-                    ft.Row([self.dark_light_icon, self.dark_light_text]),
+                    ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
                     ft.Row([
                         ft.PopupMenuButton(
                             icon=ft.icons.COLOR_LENS_OUTLINED,
@@ -100,8 +112,9 @@ class LeftNavigationMenu(ft.Column):
                             ],
                         ),
                         ft.Text("Seed color"),
-                    ])
+                    ], spacing=SPACE_2)
                 ],
+                padding=ft.padding.only(top=SPACE_5),
             ),
         ]
 

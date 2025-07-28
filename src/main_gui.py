@@ -20,6 +20,7 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
+from ui.tokens import SPACE_4
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -43,7 +44,7 @@ class AtaApp:
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.padding = 16
+        self.page.padding = SPACE_4
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
