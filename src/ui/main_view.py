@@ -105,7 +105,12 @@ def build_data_table(
 
     header_cells = [
         ft.Container(
-            ft.Text(lbl.upper(), size=12, weight=ft.FontWeight.W_600, color="#6B7280"),
+            ft.Text(
+                lbl.upper(),
+                size=11,
+                weight=ft.FontWeight.W_600,
+                color="#6B7280",
+            ),
             expand=1,
         )
         for lbl in header_labels
@@ -199,8 +204,12 @@ def build_data_table(
         ]
 
         row_container = ft.Container(
-            content=ft.Row(cells, spacing=16, vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=ft.padding.all(16),
+            content=ft.Row(
+                cells,
+                spacing=12,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.padding.all(12),
             border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
@@ -211,9 +220,7 @@ def build_data_table(
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
         border=ft.border.all(1, "#E5E7EB"),
-        119uxv-codex/ajuste-layout-tela-de-atas
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
-
     )
 
     return table
@@ -259,7 +266,11 @@ def build_grouped_data_tables(
         header = ft.Row(
             [
                 ft.Container(
-                    content=ft.Icon(status_info[status]["icon"], color=status_info[status]["icon_color"], size=20),
+                    content=ft.Icon(
+                        status_info[status]["icon"],
+                        color=status_info[status]["icon_color"],
+                        size=20,
+                    ),
                     width=28,
                     height=28,
                     padding=ft.padding.all(4),
@@ -268,7 +279,7 @@ def build_grouped_data_tables(
                 ),
                 ft.Text(
                     status_info[status]["title"],
-                    size=20,
+                    size=18,
                     weight=ft.FontWeight.BOLD,
                     color="#1F2937",
                 ),
@@ -286,10 +297,15 @@ def build_grouped_data_tables(
         )
 
         card = ft.Container(
-            content=ft.Column([header, table], spacing=24),
+            content=ft.Column([header, table], spacing=16),
             bgcolor="#FFFFFF",
             padding=24,
-            shadow=ft.BoxShadow(spread_radius=-1, blur_radius=6, color=ft.colors.with_opacity(0.1, ft.colors.BLACK), offset=ft.Offset(0, 4)),
+            shadow=ft.BoxShadow(
+                spread_radius=-1,
+                blur_radius=6,
+                color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
+                offset=ft.Offset(0, 4),
+            ),
             width=float("inf"),
         )
         card.col = {"xs": 12, "lg": 4}
@@ -299,8 +315,8 @@ def build_grouped_data_tables(
         card_controls,
         columns=12,
         alignment=ft.MainAxisAlignment.CENTER,
-        spacing=24,
-        run_spacing=24,
+        spacing=16,
+        run_spacing=16,
     )
 
     container = ft.Container(
@@ -349,10 +365,14 @@ def build_atas_vencimento(
     return ft.Container(
         content=ft.Column(
             [
-                ft.Text("🔔 Atas Próximas do Vencimento", size=18, weight=ft.FontWeight.BOLD),
+                ft.Text(
+                    "🔔 Atas Próximas do Vencimento",
+                    size=16,
+                    weight=ft.FontWeight.BOLD,
+                ),
                 ft.Column(items, spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
-            spacing=16,
+            spacing=12,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         alignment=ft.alignment.center,
