@@ -79,7 +79,6 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             label,
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
-            height=44,  # alinhamento chips/busca
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
@@ -94,16 +93,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     ]
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
-    row = ft.ResponsiveRow(
-        buttons,
-        columns=12,
-        spacing=SPACE_5,  # espaçamento uniforme
-        run_spacing=SPACE_5,
-        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-    )
+    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
     return ft.Container(
         content=row,
-        padding=ft.padding.all(SPACE_5),
+        padding=ft.padding.all(SPACE_4),
         margin=ft.margin.only(bottom=SPACE_5),
         expand=True,
     )
@@ -123,8 +116,8 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
     return (
         ft.Container(
             content=search_field,
-            padding=ft.padding.all(SPACE_5),  # padding consistente
-            margin=ft.margin.only(bottom=SPACE_5),
+            padding=ft.padding.all(SPACE_4),
+            margin=ft.margin.only(bottom=SPACE_6),
             expand=True,
         ),
         search_field,
@@ -149,17 +142,14 @@ def build_data_table(
                 size=11,
                 weight=ft.FontWeight.W_600,
                 color="#6B7280",
-                max_lines=1,
-                overflow=ft.TextOverflow.ELLIPSIS,
-                no_wrap=True,  # anti-break text
             ),
             expand=1,
         )
         for lbl in header_labels
     ]
     header_row = ft.Container(
-        content=ft.Row(header_cells, spacing=SPACE_5),
-        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_5),
+        content=ft.Row(header_cells, spacing=SPACE_4),
+        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_4),
         bgcolor="#F9FAFB",
         border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
     )
@@ -181,37 +171,26 @@ def build_data_table(
                 color="#111827",
                 max_lines=1,
                 overflow=ft.TextOverflow.ELLIPSIS,
-                no_wrap=True,
             ),
-            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS, no_wrap=True),
+            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
             ft.Text(
                 ata.objeto,
                 max_lines=1,
                 overflow=ft.TextOverflow.ELLIPSIS,
-                no_wrap=True,
             ),
             ft.Text(
                 ata.fornecedor,
                 max_lines=1,
                 overflow=ft.TextOverflow.ELLIPSIS,
-                no_wrap=True,
             ),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
-            ft.Text(
-                ata.status.replace("_", " ").title(),
-                size=12,
-                weight=ft.FontWeight.W_500,
-                color=badge_text_color,
-                max_lines=1,
-                overflow=ft.TextOverflow.ELLIPSIS,
-            ),
-            padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=8),
+            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
+            padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
-            border_radius=16,
-            min_width=60,
-        )  # badge anti-break
+            border_radius=6,
+        )
 
         actions = ft.Row(
             [
@@ -247,18 +226,13 @@ def build_data_table(
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-        actions_container = ft.Container(
-            actions,
-            padding=ft.padding.symmetric(horizontal=SPACE_2),  # padding interno
-        )
-
         cells = [
             ft.Container(text_cells[0], expand=1),
             ft.Container(text_cells[1], expand=1),
             ft.Container(text_cells[2], expand=2),
             ft.Container(text_cells[3], expand=1),
             ft.Container(badge, expand=1),
-            ft.Container(actions_container, expand=1),
+            ft.Container(actions, expand=1),
         ]
 
         row_container = ft.Container(
@@ -267,7 +241,7 @@ def build_data_table(
                 spacing=SPACE_3,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.all(SPACE_5),  # padding uniforme
+            padding=ft.padding.all(SPACE_3),
             border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
@@ -343,22 +317,21 @@ def build_grouped_data_tables(
         )
 
         card = build_card(status_info[status]["title"], icon, table)
-        card.col = {"xs": 12, "md": 6, "lg": 4}
-        card.min_height = 300  # altura consistente
+        card.col = {"xs": 12, "lg": 4}
         card_controls.append(card)
 
     row = ft.ResponsiveRow(
         card_controls,
         columns=12,
         alignment=ft.MainAxisAlignment.CENTER,
-        spacing=SPACE_5,
-        run_spacing=SPACE_5,
+        spacing=SPACE_6,
+        run_spacing=SPACE_6,
     )
 
     container = ft.Container(
         content=row,
         alignment=ft.alignment.center,
-        padding=ft.padding.all(SPACE_5),
+        padding=0,
         expand=True,
     )
     return container
@@ -468,15 +441,3 @@ def build_stats_panel(ata_service) -> ft.Container:
         ),
         margin=ft.margin.only(bottom=SPACE_5),
     )
-
-
-# Checklist final tela Atas
-# - [x] Filtros alinhados com busca
-# - [x] Espaçamentos uniformes
-# - [x] Áreas vazias reduzidas
-# - [x] Cards com altura mínima igual
-# - [x] Cabeçalhos e badges sem quebra
-# - [x] Textos truncados com reticências
-# - [x] Ícones de ação com padding
-# - [x] NavigationRail com padding inferior
-# - [x] Campo de busca responsivo
