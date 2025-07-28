@@ -90,31 +90,33 @@ class LeftNavigationMenu(ft.Column):
         self.spacing = SPACE_3
         self.controls = [
             self.rail,
-            ft.Column(
-                expand=1,
-                spacing=SPACE_3,
-                alignment=ft.MainAxisAlignment.END,
-                controls=[
-                    ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
-                    ft.Row([
-                        ft.PopupMenuButton(
-                            icon=ft.icons.COLOR_LENS_OUTLINED,
-                            items=[
-                                PopupColorItem(color="deeppurple", name="Deep purple"),
-                                PopupColorItem(color="indigo", name="Indigo"),
-                                PopupColorItem(color="blue", name="Blue"),
-                                PopupColorItem(color="teal", name="Teal"),
-                                PopupColorItem(color="green", name="Green"),
-                                PopupColorItem(color="yellow", name="Yellow"),
-                                PopupColorItem(color="orange", name="Orange"),
-                                PopupColorItem(color="deeporange", name="Deep orange"),
-                                PopupColorItem(color="pink", name="Pink"),
-                            ],
-                        ),
-                        ft.Text("Seed color"),
-                    ], spacing=SPACE_2)
-                ],
+            ft.Container(
                 padding=ft.padding.only(top=SPACE_5),
+                content=ft.Column(
+                    expand=1,
+                    spacing=SPACE_3,
+                    alignment=ft.MainAxisAlignment.END,
+                    controls=[
+                        ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
+                        ft.Row([
+                            ft.PopupMenuButton(
+                                icon=ft.icons.COLOR_LENS_OUTLINED,
+                                items=[
+                                    PopupColorItem(color="deeppurple", name="Deep purple"),
+                                    PopupColorItem(color="indigo", name="Indigo"),
+                                    PopupColorItem(color="blue", name="Blue"),
+                                    PopupColorItem(color="teal", name="Teal"),
+                                    PopupColorItem(color="green", name="Green"),
+                                    PopupColorItem(color="yellow", name="Yellow"),
+                                    PopupColorItem(color="orange", name="Orange"),
+                                    PopupColorItem(color="deeporange", name="Deep orange"),
+                                    PopupColorItem(color="pink", name="Pink"),
+                                ],
+                            ),
+                            ft.Text("Seed color"),
+                        ], spacing=SPACE_2)
+                    ],
+                ),
             ),
         ]
 
