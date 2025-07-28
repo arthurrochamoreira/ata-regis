@@ -9,9 +9,10 @@ try:
         SPACE_3,
         SPACE_4,
         SPACE_5,
+        SPACE_6,
     )
 except Exception:  # pragma: no cover
-    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5, SPACE_6
 
 try:
     from ..models.ata import Ata
