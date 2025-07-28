@@ -9,7 +9,15 @@ class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
         super().__init__()
         self.content = ft.Row(
-            controls=[ft.Icon(name=ft.icons.COLOR_LENS_OUTLINED, color=color), ft.Text(name)]
+            controls=[
+                ft.Icon(name=ft.icons.COLOR_LENS_OUTLINED, color=color),
+                ft.Text(
+                    name,
+                    max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                    no_wrap=True,
+                ),
+            ]
         )
         self.data = color
         self.on_click = self.seed_color_changed
@@ -34,7 +42,15 @@ class NavigationItem(ft.Container):
         self.padding = SPACE_3
         self.border_radius = 5
         self.content = ft.Row(
-            [ft.Icon(destination.icon), ft.Text(destination.label)],
+            [
+                ft.Icon(destination.icon),
+                ft.Text(
+                    destination.label,
+                    max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                    no_wrap=True,
+                ),
+            ],
             spacing=SPACE_2,
         )
         self.on_click = item_clicked
@@ -97,7 +113,12 @@ class LeftNavigationMenu(ft.Column):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.rail = NavigationColumn(app, self.destinations)
-        self.dark_light_text = ft.Text("Light theme")
+        self.dark_light_text = ft.Text(
+            "Light theme",
+            max_lines=1,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            no_wrap=True,
+        )
         self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
         self.padding = SPACE_5
         self.spacing = SPACE_3
@@ -126,7 +147,12 @@ class LeftNavigationMenu(ft.Column):
                                     PopupColorItem(color="pink", name="Pink"),
                                 ],
                             ),
-                            ft.Text("Seed color"),
+                            ft.Text(
+                                "Seed color",
+                                max_lines=1,
+                                overflow=ft.TextOverflow.ELLIPSIS,
+                                no_wrap=True,
+                            ),
                         ], spacing=SPACE_2)
                     ],
                 ),

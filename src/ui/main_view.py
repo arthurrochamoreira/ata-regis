@@ -1,5 +1,6 @@
 import flet as ft
 from typing import Callable, List
+from .responsive import font_size_for
 
 try:
     from .tokens import (
@@ -21,6 +22,7 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_6,
         build_card,
     )
+    from responsive import font_size_for
 
 try:
     from ..models.ata import Ata
@@ -39,12 +41,19 @@ def build_header(
     relatorio_mensal_cb: Callable,
     testar_email_cb: Callable,
     status_cb: Callable,
+    width: int,
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
     return ft.AppBar(
         leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
         leading_width=40,
-        title=ft.Text("Ata de Registro de Preços"),
+        title=ft.Text(
+            "Ata de Registro de Preços",
+            size=font_size_for(width, 18),
+            max_lines=1,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            no_wrap=True,
+        ),  # responsive font
         bgcolor=ft.colors.INVERSE_PRIMARY,
         actions=[
             ft.PopupMenuButton(
@@ -351,11 +360,24 @@ def build_atas_vencimento(
         item = ft.Container(
             content=ft.Row([
                 ft.Column([
-                    ft.Text(f"Ata: {ata.numero_ata}", weight=ft.FontWeight.BOLD),
-                    ft.Text(f"Vencimento: {data_formatada}"),
+                    ft.Text(
+                        f"Ata: {ata.numero_ata}",
+                        weight=ft.FontWeight.BOLD,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                        no_wrap=True,
+                    ),
+                    ft.Text(
+                        f"Vencimento: {data_formatada}",
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                        no_wrap=True,
+                    ),
                     ft.Text(
                         f"Faltam {ata.dias_restantes} dias",
                         color=ft.colors.RED if ata.dias_restantes <= 30 else ft.colors.ORANGE,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
                     ),
                 ], spacing=4),
                 ft.Row([
@@ -378,6 +400,8 @@ def build_atas_vencimento(
                     "🔔 Atas Próximas do Vencimento",
                     size=16,
                     weight=ft.FontWeight.BOLD,
+                    max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS,
                 ),
                 ft.Column(items, spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             ],
