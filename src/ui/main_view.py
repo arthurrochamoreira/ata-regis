@@ -116,7 +116,6 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
                 text_style=ft.TextStyle(
-                    no_wrap=True,
                     weight=ft.FontWeight.W_500,
                 ),
             ),
