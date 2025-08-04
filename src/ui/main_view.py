@@ -69,55 +69,52 @@ def build_header(
     )
 
 
-def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
-    """Return container with filter buttons."""
-    def button(label: str, value: str, color: str) -> ft.ElevatedButton:
+def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Row:
+    """Return row with filter buttons."""
+
+    def button(
+        label: str,
+        value: str,
+        icon_name: str,
+        color: str,
+    ) -> ft.ElevatedButton:
         return ft.ElevatedButton(
-            label,
+            content=ft.Row(
+                [ft.Icon(icon_name, size=16), ft.Text(label)],
+                spacing=4,
+                alignment="center",
+            ),
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            min_width=120,
+            height=40,
             style=ft.ButtonStyle(
-                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                padding=ft.padding.symmetric(vertical=0, horizontal=12),
                 shape=ft.RoundedRectangleBorder(radius=8),
             ),
         )
 
     buttons = [
-        button("✅ Vigentes", "vigente", ft.colors.GREEN),
-        button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-        button("❌ Vencidas", "vencida", ft.colors.RED),
-        button("📋 Todas", "todos", ft.colors.BLUE),
+        button("Vigentes", "vigente", ft.icons.CHECK_CIRCLE, ft.colors.GREEN),
+        button("A Vencer", "a_vencer", ft.icons.WARNING_AMBER_ROUNDED, ft.colors.ORANGE),
+        button("Vencidas", "vencida", ft.icons.CANCEL, ft.colors.RED),
+        button("Todas", "todos", ft.icons.LIST, ft.colors.BLUE),
     ]
-    for b in buttons:
-        b.col = {"xs": 6, "md": 3}
-    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
-    return ft.Container(
-        content=row,
-        padding=ft.padding.all(SPACE_4),
-        margin=ft.margin.only(bottom=SPACE_5),
-        expand=True,
-    )
+
+    return ft.Row(buttons, spacing=8, wrap=True)
 
 
-def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
-    """Return a search container and field pre-populated with ``value``."""
-    search_field = ft.TextField(
+def build_search(on_change: Callable, value: str = "") -> ft.TextField:
+    """Return a search field pre-populated with ``value``."""
+
+    return ft.TextField(
         label="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
         value=value,
         expand=True,
-        height=44,
-        content_padding=ft.padding.symmetric(horizontal=SPACE_4),
-    )
-    return (
-        ft.Container(
-            content=search_field,
-            padding=ft.padding.all(SPACE_4),
-            margin=ft.margin.only(bottom=SPACE_6),
-            expand=True,
-        ),
-        search_field,
+        height=40,
+        content_padding=ft.padding.symmetric(horizontal=SPACE_3),
     )
 
 
