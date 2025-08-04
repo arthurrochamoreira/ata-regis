@@ -164,7 +164,6 @@ class AtasTable(ft.UserControl):
             vertical_lines=ft.BorderSide(0, "transparent"),
             heading_row_color=ft.colors.WHITE,
             border=ft.border.all(1, ft.colors.GREY_100),
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
             data_row_color={
                 ft.MaterialState.HOVERED: ft.colors.GREY_100,
                 "": ft.colors.WHITE,
