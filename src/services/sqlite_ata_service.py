@@ -2,8 +2,10 @@ import sqlite3
 from typing import List, Dict, Any, Optional
 from datetime import date, datetime
 
-# Importações absolutas para permitir execução direta ou como módulo
-from models.ata import Ata, Item
+try:
+    from ..models.ata import Ata, Item
+except ImportError:  # pragma: no cover - support execution without package
+    from models.ata import Ata, Item
 
 class SQLiteAtaService:
     """Serviço de Atas usando SQLite como persistência."""
