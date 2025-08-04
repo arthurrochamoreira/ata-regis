@@ -263,8 +263,15 @@ def build_grouped_data_tables(
     visualizar_cb: Callable[[Ata], None],
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
+    filtro: str = "todos",
 ) -> ft.Container:
-    """Return layout with status cards for the given atas."""
+    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
+
+    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
+    corresponding card is returned and it expands to occupy the full available
+    width.  When ``filtro`` is ``todos`` the original layout with three cards is
+    rendered.
+    """
 
     groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
     for ata in atas:
@@ -291,8 +298,10 @@ def build_grouped_data_tables(
         },
     }
 
-    card_controls = []
-    for status in ["vigente", "a_vencer", "vencida"]:
+    statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
+
+    card_controls: list[ft.Control] = []
+    for status in statuses:
         atas_status = groups[status]
 
         icon = ft.Container(
@@ -317,20 +326,25 @@ def build_grouped_data_tables(
         )
 
         card = build_card(status_info[status]["title"], icon, table)
-        card.col = {"xs": 12, "lg": 4}
+
+        if filtro == "todos":
+            card.col = {"xs": 12, "lg": 4}
+        else:
+            # Single card should span the entire content area
+            card.col = 12
         card_controls.append(card)
 
     row = ft.ResponsiveRow(
         card_controls,
         columns=12,
-        alignment=ft.MainAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.CENTER if filtro == "todos" else ft.MainAxisAlignment.START,
         spacing=SPACE_6,
         run_spacing=SPACE_6,
     )
 
     container = ft.Container(
         content=row,
-        alignment=ft.alignment.center,
+        alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
         padding=0,
         expand=True,
     )

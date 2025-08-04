@@ -117,6 +117,7 @@ class AtaApp:
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
+            filtro=self.filtro_atual,
         )
         return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
 
@@ -180,6 +181,7 @@ class AtaApp:
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
+            filtro=self.filtro_atual,
         )
         self.grouped_tables.content = new_table.content
         self.search_field.value = self.texto_busca
