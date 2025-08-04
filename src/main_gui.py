@@ -106,7 +106,6 @@ class AtaApp:
                 spacing=16,
                 run_spacing=16,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                wrap=True,
             ),
             expand=True,
         )
