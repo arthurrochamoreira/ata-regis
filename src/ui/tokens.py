@@ -1,9 +1,11 @@
-SPACE_1 = 4
-SPACE_2 = 8
-SPACE_3 = 12
-SPACE_4 = 16
-SPACE_5 = 24
-SPACE_6 = 32
+from .spacing import (
+    SPACE_1,
+    SPACE_2,
+    SPACE_3,
+    SPACE_4,
+    SPACE_5,
+    SPACE_6,
+)
 
 import flet as ft
 from typing import Callable, Optional

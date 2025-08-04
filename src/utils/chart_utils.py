@@ -8,6 +8,25 @@ try:
 except ImportError:
     from models.ata import Ata
 
+try:
+    from ..ui.spacing import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        SPACE_6,
+    )
+except Exception:  # pragma: no cover
+    from ui.spacing import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        SPACE_6,
+    )
+
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""
     
@@ -86,11 +105,11 @@ class ChartUtils:
                     border_radius=2
                 ),
                 ft.Text(f"{info['icon']} {info['label']}: {count} ({percentage:.1f}%)")
-            ], spacing=8)
+            ], spacing=SPACE_2)
             
             legend_items.append(item)
         
-        return ft.Column(legend_items, spacing=8)
+        return ft.Column(legend_items, spacing=SPACE_2)
     
     @staticmethod
     def create_monthly_chart(atas: List[Ata]) -> ft.Container:
@@ -139,7 +158,7 @@ class ChartUtils:
                     ),
                     ft.Text(month, size=10, text_align=ft.TextAlign.CENTER)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                padding=ft.padding.all(4)
+                padding=ft.padding.all(SPACE_1)
             )
             bars.append(bar)
         
@@ -147,8 +166,8 @@ class ChartUtils:
             content=ft.Column([
                 ft.Text("Vencimentos por Mês", size=14, weight=ft.FontWeight.BOLD),
                 ft.Row(bars, alignment=ft.MainAxisAlignment.SPACE_AROUND)
-            ], spacing=16),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_4),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8
         )
@@ -167,7 +186,7 @@ class ChartUtils:
         if total_value == 0:
             return ft.Container(
                 content=ft.Text("Nenhum valor cadastrado"),
-                padding=ft.padding.all(16)
+                padding=ft.padding.all(SPACE_4)
             )
         
         # Cria barras horizontais
@@ -202,8 +221,8 @@ class ChartUtils:
                             border_radius=2
                         ),
                         ft.Text(f"{percentage:.1f}% ({value_formatted})", size=12)
-                    ], spacing=8, alignment=ft.MainAxisAlignment.START),
-                    margin=ft.margin.only(bottom=8)
+                    ], spacing=SPACE_2, alignment=ft.MainAxisAlignment.START),
+                    margin=ft.margin.only(bottom=SPACE_2)
                 )
                 bars.append(bar)
         
@@ -213,8 +232,8 @@ class ChartUtils:
                 ft.Text(f"Total: R$ {total_value:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), 
                        size=12, color=ft.colors.SECONDARY),
                 ft.Column(bars, spacing=0)
-            ], spacing=16),
-            padding=ft.padding.all(16),
+            ], spacing=SPACE_4),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8
         )
@@ -227,8 +246,8 @@ class ChartUtils:
                 content=ft.Row([
                     ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=24),
                     ft.Text("Nenhuma ata próxima do vencimento", color=ft.colors.GREEN)
-                ], spacing=8),
-                padding=ft.padding.all(16),
+                ], spacing=SPACE_2),
+                padding=ft.padding.all(SPACE_4),
                 border=ft.border.all(1, ft.colors.GREEN),
                 border_radius=8,
                 bgcolor=ft.colors.GREEN_50
@@ -262,9 +281,9 @@ class ChartUtils:
                 ft.Column([
                     ft.Text(message, weight=ft.FontWeight.BOLD, color=color),
                     ft.Text(f"Total de atas monitoradas: {len(atas_vencimento)}", size=12)
-                ], spacing=4)
-            ], spacing=8),
-            padding=ft.padding.all(16),
+                ], spacing=SPACE_1)
+            ], spacing=SPACE_2),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, color),
             border_radius=8,
             bgcolor=bgcolor
@@ -298,9 +317,9 @@ class ChartUtils:
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=4,
+                spacing=SPACE_1,
             ),
-            padding=ft.padding.all(16),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
             bgcolor=ft.colors.SURFACE_VARIANT,
@@ -330,9 +349,9 @@ class ChartUtils:
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=4,
+                spacing=SPACE_1,
             ),
-            padding=ft.padding.all(16),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.OUTLINE),
             border_radius=8,
             bgcolor=ft.colors.SURFACE_VARIANT,
@@ -367,9 +386,9 @@ class ChartUtils:
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=4,
+                spacing=SPACE_1,
             ),
-            padding=ft.padding.all(16),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.GREEN),
             border_radius=8,
             bgcolor=ft.colors.GREEN_50,
@@ -404,9 +423,9 @@ class ChartUtils:
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=4,
+                spacing=SPACE_1,
             ),
-            padding=ft.padding.all(16),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, ft.colors.ORANGE),
             border_radius=8,
             bgcolor=ft.colors.ORANGE_50,
@@ -414,5 +433,5 @@ class ChartUtils:
         )
         cards.append(card_vencer)
 
-        return ft.Row(cards, spacing=16, alignment=ft.MainAxisAlignment.SPACE_EVENLY)
+        return ft.Row(cards, spacing=SPACE_4, alignment=ft.MainAxisAlignment.SPACE_EVENLY)
 

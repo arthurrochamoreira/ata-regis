@@ -3,29 +3,25 @@ from datetime import timedelta
 from typing import Callable
 
 try:
-    from .tokens import (
+    from .spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
         SPACE_6,
-        build_section,
-        primary_button,
-        secondary_button,
     )
+    from .tokens import build_section, primary_button, secondary_button
 except Exception:  # pragma: no cover
-    from tokens import (
+    from spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
         SPACE_6,
-        build_section,
-        primary_button,
-        secondary_button,
     )
+    from tokens import build_section, primary_button, secondary_button
 
 try:
     from ..models.ata import Ata
@@ -53,7 +49,7 @@ def build_ata_detail_view(
     header = ft.Row(
         [
             ft.Column(
-                spacing=2,
+                spacing=SPACE_1,
                 controls=[
                     ft.Text(
                         "Ata de Registro de Preços",
@@ -281,7 +277,7 @@ def build_ata_detail_view(
                     ft.Icon(ft.icons.PHONE_OUTLINED, color="#6B7280"),
                     ft.Text(tel),
                 ],
-                spacing=8,
+                spacing=SPACE_2,
             )
         )
     if ata.telefones_fornecedor:
@@ -293,11 +289,11 @@ def build_ata_detail_view(
                     ft.Icon(ft.icons.EMAIL_OUTLINED, color="#6B7280"),
                     ft.Text(email),
                 ],
-                spacing=8,
+                spacing=SPACE_2,
             )
         )
 
-    contatos_body = ft.Column(contatos_list, spacing=12)
+    contatos_body = ft.Column(contatos_list, spacing=SPACE_3)
     contatos_section = build_section(
         "Contatos",
         ft.icons.HEADSET_MIC_OUTLINED,
@@ -318,7 +314,7 @@ def build_ata_detail_view(
     card = ft.Container(
         content=ft.Column(
             [header, layout],
-            spacing=32,
+            spacing=SPACE_6,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
