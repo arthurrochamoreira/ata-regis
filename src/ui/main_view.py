@@ -125,12 +125,12 @@ def build_filters(
         )
         return ft.ElevatedButton(
             content=content,
+            width=140,
             height=48,
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=16),
                 shape=ft.RoundedRectangleBorder(radius=8),
                 bgcolor=bg,
-                minimum_size=ft.Size(140, 48),
             ),
             on_click=lambda e: filtro_cb(value),
         )
