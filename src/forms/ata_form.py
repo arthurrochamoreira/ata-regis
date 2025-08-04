@@ -11,6 +11,8 @@ try:
         build_section,
         primary_button,
         secondary_button,
+        text_button,
+        icon_button,
     )
 except Exception:  # pragma: no cover
     from ui.tokens import (
@@ -21,6 +23,8 @@ except Exception:  # pragma: no cover
         build_section,
         primary_button,
         secondary_button,
+        text_button,
+        icon_button,
     )
 try:
     from ..models.ata import Ata, Item
@@ -137,8 +141,8 @@ class AtaForm:
             dados_gerais_body,
         )
         
-        telefones_header_btn = ft.IconButton(
-            icon=ft.icons.ADD,
+        telefones_header_btn = icon_button(
+            ft.icons.ADD,
             tooltip="Adicionar telefone",
             on_click=lambda e: self.add_telefone(),
         )
@@ -155,8 +159,8 @@ class AtaForm:
             ], spacing=SPACE_2),
         )
         
-        emails_header_btn = ft.IconButton(
-            icon=ft.icons.ADD,
+        emails_header_btn = icon_button(
+            ft.icons.ADD,
             tooltip="Adicionar e-mail",
             on_click=lambda e: self.add_email(),
         )
@@ -173,8 +177,8 @@ class AtaForm:
             ], spacing=SPACE_2),
         )
         
-        itens_header_btn = ft.IconButton(
-            icon=ft.icons.ADD,
+        itens_header_btn = icon_button(
+            ft.icons.ADD,
             tooltip="Adicionar item",
             on_click=lambda e: self.add_item(),
         )
@@ -287,9 +291,9 @@ class AtaForm:
             width=200
         )
         
-        remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE,
-            tooltip="Remover telefone"
+        remove_btn = icon_button(
+            ft.icons.DELETE,
+            tooltip="Remover telefone",
         )
 
         row = ft.Row([telefone_field, remove_btn], spacing=SPACE_2)
@@ -314,9 +318,9 @@ class AtaForm:
             width=300
         )
         
-        remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE,
-            tooltip="Remover e-mail"
+        remove_btn = icon_button(
+            ft.icons.DELETE,
+            tooltip="Remover e-mail",
         )
 
         row = ft.Row([email_field, remove_btn], spacing=SPACE_2)
@@ -355,10 +359,10 @@ class AtaForm:
             width=150
         )
         
-        remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE,
+        remove_btn = icon_button(
+            ft.icons.DELETE,
             tooltip="Remover item",
-            on_click=lambda e: self.remove_item(descricao_field, row)
+            on_click=lambda e: self.remove_item(descricao_field, row),
         )
         
         row = ft.Row([
@@ -483,7 +487,7 @@ class AtaForm:
                     ft.Text("Corrija os seguintes erros:"),
                     *[ft.Text(f"• {erro}") for erro in erros]
                 ], tight=True),
-                actions=[ft.TextButton("OK", on_click=lambda e: self.close_error_dialog())]
+                actions=[text_button("OK", on_click=lambda e: self.close_error_dialog())]
             )
             self.page.dialog = erro_dialog
             erro_dialog.open = True

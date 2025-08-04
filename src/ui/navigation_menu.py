@@ -1,9 +1,9 @@
 import flet as ft
 
 try:
-    from .tokens import SPACE_2, SPACE_3, SPACE_5
+    from .tokens import SPACE_2, SPACE_3, SPACE_5, icon_button
 except Exception:  # pragma: no cover
-    from tokens import SPACE_2, SPACE_3, SPACE_5
+    from tokens import SPACE_2, SPACE_3, SPACE_5, icon_button
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
@@ -98,7 +98,11 @@ class LeftNavigationMenu(ft.Column):
         ]
         self.rail = NavigationColumn(app, self.destinations)
         self.dark_light_text = ft.Text("Light theme")
-        self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
+        self.dark_light_icon = icon_button(
+            ft.icons.BRIGHTNESS_2_OUTLINED,
+            tooltip="Toggle brightness",
+            on_click=self.theme_changed,
+        )
         self.padding = SPACE_5
         self.spacing = SPACE_3
         self.controls = [
