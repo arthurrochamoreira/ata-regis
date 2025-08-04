@@ -34,6 +34,34 @@ except ImportError:  # for standalone execution
     from utils.chart_utils import ChartUtils
 
 
+STATUS_INFO = {
+    "vigente": {
+        "title": "Atas Vigentes",
+        "filter": "Vigentes",
+        "icon": ft.icons.CHECK_CIRCLE,
+        "icon_color": "#16A34A",
+        "icon_bg": "#D1FAE5",
+        "button_color": ft.colors.GREEN,
+    },
+    "a_vencer": {
+        "title": "Atas a Vencer",
+        "filter": "A Vencer",
+        "icon": ft.icons.WARNING_AMBER_ROUNDED,
+        "icon_color": "#CA8A04",
+        "icon_bg": "#FEF9C3",
+        "button_color": ft.colors.ORANGE,
+    },
+    "vencida": {
+        "title": "Atas Vencidas",
+        "filter": "Vencidas",
+        "icon": ft.icons.CANCEL,
+        "icon_color": "#DC2626",
+        "icon_bg": "#FEE2E2",
+        "button_color": ft.colors.RED,
+    },
+}
+
+
 def build_header(
     nova_ata_cb: Callable,
     verificar_alertas_cb: Callable,
@@ -71,9 +99,14 @@ def build_header(
 
 def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
     """Return container with filter buttons."""
-    def button(label: str, value: str, color: str) -> ft.ElevatedButton:
+
+    def button(
+        label: str, value: str, color: str, icon: str, icon_color: str | None = None
+    ) -> ft.ElevatedButton:
         return ft.ElevatedButton(
             label,
+            icon=icon,
+            icon_color=icon_color,
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
             style=ft.ButtonStyle(
@@ -82,12 +115,21 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             ),
         )
 
-    buttons = [
-        button("✅ Vigentes", "vigente", ft.colors.GREEN),
-        button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-        button("❌ Vencidas", "vencida", ft.colors.RED),
-        button("📋 Todas", "todos", ft.colors.BLUE),
-    ]
+    buttons: list[ft.ElevatedButton] = []
+    for key in ["vigente", "a_vencer", "vencida"]:
+        info = STATUS_INFO[key]
+        buttons.append(
+            button(
+                info["filter"],
+                key,
+                info["button_color"],
+                info["icon"],
+                info["icon_color"],
+            )
+        )
+
+    buttons.append(button("Todas", "todos", ft.colors.BLUE, ft.icons.LIST))
+
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
     row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
@@ -274,43 +316,24 @@ def build_grouped_data_tables(
     for ata in atas:
         groups[ata.status].append(ata)
 
-    status_info = {
-        "vigente": {
-            "title": "Atas Vigentes",
-            "icon": ft.icons.CHECK_CIRCLE,
-            "icon_color": "#16A34A",
-            "icon_bg": "#D1FAE5",
-        },
-        "a_vencer": {
-            "title": "Atas a Vencer",
-            "icon": ft.icons.WARNING_AMBER_ROUNDED,
-            "icon_color": "#CA8A04",
-            "icon_bg": "#FEF9C3",
-        },
-        "vencida": {
-            "title": "Atas Vencidas",
-            "icon": ft.icons.CANCEL,
-            "icon_color": "#DC2626",
-            "icon_bg": "#FEE2E2",
-        },
-    }
-
     statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
 
     card_controls: list[ft.Control] = []
     for status in statuses:
         atas_status = groups[status]
 
+        info = STATUS_INFO[status]
+
         icon = ft.Container(
             content=ft.Icon(
-                status_info[status]["icon"],
-                color=status_info[status]["icon_color"],
+                info["icon"],
+                color=info["icon_color"],
                 size=20,
             ),
             width=28,
             height=28,
             padding=ft.padding.all(SPACE_1),
-            bgcolor=status_info[status]["icon_bg"],
+            bgcolor=info["icon_bg"],
             border_radius=4,
         )
 
@@ -322,7 +345,7 @@ def build_grouped_data_tables(
             status,
         )
 
-        card = build_card(status_info[status]["title"], icon, table)
+        card = build_card(info["title"], icon, table)
 
         if filtro == "todos":
             card.col = {"xs": 12, "lg": 4}
