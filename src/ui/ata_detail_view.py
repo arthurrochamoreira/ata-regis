@@ -53,7 +53,7 @@ def build_ata_detail_view(
     header = ft.Row(
         [
             ft.Column(
-                spacing=2,
+                spacing=SPACE_1 // 2,
                 controls=[
                     ft.Text(
                         "Ata de Registro de Preços",
@@ -281,7 +281,7 @@ def build_ata_detail_view(
                     ft.Icon(ft.icons.PHONE_OUTLINED, color="#6B7280"),
                     ft.Text(tel),
                 ],
-                spacing=8,
+                spacing=SPACE_2,
             )
         )
     if ata.telefones_fornecedor:
@@ -293,11 +293,11 @@ def build_ata_detail_view(
                     ft.Icon(ft.icons.EMAIL_OUTLINED, color="#6B7280"),
                     ft.Text(email),
                 ],
-                spacing=8,
+                spacing=SPACE_2,
             )
         )
 
-    contatos_body = ft.Column(contatos_list, spacing=12)
+    contatos_body = ft.Column(contatos_list, spacing=SPACE_3)
     contatos_section = build_section(
         "Contatos",
         ft.icons.HEADSET_MIC_OUTLINED,
@@ -318,11 +318,10 @@ def build_ata_detail_view(
     card = ft.Container(
         content=ft.Column(
             [header, layout],
-            spacing=32,
+            spacing=SPACE_6,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        width=1152,
         bgcolor="#FFFFFF",
         padding=SPACE_5,
         border_radius=16,

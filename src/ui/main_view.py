@@ -482,7 +482,7 @@ def build_atas_vencimento(
                         f"Faltam {ata.dias_restantes} dias",
                         color=ft.colors.RED if ata.dias_restantes <= 30 else ft.colors.ORANGE,
                     ),
-                ], spacing=4),
+                ], spacing=SPACE_1),
                 ft.Row([
                     ft.IconButton(icon=ft.icons.VISIBILITY, tooltip="Visualizar", on_click=lambda e, ata=ata: visualizar_cb(ata)),
                     ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
@@ -538,7 +538,7 @@ def build_stats_panel(ata_service) -> ft.Container:
                 ),
                 ft.Row(
                     [pie_chart, legend],
-                    spacing=32,
+                    spacing=SPACE_6,
                     alignment=ft.MainAxisAlignment.START,
                 ),
                 value_chart,

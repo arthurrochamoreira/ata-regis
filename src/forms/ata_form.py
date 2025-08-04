@@ -210,7 +210,7 @@ class AtaForm:
         header = ft.Row(
             [
                 ft.Column(
-                    spacing=2,
+                    spacing=SPACE_1 // 2,
                     controls=[
                         ft.Text(
                             "Ata de Registro de Preços",
@@ -233,8 +233,7 @@ class AtaForm:
         )
 
         card = ft.Container(
-            content=ft.Column([header, content], spacing=32, expand=True),
-            width=1152,
+            content=ft.Column([header, content], spacing=SPACE_6, expand=True),
             bgcolor="#FFFFFF",
             padding=SPACE_5,
             border_radius=16,
