@@ -115,9 +115,6 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
-                text_style=ft.TextStyle(
-                    weight=ft.FontWeight.W_500,
-                ),
             ),
         )
 
