@@ -33,12 +33,12 @@ class AtasTable(ft.UserControl):
             data_columns.append(
                 ft.DataColumn(
                     label=ft.Container(
-                        ft.Text(
-                            col.upper(),
-                            text_align=ft.TextAlign.CENTER,
-                            weight=ft.FontWeight.SEMIBOLD,
-                            size=font_size,
-                        ),
+                            ft.Text(
+                                col.upper(),
+                                text_align=ft.TextAlign.CENTER,
+                            weight=ft.FontWeight.W_600,
+                                size=font_size,
+                            ),
                         alignment=ft.alignment.center,
                         expand=expand,
                     )
@@ -52,7 +52,7 @@ class AtasTable(ft.UserControl):
                         ft.Text(
                             "AÇÕES",
                             text_align=ft.TextAlign.CENTER,
-                            weight=ft.FontWeight.SEMIBOLD,
+                            weight=ft.FontWeight.W_600,
                             size=font_size,
                         ),
                         alignment=ft.alignment.center,
