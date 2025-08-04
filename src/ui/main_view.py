@@ -11,9 +11,6 @@ try:
         SPACE_6,
         build_card,
         primary_button,
-        button_style,
-        BUTTON_HEIGHT,
-        icon_button,
     )
 except Exception:  # pragma: no cover - fallback for standalone execution
     from tokens import (
@@ -25,9 +22,6 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_6,
         build_card,
         primary_button,
-        button_style,
-        BUTTON_HEIGHT,
-        icon_button,
     )
 
 try:
@@ -129,8 +123,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if selected else ft.colors.SURFACE_VARIANT,
             color=ft.colors.WHITE if selected else ft.colors.BLACK,
-            height=BUTTON_HEIGHT,
-            style=button_style(),
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                shape=ft.RoundedRectangleBorder(radius=8),
+            ),
             expand=True,
         )
 
@@ -289,29 +285,32 @@ def build_data_table(
 
         actions = ft.Row(
             [
-                icon_button(
-                    ft.icons.VISIBILITY,
+                ft.IconButton(
+                    icon=ft.icons.VISIBILITY,
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
-                    style=button_style(
+                    style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
                     ),
+                    icon_size=20,
                 ),
-                icon_button(
-                    ft.icons.EDIT,
+                ft.IconButton(
+                    icon=ft.icons.EDIT,
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
-                    style=button_style(
+                    style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
                     ),
+                    icon_size=20,
                 ),
-                icon_button(
-                    ft.icons.DELETE,
+                ft.IconButton(
+                    icon=ft.icons.DELETE,
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
-                    style=button_style(
+                    style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
                     ),
+                    icon_size=20,
                 ),
             ],
             spacing=SPACE_3,
@@ -485,16 +484,8 @@ def build_atas_vencimento(
                     ),
                 ], spacing=4),
                 ft.Row([
-                    icon_button(
-                        ft.icons.VISIBILITY,
-                        tooltip="Visualizar",
-                        on_click=lambda e, ata=ata: visualizar_cb(ata),
-                    ),
-                    icon_button(
-                        ft.icons.EMAIL,
-                        tooltip="Enviar Alerta",
-                        on_click=lambda e, ata=ata: alerta_cb(ata),
-                    ),
+                    ft.IconButton(icon=ft.icons.VISIBILITY, tooltip="Visualizar", on_click=lambda e, ata=ata: visualizar_cb(ata)),
+                    ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
                 ]),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.all(SPACE_3),

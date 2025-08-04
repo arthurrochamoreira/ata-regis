@@ -20,7 +20,7 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.tokens import SPACE_4, text_button
+from ui.tokens import SPACE_4
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -231,8 +231,8 @@ class AtaApp:
             title=ft.Text("Excluir Ata"),
             content=ft.Text(f"Deseja realmente excluir a ata {ata.numero_ata}?"),
             actions=[
-                text_button("Cancelar", on_click=lambda e: self.close_dialog()),
-                text_button("Excluir", on_click=lambda e: self.confirmar_exclusao(ata.numero_ata))
+                ft.TextButton("Cancelar", on_click=lambda e: self.close_dialog()),
+                ft.TextButton("Excluir", on_click=lambda e: self.confirmar_exclusao(ata.numero_ata))
             ]
         )
         self.page.dialog.open = True
@@ -253,7 +253,7 @@ class AtaApp:
             self.page.dialog = ft.AlertDialog(
                 title=ft.Text("Alerta Enviado"),
                 content=ft.Text("Alerta de vencimento enviado com sucesso!\n(Verifique o console para detalhes)"),
-                actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+                actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
             )
             self.page.dialog.open = True
             self.page.update()
@@ -294,7 +294,7 @@ class AtaApp:
         self.page.dialog = ft.AlertDialog(
             title=ft.Text("Sucesso"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
@@ -304,7 +304,7 @@ class AtaApp:
         self.page.dialog = ft.AlertDialog(
             title=ft.Text("Erro"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
@@ -337,7 +337,7 @@ class AtaApp:
         self.page.dialog = ft.AlertDialog(
             title=ft.Text("Verificação de Alertas"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
@@ -352,7 +352,7 @@ class AtaApp:
         self.page.dialog = ft.AlertDialog(
             title=ft.Text(f"Relatório {tipo.title()}"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
@@ -367,7 +367,7 @@ class AtaApp:
         self.page.dialog = ft.AlertDialog(
             title=ft.Text("Teste de Email"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
@@ -394,7 +394,7 @@ O sistema está monitorando automaticamente as atas e enviará alertas conforme 
         self.page.dialog = ft.AlertDialog(
             title=ft.Text("Status do Sistema"),
             content=ft.Text(message),
-            actions=[text_button("OK", on_click=lambda e: self.close_dialog())]
+            actions=[ft.TextButton("OK", on_click=lambda e: self.close_dialog())]
         )
         self.page.dialog.open = True
         self.page.update()
