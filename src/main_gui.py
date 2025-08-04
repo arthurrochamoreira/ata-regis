@@ -74,15 +74,14 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=ft.colors.GREY_800,
+            bgcolor=ft.colors.WHITE,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
                 top=SPACE_5,
                 bottom=SPACE_5,
             ),
-            border_radius=ft.border_radius.only(top_right=12, bottom_right=12),
-            shadow=ft.BoxShadow(blur_radius=8, spread_radius=0),
+            shadow=ft.BoxShadow(blur_radius=1, spread_radius=0),
         )
 
         layout = ft.Row(
