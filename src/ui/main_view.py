@@ -103,15 +103,22 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     def button(
         label: str, value: str, color: str, icon: str, icon_color: str | None = None
     ) -> ft.ElevatedButton:
+        selected = filtro_atual == value
         return ft.ElevatedButton(
             label,
             icon=icon,
             icon_color=icon_color,
             on_click=lambda e: filtro_cb(value),
-            bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            bgcolor=color if selected else ft.colors.SURFACE_VARIANT,
+            color=ft.colors.WHITE if selected else ft.colors.BLACK,
+            min_width=100,
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
+                text_style=ft.TextStyle(
+                    no_wrap=True,
+                    weight=ft.FontWeight.W_500,
+                ),
             ),
         )
 
@@ -132,11 +139,13 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
 
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
-    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
+    row = ft.ResponsiveRow(
+        buttons, columns=12, spacing=SPACE_4, run_spacing=SPACE_4
+    )
     return ft.Container(
         content=row,
         padding=ft.padding.all(SPACE_4),
-        margin=ft.margin.only(bottom=SPACE_5),
+        margin=ft.margin.only(bottom=SPACE_4),
         expand=True,
     )
 
@@ -171,6 +180,16 @@ def build_data_table(
     status: str,
 ) -> ft.Column:
     """Return custom table for a list of atas respecting design specs."""
+    if not atas:
+        return ft.Container(
+            content=ft.Text(
+                "Nenhuma ata encontrada",
+                color="#6B7280",
+                no_wrap=True,
+            ),
+            alignment=ft.alignment.center,
+            padding=ft.padding.all(SPACE_4),
+        )
 
     header_labels = ["Número", "Vigência", "Objeto", "Fornecedor", "Situação", "Ações"]
 
@@ -181,14 +200,17 @@ def build_data_table(
                 size=11,
                 weight=ft.FontWeight.W_600,
                 color="#6B7280",
+                no_wrap=True,
             ),
             expand=1,
+            min_width=80,
+            alignment=ft.alignment.center_left,
         )
         for lbl in header_labels
     ]
     header_row = ft.Container(
         content=ft.Row(header_cells, spacing=SPACE_4),
-        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_4),
+        padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
         bgcolor="#F9FAFB",
         border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
     )
@@ -209,23 +231,37 @@ def build_data_table(
                 weight=ft.FontWeight.W_500,
                 color="#111827",
                 max_lines=1,
+                no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
             ),
-            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
+            ft.Text(
+                data_formatada,
+                max_lines=1,
+                no_wrap=True,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
             ft.Text(
                 ata.objeto,
                 max_lines=1,
+                no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
             ),
             ft.Text(
                 ata.fornecedor,
                 max_lines=1,
+                no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
             ),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
-            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
+            ft.Text(
+                ata.status.replace("_", " ").title(),
+                size=12,
+                weight=ft.FontWeight.W_500,
+                color=badge_text_color,
+                no_wrap=True,
+            ),
             padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
             border_radius=6,
@@ -263,15 +299,46 @@ def build_data_table(
             ],
             spacing=SPACE_3,
             alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
 
         cells = [
-            ft.Container(text_cells[0], expand=1),
-            ft.Container(text_cells[1], expand=1),
-            ft.Container(text_cells[2], expand=2),
-            ft.Container(text_cells[3], expand=1),
-            ft.Container(badge, expand=1),
-            ft.Container(actions, expand=1),
+            ft.Container(
+                text_cells[0],
+                expand=1,
+                min_width=80,
+                alignment=ft.alignment.center_left,
+            ),
+            ft.Container(
+                text_cells[1],
+                expand=1,
+                min_width=80,
+                alignment=ft.alignment.center_left,
+            ),
+            ft.Container(
+                text_cells[2],
+                expand=2,
+                min_width=160,
+                alignment=ft.alignment.center_left,
+            ),
+            ft.Container(
+                text_cells[3],
+                expand=1,
+                min_width=120,
+                alignment=ft.alignment.center_left,
+            ),
+            ft.Container(
+                badge,
+                expand=1,
+                min_width=100,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                actions,
+                expand=1,
+                min_width=80,
+                alignment=ft.alignment.center,
+            ),
         ]
 
         row_container = ft.Container(
@@ -280,7 +347,7 @@ def build_data_table(
                 spacing=SPACE_3,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.all(SPACE_3),
+            padding=ft.padding.all(SPACE_4),
             border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
@@ -321,6 +388,8 @@ def build_grouped_data_tables(
     card_controls: list[ft.Control] = []
     for status in statuses:
         atas_status = groups[status]
+        if not atas_status and filtro == "todos":
+            continue
 
         info = STATUS_INFO[status]
 
@@ -353,6 +422,18 @@ def build_grouped_data_tables(
             # Single card should span the entire content area
             card.col = 12
         card_controls.append(card)
+
+    if not card_controls:
+        return ft.Container(
+            content=ft.Text(
+                "Nenhuma ata encontrada",
+                color="#6B7280",
+                no_wrap=True,
+            ),
+            alignment=ft.alignment.center,
+            padding=ft.padding.all(SPACE_4),
+            expand=True,
+        )
 
     row = ft.ResponsiveRow(
         card_controls,
