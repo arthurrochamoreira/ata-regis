@@ -85,7 +85,7 @@ def build_section(
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     header = ft.Row(
-        [icon, ft.Text(title, size=16, weight=ft.FontWeight.W_600)],
+        [icon, ft.Text(title, size=18, weight=ft.FontWeight.W_600)],
         spacing=SPACE_2,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
