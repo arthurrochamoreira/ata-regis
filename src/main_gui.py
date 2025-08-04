@@ -20,7 +20,7 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.spacing import SPACE_4, SPACE_5
+from ui.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -65,7 +65,6 @@ class AtaApp:
         )
 
         self.navigation_menu = LeftNavigationMenu(self)
-        self.navigation_menu.update_layout(self.page.width)
         self.body_container = ft.Container(
             padding=ft.padding.only(
                 left=SPACE_5,
@@ -77,12 +76,44 @@ class AtaApp:
         )
         self.update_body()
 
+        self.menu_container = ft.Container(
+            content=self.navigation_menu,
+            width=200,
+            bgcolor=ft.colors.GREY_800,
+            padding=ft.padding.only(
+                left=SPACE_5,
+                right=SPACE_5,
+                top=SPACE_5,
+                bottom=SPACE_5,
+            ),
+            border_radius=ft.border_radius.only(top_right=12, bottom_right=12),
+            shadow=ft.BoxShadow(blur_radius=8, spread_radius=0),
+        )
+
         layout = ft.Row(
-            [self.navigation_menu, ft.VerticalDivider(width=1), self.body_container],
+            [self.menu_container, self.body_container],
             expand=True,
         )
 
         self.page.add(layout)
+        self.update_responsive_layout(self.page.width)
+        self.page.update()
+
+    def update_responsive_layout(self, width: int):
+        """Atualiza visibilidade e dimensões da barra lateral conforme ``width``."""
+        self.navigation_menu.update_layout(width)
+
+        if width < 768:
+            self.menu_container.visible = False
+        elif width < 1024:
+            self.menu_container.visible = True
+            self.menu_container.width = 80
+            self.menu_container.padding = ft.padding.all(SPACE_2)
+        else:
+            self.menu_container.visible = True
+            self.menu_container.width = 200
+            self.menu_container.padding = ft.padding.all(SPACE_5)
+
         self.page.update()
     
     def build_stats_panel(self):
@@ -153,10 +184,10 @@ class AtaApp:
         self.update_body()
 
     def on_page_resize(self, e):
+        self.update_responsive_layout(self.page.width)
         new_bp = get_breakpoint(self.page.width)
         if new_bp != self.breakpoint:
             self.breakpoint = new_bp
-            self.navigation_menu.update_layout(self.page.width)
             self.refresh_ui()
     
     def get_atas_filtradas(self):
