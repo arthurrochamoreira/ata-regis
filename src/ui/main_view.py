@@ -32,6 +32,42 @@ except ImportError:  # for standalone execution
     from utils.chart_utils import ChartUtils
 
 
+# Informações de status reutilizadas entre cards e filtros
+STATUS_INFO = {
+    "vigente": {
+        "title": "Atas Vigentes",
+        "icon": ft.icons.CHECK_CIRCLE,
+        "icon_color": "#16A34A",
+        "icon_bg": "#D1FAE5",
+        "filter_label": "Vigentes",
+        "filter_color": ft.colors.GREEN,
+    },
+    "a_vencer": {
+        "title": "Atas a Vencer",
+        "icon": ft.icons.WARNING_AMBER_ROUNDED,
+        "icon_color": "#CA8A04",
+        "icon_bg": "#FEF9C3",
+        "filter_label": "A Vencer",
+        "filter_color": ft.colors.ORANGE,
+    },
+    "vencida": {
+        "title": "Atas Vencidas",
+        "icon": ft.icons.CANCEL,
+        "icon_color": "#DC2626",
+        "icon_bg": "#FEE2E2",
+        "filter_label": "Vencidas",
+        "filter_color": ft.colors.RED,
+    },
+}
+
+ALL_FILTER_INFO = {
+    "filter_label": "Todas",
+    "icon": ft.icons.LIST_ALT,
+    "icon_color": ft.colors.BLUE,
+    "filter_color": ft.colors.BLUE,
+}
+
+
 def build_header(
     nova_ata_cb: Callable,
     verificar_alertas_cb: Callable,
@@ -74,23 +110,37 @@ def build_header(
 
 def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
     """Return container with filter buttons."""
-    def button(label: str, value: str, color: str) -> ft.ElevatedButton:
+
+    def button(status: str) -> ft.ElevatedButton:
+        info = STATUS_INFO[status]
         return ft.ElevatedButton(
-            label,
-            on_click=lambda e: filtro_cb(value),
-            bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            info["filter_label"],
+            icon=info["icon"],
+            icon_color=info["icon_color"],
+            on_click=lambda e, v=status: filtro_cb(v),
+            bgcolor=info["filter_color"] if filtro_atual == status else ft.colors.SURFACE_VARIANT,
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
             ),
         )
 
-    buttons = [
-        button("✅ Vigentes", "vigente", ft.colors.GREEN),
-        button("⚠️ A Vencer", "a_vencer", ft.colors.ORANGE),
-        button("❌ Vencidas", "vencida", ft.colors.RED),
-        button("📋 Todas", "todos", ft.colors.BLUE),
-    ]
+    buttons = [button("vigente"), button("a_vencer"), button("vencida")]
+
+    buttons.append(
+        ft.ElevatedButton(
+            ALL_FILTER_INFO["filter_label"],
+            icon=ALL_FILTER_INFO["icon"],
+            icon_color=ALL_FILTER_INFO["icon_color"],
+            on_click=lambda e: filtro_cb("todos"),
+            bgcolor=ALL_FILTER_INFO["filter_color"] if filtro_atual == "todos" else ft.colors.SURFACE_VARIANT,
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                shape=ft.RoundedRectangleBorder(radius=8),
+            ),
+        )
+    )
+
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
     row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
@@ -270,41 +320,17 @@ def build_grouped_data_tables(
     for ata in atas:
         groups[ata.status].append(ata)
 
-    status_info = {
-        "vigente": {
-            "title": "Atas Vigentes",
-            "icon": ft.icons.CHECK_CIRCLE,
-            "icon_color": "#16A34A",
-            "icon_bg": "#D1FAE5",
-        },
-        "a_vencer": {
-            "title": "Atas a Vencer",
-            "icon": ft.icons.WARNING_AMBER_ROUNDED,
-            "icon_color": "#CA8A04",
-            "icon_bg": "#FEF9C3",
-        },
-        "vencida": {
-            "title": "Atas Vencidas",
-            "icon": ft.icons.CANCEL,
-            "icon_color": "#DC2626",
-            "icon_bg": "#FEE2E2",
-        },
-    }
-
     card_controls = []
     for status in ["vigente", "a_vencer", "vencida"]:
         atas_status = groups[status]
+        info = STATUS_INFO[status]
 
         icon = ft.Container(
-            content=ft.Icon(
-                status_info[status]["icon"],
-                color=status_info[status]["icon_color"],
-                size=20,
-            ),
+            content=ft.Icon(info["icon"], color=info["icon_color"], size=20),
             width=28,
             height=28,
             padding=ft.padding.all(SPACE_1),
-            bgcolor=status_info[status]["icon_bg"],
+            bgcolor=info["icon_bg"],
             border_radius=4,
         )
 
@@ -316,7 +342,7 @@ def build_grouped_data_tables(
             status,
         )
 
-        card = build_card(status_info[status]["title"], icon, table)
+        card = build_card(info["title"], icon, table)
         card.col = {"xs": 12, "lg": 4}
         card_controls.append(card)
 
