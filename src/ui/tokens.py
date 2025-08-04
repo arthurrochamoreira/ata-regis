@@ -4,6 +4,7 @@ SPACE_3 = 12
 SPACE_4 = 16
 SPACE_5 = 24
 SPACE_6 = 32
+DEFAULT_PADDING = 24
 
 import flet as ft
 from typing import Callable, Optional
@@ -19,7 +20,7 @@ CARD_BG = "#F8FAFC"
 def primary_button(
     text: str,
     *,
-    icon: Optional[str] = None,
+    icon: Optional[ft.Control] = None,
     on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
 ) -> ft.ElevatedButton:
     """Return a standard primary button used across the app."""
