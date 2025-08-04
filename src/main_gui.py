@@ -20,7 +20,7 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.tokens import SPACE_4, SPACE_5
+from ui.tokens import SPACE_4
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -46,7 +46,7 @@ class AtaApp:
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.page.padding = SPACE_5
+        self.page.padding = SPACE_4
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
@@ -94,20 +94,22 @@ class AtaApp:
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
-        buttons = build_filters(self.filtro_atual, self.filtrar_atas)
+        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
         search_container, self.search_field = build_search(
             self.buscar_atas, self.texto_busca
         )
-        controls = buttons + [ft.Container(expand=True), search_container]
+        filtros.margin = ft.margin.only(bottom=0)
+        search_container.margin = ft.margin.only(bottom=0)
+        filtros.col = {"xs": 12, "md": 4, "lg": 4}
+        search_container.col = {"xs": 12, "md": 8, "lg": 8}
         filtros_search_row = ft.Container(
             content=ft.ResponsiveRow(
-                controls,
+                [filtros, search_container],
                 columns=12,
                 spacing=16,
                 run_spacing=16,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                wrap=True,
             ),
+            margin=ft.margin.only(bottom=16),
             expand=True,
         )
         self.grouped_tables = build_grouped_data_tables(

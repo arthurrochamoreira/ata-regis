@@ -59,14 +59,6 @@ STATUS_INFO = {
         "icon_bg": "#FEE2E2",
         "button_color": ft.colors.RED,
     },
-    "todos": {
-        "title": "Todas as Atas",
-        "filter": "Todas",
-        "icon": ft.icons.LIST,
-        "icon_color": "#1D4ED8",
-        "icon_bg": "#DBEAFE",
-        "button_color": ft.colors.BLUE,
-    },
 }
 
 
@@ -105,58 +97,70 @@ def build_header(
     )
 
 
-def build_filters(
-    filtro_atual: str, filtro_cb: Callable[[str], None]
-) -> List[ft.ElevatedButton]:
-    """Return filter buttons following design specifications."""
+def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
+    """Return container with filter buttons."""
 
     def button(
-        label: str, value: str, info: dict[str, str]
+        label: str, value: str, color: str, icon: str, icon_color: str | None = None
     ) -> ft.ElevatedButton:
-        bg = info["button_color"] if filtro_atual == value else ft.colors.SURFACE_VARIANT
-        content = ft.Row(
-            [
-                ft.Icon(info["icon"], color=info.get("icon_color")),
-                ft.Text(label, no_wrap=True, size=14, weight=ft.FontWeight.W_500),
-            ],
-            spacing=8,
-            alignment=ft.MainAxisAlignment.START,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
         return ft.ElevatedButton(
-            content=content,
-            height=48,
-            style=ft.ButtonStyle(
-                padding=ft.padding.symmetric(horizontal=16),
-                shape=ft.RoundedRectangleBorder(radius=8),
-                bgcolor=bg,
-                minimum_size=ft.Size(140, 48),
-            ),
+            label,
+            icon=icon,
+            icon_color=icon_color,
             on_click=lambda e: filtro_cb(value),
+            bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                shape=ft.RoundedRectangleBorder(radius=8),
+            ),
         )
 
-    buttons: List[ft.ElevatedButton] = []
-    for key in ["vigente", "a_vencer", "vencida", "todos"]:
+    buttons: list[ft.ElevatedButton] = []
+    for key in ["vigente", "a_vencer", "vencida"]:
         info = STATUS_INFO[key]
-        buttons.append(button(info["filter"], key, info))
+        buttons.append(
+            button(
+                info["filter"],
+                key,
+                info["button_color"],
+                info["icon"],
+                info["icon_color"],
+            )
+        )
 
-    return buttons
+    buttons.append(button("Todas", "todos", ft.colors.BLUE, ft.icons.LIST))
+
+    for b in buttons:
+        b.col = {"xs": 6, "md": 3}
+    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
+    return ft.Container(
+        content=row,
+        padding=ft.padding.all(SPACE_4),
+        margin=ft.margin.only(bottom=SPACE_5),
+        expand=True,
+    )
 
 
 def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
     search_field = ft.TextField(
+        label="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
         value=value,
-        height=48,
-        border_radius=8,
-        content_padding=ft.padding.symmetric(horizontal=16),
         expand=True,
-        hint_text="Buscar atas...",
+        height=44,
+        content_padding=ft.padding.symmetric(horizontal=SPACE_4),
     )
-    container = ft.Container(content=search_field, width=320)
-    return container, search_field
+    return (
+        ft.Container(
+            content=search_field,
+            padding=ft.padding.all(SPACE_4),
+            margin=ft.margin.only(bottom=SPACE_6),
+            expand=True,
+        ),
+        search_field,
+    )
 
 
 def build_data_table(
@@ -165,17 +169,29 @@ def build_data_table(
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
     status: str,
-) -> ft.DataTable:
-    """Return DataTable for a list of atas respecting design specs."""
+) -> ft.Column:
+    """Return custom table for a list of atas respecting design specs."""
 
-    columns = [
-        ft.DataColumn(ft.Text("Número")),
-        ft.DataColumn(ft.Text("Vigência")),
-        ft.DataColumn(ft.Text("Objeto")),
-        ft.DataColumn(ft.Text("Fornecedor")),
-        ft.DataColumn(ft.Text("Situação")),
-        ft.DataColumn(ft.Text("Ações")),
+    header_labels = ["Número", "Vigência", "Objeto", "Fornecedor", "Situação", "Ações"]
+
+    header_cells = [
+        ft.Container(
+            ft.Text(
+                lbl.upper(),
+                size=11,
+                weight=ft.FontWeight.W_600,
+                color="#6B7280",
+            ),
+            expand=1,
+        )
+        for lbl in header_labels
     ]
+    header_row = ft.Container(
+        content=ft.Row(header_cells, spacing=SPACE_4),
+        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_4),
+        bgcolor="#F9FAFB",
+        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+    )
 
     badge_colors = {
         "vigente": ("#14532D", "#D1FAE5"),
@@ -183,97 +199,101 @@ def build_data_table(
         "vencida": ("#991B1B", "#FEE2E2"),
     }
 
-    rows: list[ft.DataRow] = []
-    for ata in atas:
+    rows: list[ft.Control] = []
+    total = len(atas)
+    for index, ata in enumerate(atas):
         data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
+        text_cells = [
+            ft.Text(
+                ata.numero_ata,
+                weight=ft.FontWeight.W_500,
+                color="#111827",
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
+            ft.Text(
+                ata.objeto,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            ft.Text(
+                ata.fornecedor,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+        ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
-            ft.Text(
-                ata.status.replace("_", " ").title(),
-                size=14,
-                weight=ft.FontWeight.W_400,
-                color=badge_text_color,
-            ),
-            padding=ft.padding.symmetric(vertical=4, horizontal=8),
+            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
+            padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
             border_radius=6,
         )
 
         actions = ft.Row(
             [
-                ft.InkWell(
-                    content=ft.Icon(ft.icons.VISIBILITY, size=20, color=ft.colors.GREY_600),
-                    on_tap=lambda e, ata=ata: visualizar_cb(ata),
-                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
-                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
-                    border_radius=8,
+                ft.IconButton(
+                    icon=ft.icons.VISIBILITY,
+                    tooltip="Visualizar",
+                    on_click=lambda e, ata=ata: visualizar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                    ),
+                    icon_size=20,
                 ),
-                ft.InkWell(
-                    content=ft.Icon(ft.icons.EDIT, size=20, color=ft.colors.GREY_600),
-                    on_tap=lambda e, ata=ata: editar_cb(ata),
-                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
-                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
-                    border_radius=8,
+                ft.IconButton(
+                    icon=ft.icons.EDIT,
+                    tooltip="Editar",
+                    on_click=lambda e, ata=ata: editar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                    ),
+                    icon_size=20,
                 ),
-                ft.InkWell(
-                    content=ft.Icon(ft.icons.DELETE, size=20, color=ft.colors.GREY_600),
-                    on_tap=lambda e, ata=ata: excluir_cb(ata),
-                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
-                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
-                    border_radius=8,
+                ft.IconButton(
+                    icon=ft.icons.DELETE,
+                    tooltip="Excluir",
+                    on_click=lambda e, ata=ata: excluir_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                    ),
+                    icon_size=20,
                 ),
             ],
+            spacing=SPACE_3,
             alignment=ft.MainAxisAlignment.CENTER,
-            spacing=8,
         )
 
-        rows.append(
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(
-                        ft.Text(
-                            ata.numero_ata,
-                            size=14,
-                            weight=ft.FontWeight.W_400,
-                            no_wrap=True,
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            data_formatada,
-                            size=14,
-                            weight=ft.FontWeight.W_400,
-                            no_wrap=True,
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            ata.objeto,
-                            size=14,
-                            weight=ft.FontWeight.W_400,
-                            no_wrap=True,
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            ata.fornecedor,
-                            size=14,
-                            weight=ft.FontWeight.W_400,
-                            no_wrap=True,
-                        )
-                    ),
-                    ft.DataCell(badge),
-                    ft.DataCell(actions),
-                ]
-            )
+        cells = [
+            ft.Container(text_cells[0], expand=1),
+            ft.Container(text_cells[1], expand=1),
+            ft.Container(text_cells[2], expand=2),
+            ft.Container(text_cells[3], expand=1),
+            ft.Container(badge, expand=1),
+            ft.Container(actions, expand=1),
+        ]
+
+        row_container = ft.Container(
+            content=ft.Row(
+                cells,
+                spacing=SPACE_3,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.padding.all(SPACE_3),
+            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
-    table = ft.DataTable(
-        columns=columns,
-        rows=rows,
-        column_spacing=24,
-        expand=True,
+        rows.append(row_container)
+
+    body = ft.Column(rows, spacing=0)
+
+    table = ft.Container(
+        content=ft.Column([header_row, body], spacing=0),
+        border=ft.border.all(1, "#E5E7EB"),
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
     )
+
     return table
 
 
@@ -284,24 +304,71 @@ def build_grouped_data_tables(
     excluir_cb: Callable[[Ata], None],
     filtro: str = "todos",
 ) -> ft.Container:
-    """Return a single status card with the atas list respecting ``filtro``."""
+    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
 
-    info = STATUS_INFO.get(filtro, STATUS_INFO["todos"])
+    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
+    corresponding card is returned and it expands to occupy the full available
+    width.  When ``filtro`` is ``todos`` the original layout with three cards is
+    rendered.
+    """
 
-    icon = ft.Container(
-        content=ft.Icon(info["icon"], color=info["icon_color"], size=20),
-        width=28,
-        height=28,
-        padding=ft.padding.all(SPACE_1),
-        bgcolor=info["icon_bg"],
-        border_radius=4,
+    groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
+    for ata in atas:
+        groups[ata.status].append(ata)
+
+    statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
+
+    card_controls: list[ft.Control] = []
+    for status in statuses:
+        atas_status = groups[status]
+
+        info = STATUS_INFO[status]
+
+        icon = ft.Container(
+            content=ft.Icon(
+                info["icon"],
+                color=info["icon_color"],
+                size=20,
+            ),
+            width=28,
+            height=28,
+            padding=ft.padding.all(SPACE_1),
+            bgcolor=info["icon_bg"],
+            border_radius=4,
+        )
+
+        table = build_data_table(
+            atas_status,
+            visualizar_cb,
+            editar_cb,
+            excluir_cb,
+            status,
+        )
+
+        card = build_card(info["title"], icon, table)
+
+        if filtro == "todos":
+            card.col = {"xs": 12, "lg": 4}
+        else:
+            # Single card should span the entire content area
+            card.col = 12
+        card_controls.append(card)
+
+    row = ft.ResponsiveRow(
+        card_controls,
+        columns=12,
+        alignment=ft.MainAxisAlignment.CENTER if filtro == "todos" else ft.MainAxisAlignment.START,
+        spacing=SPACE_6,
+        run_spacing=SPACE_6,
     )
 
-    table = build_data_table(atas, visualizar_cb, editar_cb, excluir_cb, filtro)
-
-    card = build_card(info["title"], icon, table)
-
-    return ft.Container(content=card, width="100%", margin=ft.margin.only(top=32))
+    container = ft.Container(
+        content=row,
+        alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
+        padding=0,
+        expand=True,
+    )
+    return container
 
 
 def build_atas_vencimento(
