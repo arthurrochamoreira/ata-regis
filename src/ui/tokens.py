@@ -79,19 +79,27 @@ def build_section(
     return ft.Container(
         content=ft.Column([header, body], spacing=SPACE_5),
         bgcolor=CARD_BG,
-        padding=SPACE_5,
+        padding=SPACE_4,
         border_radius=12,
     )
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     header = ft.Row(
-        [icon, ft.Text(title, size=16, weight=ft.FontWeight.W_600)],
+        [
+            icon,
+            ft.Text(
+                title,
+                size=16,
+                weight=ft.FontWeight.W_600,
+                color="#1F2937",
+            ),
+        ],
         spacing=SPACE_2,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
     return ft.Container(
         content=ft.Column([header, content], spacing=SPACE_4),
-        padding=SPACE_5,
+        padding=SPACE_4,
         border=ft.border.all(1, GREY_LIGHT),
         border_radius=12,
         bgcolor=ft.colors.WHITE,

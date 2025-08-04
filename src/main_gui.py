@@ -106,10 +106,10 @@ class AtaApp:
             content=ft.ResponsiveRow(
                 [filtros, search_container],
                 columns=12,
-                spacing=16,
-                run_spacing=16,
+                spacing=SPACE_4,
+                run_spacing=SPACE_4,
             ),
-            margin=ft.margin.only(bottom=16),
+            margin=ft.margin.only(bottom=SPACE_4),
             expand=True,
         )
         self.grouped_tables = build_grouped_data_tables(
