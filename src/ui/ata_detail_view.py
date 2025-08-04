@@ -149,12 +149,28 @@ def build_ata_detail_view(
     item_rows = [
         ft.DataRow(
             cells=[
-                ft.DataCell(ft.Text(item.descricao)),
-                ft.DataCell(ft.Text(str(item.quantidade))),
-                ft.DataCell(ft.Text(Formatters.formatar_valor_monetario(item.valor))),
                 ft.DataCell(
                     ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor_total)
+                        item.descricao,
+                        text_align=ft.TextAlign.START,
+                    )
+                ),
+                ft.DataCell(
+                    ft.Text(
+                        str(item.quantidade),
+                        text_align=ft.TextAlign.END,
+                    )
+                ),
+                ft.DataCell(
+                    ft.Text(
+                        Formatters.formatar_valor_monetario(item.valor),
+                        text_align=ft.TextAlign.END,
+                    )
+                ),
+                ft.DataCell(
+                    ft.Text(
+                        Formatters.formatar_valor_monetario(item.valor_total),
+                        text_align=ft.TextAlign.END,
                     )
                 ),
             ]
@@ -164,15 +180,36 @@ def build_ata_detail_view(
 
     itens_table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("Descrição", weight=ft.FontWeight.W_600)),
             ft.DataColumn(
-                ft.Text("Qtd.", weight=ft.FontWeight.W_600), numeric=True
+                ft.Text(
+                    "Descrição",
+                    weight=ft.FontWeight.W_600,
+                    text_align=ft.TextAlign.START,
+                )
             ),
             ft.DataColumn(
-                ft.Text("Valor Unit.", weight=ft.FontWeight.W_600), numeric=True
+                ft.Text(
+                    "Qtd.",
+                    weight=ft.FontWeight.W_600,
+                    text_align=ft.TextAlign.END,
+                ),
+                numeric=True,
             ),
             ft.DataColumn(
-                ft.Text("Subtotal", weight=ft.FontWeight.W_600), numeric=True
+                ft.Text(
+                    "Valor Unit.",
+                    weight=ft.FontWeight.W_600,
+                    text_align=ft.TextAlign.END,
+                ),
+                numeric=True,
+            ),
+            ft.DataColumn(
+                ft.Text(
+                    "Subtotal",
+                    weight=ft.FontWeight.W_600,
+                    text_align=ft.TextAlign.END,
+                ),
+                numeric=True,
             ),
         ],
         rows=item_rows,

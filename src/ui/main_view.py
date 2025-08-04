@@ -104,18 +104,30 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
         label: str, value: str, color: str, icon: str, icon_color: str | None = None
     ) -> ft.ElevatedButton:
         selected = filtro_atual == value
+        content = ft.Row(
+            [
+                ft.Icon(icon, color=icon_color),
+                ft.Text(
+                    label,
+                    no_wrap=True,
+                    max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                ),
+            ],
+            spacing=SPACE_2,
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
         return ft.ElevatedButton(
-            label,
-            icon=icon,
-            icon_color=icon_color,
+            content=content,
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if selected else ft.colors.SURFACE_VARIANT,
             color=ft.colors.WHITE if selected else ft.colors.BLACK,
-            width=100,
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
             ),
+            expand=True,
         )
 
     buttons: list[ft.ElevatedButton] = []
