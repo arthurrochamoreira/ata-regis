@@ -201,23 +201,26 @@ def build_data_table(
 
         actions = ft.Row(
             [
-                ft.IconButton(
-                    icon=ft.icons.VISIBILITY,
-                    icon_size=20,
-                    icon_color=ft.colors.GREY_600,
-                    on_click=lambda e, ata=ata: visualizar_cb(ata),
+                ft.InkWell(
+                    content=ft.Icon(ft.icons.VISIBILITY, size=20, color=ft.colors.GREY_600),
+                    on_tap=lambda e, ata=ata: visualizar_cb(ata),
+                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
+                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
+                    border_radius=8,
                 ),
-                ft.IconButton(
-                    icon=ft.icons.EDIT,
-                    icon_size=20,
-                    icon_color=ft.colors.GREY_600,
-                    on_click=lambda e, ata=ata: editar_cb(ata),
+                ft.InkWell(
+                    content=ft.Icon(ft.icons.EDIT, size=20, color=ft.colors.GREY_600),
+                    on_tap=lambda e, ata=ata: editar_cb(ata),
+                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
+                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
+                    border_radius=8,
                 ),
-                ft.IconButton(
-                    icon=ft.icons.DELETE,
-                    icon_size=20,
-                    icon_color=ft.colors.GREY_600,
-                    on_click=lambda e, ata=ata: excluir_cb(ata),
+                ft.InkWell(
+                    content=ft.Icon(ft.icons.DELETE, size=20, color=ft.colors.GREY_600),
+                    on_tap=lambda e, ata=ata: excluir_cb(ata),
+                    hover_color=ft.colors.with_opacity(0.1, ft.colors.GREY_200),
+                    splash_color=ft.colors.with_opacity(0.1, ft.colors.GREY_400),
+                    border_radius=8,
                 ),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
