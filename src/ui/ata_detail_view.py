@@ -150,27 +150,39 @@ def build_ata_detail_view(
         ft.DataRow(
             cells=[
                 ft.DataCell(
-                    ft.Text(
-                        item.descricao,
-                        text_align=ft.TextAlign.START,
+                    ft.Container(
+                        ft.Text(
+                            item.descricao,
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        alignment=ft.alignment.center,
                     )
                 ),
                 ft.DataCell(
-                    ft.Text(
-                        str(item.quantidade),
-                        text_align=ft.TextAlign.END,
+                    ft.Container(
+                        ft.Text(
+                            str(item.quantidade),
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        alignment=ft.alignment.center,
                     )
                 ),
                 ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor),
-                        text_align=ft.TextAlign.END,
+                    ft.Container(
+                        ft.Text(
+                            Formatters.formatar_valor_monetario(item.valor),
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        alignment=ft.alignment.center,
                     )
                 ),
                 ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor_total),
-                        text_align=ft.TextAlign.END,
+                    ft.Container(
+                        ft.Text(
+                            Formatters.formatar_valor_monetario(item.valor_total),
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        alignment=ft.alignment.center,
                     )
                 ),
             ]
@@ -181,35 +193,44 @@ def build_ata_detail_view(
     itens_table = ft.DataTable(
         columns=[
             ft.DataColumn(
-                ft.Text(
-                    "Descrição",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.START,
+                ft.Container(
+                    ft.Text(
+                        "Descrição",
+                        weight=ft.FontWeight.W_600,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
                 )
             ),
             ft.DataColumn(
-                ft.Text(
-                    "Qtd.",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
+                ft.Container(
+                    ft.Text(
+                        "Qtd.",
+                        weight=ft.FontWeight.W_600,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                )
             ),
             ft.DataColumn(
-                ft.Text(
-                    "Valor Unit.",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
+                ft.Container(
+                    ft.Text(
+                        "Valor Unit.",
+                        weight=ft.FontWeight.W_600,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                )
             ),
             ft.DataColumn(
-                ft.Text(
-                    "Subtotal",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
+                ft.Container(
+                    ft.Text(
+                        "Subtotal",
+                        weight=ft.FontWeight.W_600,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                )
             ),
         ],
         rows=item_rows,
