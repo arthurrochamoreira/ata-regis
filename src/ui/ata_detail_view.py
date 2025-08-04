@@ -30,9 +30,11 @@ except Exception:  # pragma: no cover
 try:
     from ..models.ata import Ata
     from ..utils.validators import Formatters
+    from .atas_table import AtasTable
 except ImportError:  # standalone execution
     from models.ata import Ata
     from utils.validators import Formatters
+    from atas_table import AtasTable
 
 
 def build_ata_detail_view(
@@ -146,76 +148,23 @@ def build_ata_detail_view(
         dados_gerais_body,
     )
 
-    item_rows = [
-        ft.DataRow(
-            cells=[
-                ft.DataCell(
-                    ft.Text(
-                        item.descricao,
-                        text_align=ft.TextAlign.START,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        str(item.quantidade),
-                        text_align=ft.TextAlign.END,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor),
-                        text_align=ft.TextAlign.END,
-                    )
-                ),
-                ft.DataCell(
-                    ft.Text(
-                        Formatters.formatar_valor_monetario(item.valor_total),
-                        text_align=ft.TextAlign.END,
-                    )
-                ),
-            ]
+    item_rows: list[dict] = []
+    for item in ata.itens:
+        item_rows.append(
+            {
+                "values": [
+                    item.descricao,
+                    str(item.quantidade),
+                    Formatters.formatar_valor_monetario(item.valor),
+                    Formatters.formatar_valor_monetario(item.valor_total),
+                ]
+            }
         )
-        for item in ata.itens
-    ]
 
-    itens_table = ft.DataTable(
-        columns=[
-            ft.DataColumn(
-                ft.Text(
-                    "Descrição",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.START,
-                )
-            ),
-            ft.DataColumn(
-                ft.Text(
-                    "Qtd.",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
-            ),
-            ft.DataColumn(
-                ft.Text(
-                    "Valor Unit.",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
-            ),
-            ft.DataColumn(
-                ft.Text(
-                    "Subtotal",
-                    weight=ft.FontWeight.W_600,
-                    text_align=ft.TextAlign.END,
-                ),
-                numeric=True,
-            ),
-        ],
-        rows=item_rows,
-        heading_row_height=32,
-        data_row_min_height=32,
-        column_spacing=SPACE_3,
+    itens_table = AtasTable(
+        ["Descrição", "Qtd.", "Valor Unit.", "Subtotal"],
+        item_rows,
+        page_width=1000,
     )
 
     resumo_financeiro = ft.Container(
