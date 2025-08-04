@@ -209,14 +209,19 @@ def build_data_table(
                 weight=ft.FontWeight.W_600,
                 color="#6B7280",
                 no_wrap=True,
+                text_align=ft.TextAlign.CENTER,
             ),
             expand=1,
-            alignment=ft.alignment.center_left,
+            alignment=ft.alignment.center,
         )
         for lbl in header_labels
     ]
     header_row = ft.Container(
-        content=ft.Row(header_cells, spacing=SPACE_4),
+        content=ft.Row(
+            header_cells,
+            spacing=SPACE_4,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
         bgcolor="#F9FAFB",
         border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
@@ -240,24 +245,28 @@ def build_data_table(
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
             ),
             ft.Text(
                 data_formatada,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
             ),
             ft.Text(
                 ata.objeto,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
             ),
             ft.Text(
                 ata.fornecedor,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
             ),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
@@ -313,22 +322,22 @@ def build_data_table(
             ft.Container(
                 text_cells[0],
                 expand=1,
-                alignment=ft.alignment.center_left,
+                alignment=ft.alignment.center,
             ),
             ft.Container(
                 text_cells[1],
                 expand=1,
-                alignment=ft.alignment.center_left,
+                alignment=ft.alignment.center,
             ),
             ft.Container(
                 text_cells[2],
                 expand=2,
-                alignment=ft.alignment.center_left,
+                alignment=ft.alignment.center,
             ),
             ft.Container(
                 text_cells[3],
                 expand=1,
-                alignment=ft.alignment.center_left,
+                alignment=ft.alignment.center,
             ),
             ft.Container(
                 badge,
