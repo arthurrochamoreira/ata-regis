@@ -234,9 +234,13 @@ class AtaForm:
 
         card = ft.Container(
             content=ft.Column([header, content], spacing=SPACE_6, expand=True),
-            width=1152,
             bgcolor="#FFFFFF",
-            padding=SPACE_5,
+            padding=ft.padding.only(
+                left=SPACE_5,
+                right=SPACE_5,
+                top=SPACE_4,
+                bottom=SPACE_4,
+            ),
             border_radius=16,
             alignment=ft.alignment.center,
             shadow=ft.BoxShadow(
@@ -246,6 +250,7 @@ class AtaForm:
                 offset=ft.Offset(0, 5),
             ),
             expand=True,
+            max_width=1152,
         )
 
         self.dialog = ft.AlertDialog(content=card, modal=True)

@@ -4,11 +4,16 @@ BREAKPOINT_SM = 640
 BREAKPOINT_MD = 1024
 BREAKPOINT_LG = 1280
 
-# maps breakpoints to paddings and font multipliers
+# maps breakpoints to paddings and font multipliers using design tokens
+try:
+    from .spacing import SPACE_2, SPACE_4, SPACE_5
+except Exception:  # pragma: no cover
+    from spacing import SPACE_2, SPACE_4, SPACE_5
+
 PADDINGS = {
-    "xs": 8,
-    "md": 16,
-    "lg": 24,
+    "xs": SPACE_2,
+    "md": SPACE_4,
+    "lg": SPACE_5,
 }
 
 FONT_SCALE = {
@@ -28,7 +33,7 @@ def get_breakpoint(width: int) -> str:
 
 def get_padding(width: int) -> int:
     bp = get_breakpoint(width)
-    return PADDINGS.get(bp, 16)
+    return PADDINGS.get(bp, SPACE_4)
 
 
 def get_font_size(width: int, base: int) -> int:

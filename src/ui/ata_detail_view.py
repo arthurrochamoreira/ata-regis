@@ -318,9 +318,13 @@ def build_ata_detail_view(
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        width=1152,
         bgcolor="#FFFFFF",
-        padding=SPACE_5,
+        padding=ft.padding.only(
+            left=SPACE_5,
+            right=SPACE_5,
+            top=SPACE_4,
+            bottom=SPACE_4,
+        ),
         border_radius=16,
         alignment=ft.alignment.center,
         shadow=ft.BoxShadow(
@@ -330,6 +334,7 @@ def build_ata_detail_view(
             offset=ft.Offset(0, 5),
         ),
         expand=True,
+        max_width=1152,
     )
 
     return card
