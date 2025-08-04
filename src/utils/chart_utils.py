@@ -2,11 +2,8 @@ import flet as ft
 from typing import List, Dict, Any, Tuple
 from datetime import date, datetime, timedelta
 
-# Importações condicionais para suportar execução direta e como módulo
-try:
-    from ..models.ata import Ata
-except ImportError:
-    from models.ata import Ata
+# Importação absoluta para funcionar como script ou módulo
+from models.ata import Ata
 
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""

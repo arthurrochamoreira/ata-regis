@@ -24,16 +24,11 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         primary_button,
     )
 
-try:
-    from ..models.ata import Ata
-    from ..utils.validators import Formatters
-    from ..utils.chart_utils import ChartUtils
-    from .atas_table import AtasTable
-except ImportError:  # for standalone execution
-    from models.ata import Ata
-    from utils.validators import Formatters
-    from utils.chart_utils import ChartUtils
-    from atas_table import AtasTable
+# Importações absolutas para modelos e utilitários
+from models.ata import Ata
+from utils.validators import Formatters
+from utils.chart_utils import ChartUtils
+from .atas_table import AtasTable
 
 
 STATUS_INFO = {

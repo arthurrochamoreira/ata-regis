@@ -2,32 +2,18 @@ import flet as ft
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
-try:
-    from ..ui.tokens import (
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        build_section,
-        primary_button,
-        secondary_button,
-    )
-except Exception:  # pragma: no cover
-    from ui.tokens import (
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        build_section,
-        primary_button,
-        secondary_button,
-    )
-try:
-    from ..models.ata import Ata, Item
-    from ..utils.validators import Validators, Formatters, MaskUtils
-except ImportError:  # Execução direta sem pacote
-    from models.ata import Ata, Item
-    from utils.validators import Validators, Formatters, MaskUtils
+# Importações absolutas para evitar problemas ao executar como script
+from ui.tokens import (
+    SPACE_2,
+    SPACE_3,
+    SPACE_4,
+    SPACE_5,
+    build_section,
+    primary_button,
+    secondary_button,
+)
+from models.ata import Ata, Item
+from utils.validators import Validators, Formatters, MaskUtils
 
 class AtaForm:
     """Formulário para criação e edição de atas"""
