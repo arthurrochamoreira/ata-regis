@@ -60,38 +60,6 @@ STATUS_INFO = {
 }
 
 
-def cell(
-    value: str | ft.Control,
-    *,
-    alignment: ft.Alignment = ft.alignment.center_left,
-    padding_left: int = SPACE_5,
-) -> ft.Container:
-    """Return a standard container for table cells.
-
-    The returned container applies the default gutter ``SPACE_5`` and aligns
-    its content to the left.  ``value`` can be either a string, in which case a
-    ``ft.Text`` control is created, or any widget for special cases like
-    badges or action icons.
-    """
-
-    content = (
-        value
-        if isinstance(value, ft.Control)
-        else ft.Text(
-            value,
-            max_lines=1,
-            no_wrap=True,
-            overflow=ft.TextOverflow.ELLIPSIS,
-        )
-    )
-
-    return ft.Container(
-        content=content,
-        alignment=alignment,
-        padding=ft.padding.only(left=padding_left),
-    )
-
-
 def build_header(
     nova_ata_cb: Callable,
     verificar_alertas_cb: Callable,
@@ -228,8 +196,8 @@ def build_data_table(
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
     status: str,
-) -> ft.Control:
-    """Return a ``DataTable`` for the given list of ``atas``."""
+) -> ft.Column:
+    """Return custom table for a list of atas respecting design specs."""
     if not atas:
         return ft.Container(
             content=ft.Text(
@@ -241,16 +209,76 @@ def build_data_table(
             padding=ft.padding.all(SPACE_4),
         )
 
+    header_labels = ["Número", "Vigência", "Objeto", "Fornecedor", "Situação", "Ações"]
+
+    header_cells = [
+        ft.Container(
+            ft.Text(
+                lbl.upper(),
+                size=11,
+                weight=ft.FontWeight.W_600,
+                color="#6B7280",
+                no_wrap=True,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            expand=1,
+            alignment=ft.alignment.center,
+        )
+        for lbl in header_labels
+    ]
+    header_row = ft.Container(
+        content=ft.Row(
+            header_cells,
+            spacing=SPACE_4,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
+        bgcolor="#F9FAFB",
+        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+    )
+
     badge_colors = {
         "vigente": ("#14532D", "#D1FAE5"),
         "a_vencer": ("#713F12", "#FEF9C3"),
         "vencida": ("#991B1B", "#FEE2E2"),
     }
 
-    rows: list[ft.DataRow] = []
-    for ata in atas:
+    rows: list[ft.Control] = []
+    total = len(atas)
+    for index, ata in enumerate(atas):
         data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
-
+        text_cells = [
+            ft.Text(
+                ata.numero_ata,
+                weight=ft.FontWeight.W_500,
+                color="#111827",
+                max_lines=1,
+                no_wrap=True,
+                overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Text(
+                data_formatada,
+                max_lines=1,
+                no_wrap=True,
+                overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Text(
+                ata.objeto,
+                max_lines=1,
+                no_wrap=True,
+                overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
+            ),
+            ft.Text(
+                ata.fornecedor,
+                max_lines=1,
+                no_wrap=True,
+                overflow=ft.TextOverflow.ELLIPSIS,
+                text_align=ft.TextAlign.CENTER,
+            ),
+        ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
         badge = ft.Container(
             ft.Text(
@@ -300,105 +328,57 @@ def build_data_table(
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
 
-        rows.append(
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(
-                        cell(
-                            ft.Text(
-                                ata.numero_ata,
-                                weight=ft.FontWeight.W_500,
-                                color="#111827",
-                            )
-                        )
-                    ),
-                    ft.DataCell(cell(data_formatada)),
-                    ft.DataCell(cell(ata.objeto)),
-                    ft.DataCell(cell(ata.fornecedor)),
-                    ft.DataCell(cell(badge)),
-                    ft.DataCell(
-                        cell(
-                            actions,
-                            alignment=ft.alignment.center,
-                            padding_left=0,
-                        )
-                    ),
-                ]
-            )
+        cells = [
+            ft.Container(
+                text_cells[0],
+                expand=1,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                text_cells[1],
+                expand=1,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                text_cells[2],
+                expand=2,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                text_cells[3],
+                expand=1,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                badge,
+                expand=1,
+                alignment=ft.alignment.center,
+            ),
+            ft.Container(
+                actions,
+                expand=1,
+                alignment=ft.alignment.center,
+            ),
+        ]
+
+        row_container = ft.Container(
+            content=ft.Row(
+                cells,
+                spacing=SPACE_3,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.padding.all(SPACE_4),
+            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
-    columns = [
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "NÚMERO",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                )
-            )
-        ),
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "VIGÊNCIA",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                )
-            )
-        ),
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "OBJETO",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                )
-            )
-        ),
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "FORNECEDOR",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                )
-            )
-        ),
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "SITUAÇÃO",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                )
-            )
-        ),
-        ft.DataColumn(
-            cell(
-                ft.Text(
-                    "AÇÕES",
-                    size=11,
-                    weight=ft.FontWeight.W_600,
-                    color="#6B7280",
-                ),
-                alignment=ft.alignment.center,
-                padding_left=0,
-            )
-        ),
-    ]
+        rows.append(row_container)
 
-    table = ft.DataTable(
-        columns=columns,
-        rows=rows,
-        column_spacing=SPACE_5,
-        heading_row_height=44,
-        data_row_min_height=44,
-        horizontal_margin=0,
+    body = ft.Column(rows, spacing=0)
+
+    table = ft.Container(
+        content=ft.Column([header_row, body], spacing=0),
+        border=ft.border.all(1, "#E5E7EB"),
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
     )
 
     return table
