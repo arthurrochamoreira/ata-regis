@@ -1,13 +1,9 @@
 from datetime import date, datetime, timedelta
 from typing import List, Dict, Any
 
-# Importações condicionais para suportar execução direta e como módulo
-try:
-    from ..models.ata import Ata
-    from ..utils.email_service import EmailService
-except ImportError:
-    from models.ata import Ata
-    from utils.email_service import EmailService
+# Importações absolutas para permitir execução direta ou como módulo
+from models.ata import Ata
+from utils.email_service import EmailService
 
 class AlertService:
     """Serviço para gerenciar alertas automáticos"""
