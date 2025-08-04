@@ -2,7 +2,7 @@ import flet as ft
 from typing import Callable, List
 
 try:
-    from .spacing import (
+    from .theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
@@ -12,7 +12,7 @@ try:
     )
     from .tokens import build_card, primary_button
 except Exception:  # pragma: no cover - fallback for standalone execution
-    from spacing import (
+    from theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
@@ -69,12 +69,8 @@ def build_header(
     status_cb: Callable,
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
-    return ft.AppBar(
-        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
-        leading_width=40,
-        title=ft.Text("Ata de Registro de Preços"),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
-        actions=[
+    actions_row = ft.Row(
+        [
             ft.PopupMenuButton(
                 icon=ft.icons.SETTINGS,
                 tooltip="Ferramentas",
@@ -91,6 +87,22 @@ def build_header(
                 icon=ft.icons.ADD,
                 on_click=nova_ata_cb,
             ),
+        ],
+        spacing=SPACE_4,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    return ft.AppBar(
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
+        leading_width=40,
+        title=ft.Text("Ata de Registro de Preços"),
+        bgcolor=ft.colors.INVERSE_PRIMARY,
+        actions=[
+            ft.Container(
+                content=actions_row,
+                alignment=ft.alignment.center_right,
+                padding=ft.padding.only(right=SPACE_5),
+            )
         ],
     )
 
@@ -150,7 +162,7 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
     return ft.Container(
         content=row,
-        padding=ft.padding.all(SPACE_4),
+        padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
         margin=ft.margin.only(bottom=SPACE_4),
         expand=True,
     )
@@ -170,7 +182,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
     return (
         ft.Container(
             content=search_field,
-            padding=ft.padding.all(SPACE_4),
+            padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
             margin=ft.margin.only(bottom=SPACE_6),
             expand=True,
         ),
@@ -454,7 +466,7 @@ def build_grouped_data_tables(
     container = ft.Container(
         content=row,
         alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
-        padding=0,
+        padding=ft.padding.symmetric(horizontal=SPACE_5),
         expand=True,
     )
     return container
@@ -508,7 +520,7 @@ def build_atas_vencimento(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         alignment=ft.alignment.center,
-        padding=ft.padding.all(SPACE_4),
+        padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
         border=ft.border.all(1, ft.colors.OUTLINE),
         border_radius=8,
     )
@@ -562,5 +574,6 @@ def build_stats_panel(ata_service) -> ft.Container:
         content=ft.Column(
             [urgency_indicator, summary_cards, charts_section], spacing=SPACE_4
         ),
+        padding=ft.padding.symmetric(horizontal=SPACE_5),
         margin=ft.margin.only(bottom=SPACE_5),
     )

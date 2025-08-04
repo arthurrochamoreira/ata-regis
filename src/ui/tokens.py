@@ -1,4 +1,4 @@
-from .spacing import (
+from .theme.spacing import (
     SPACE_1,
     SPACE_2,
     SPACE_3,

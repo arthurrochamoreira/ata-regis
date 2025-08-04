@@ -9,7 +9,7 @@ except ImportError:
     from models.ata import Ata
 
 try:
-    from ..ui.spacing import (
+    from ..ui.theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
@@ -18,7 +18,7 @@ try:
         SPACE_6,
     )
 except Exception:  # pragma: no cover
-    from ui.spacing import (
+    from ui.theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
