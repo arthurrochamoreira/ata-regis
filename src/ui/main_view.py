@@ -111,7 +111,7 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             on_click=lambda e: filtro_cb(value),
             bgcolor=color if selected else ft.colors.SURFACE_VARIANT,
             color=ft.colors.WHITE if selected else ft.colors.BLACK,
-            min_width=100,
+            width=100,
             style=ft.ButtonStyle(
                 padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
                 shape=ft.RoundedRectangleBorder(radius=8),
@@ -199,7 +199,6 @@ def build_data_table(
                 no_wrap=True,
             ),
             expand=1,
-            min_width=80,
             alignment=ft.alignment.center_left,
         )
         for lbl in header_labels
@@ -302,37 +301,31 @@ def build_data_table(
             ft.Container(
                 text_cells[0],
                 expand=1,
-                min_width=80,
                 alignment=ft.alignment.center_left,
             ),
             ft.Container(
                 text_cells[1],
                 expand=1,
-                min_width=80,
                 alignment=ft.alignment.center_left,
             ),
             ft.Container(
                 text_cells[2],
                 expand=2,
-                min_width=160,
                 alignment=ft.alignment.center_left,
             ),
             ft.Container(
                 text_cells[3],
                 expand=1,
-                min_width=120,
                 alignment=ft.alignment.center_left,
             ),
             ft.Container(
                 badge,
                 expand=1,
-                min_width=100,
                 alignment=ft.alignment.center,
             ),
             ft.Container(
                 actions,
                 expand=1,
-                min_width=80,
                 alignment=ft.alignment.center,
             ),
         ]
