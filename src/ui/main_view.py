@@ -9,6 +9,7 @@ try:
         SPACE_4,
         SPACE_5,
         SPACE_6,
+        build_card,
         primary_button,
     )
 except Exception:  # pragma: no cover - fallback for standalone execution
@@ -19,6 +20,7 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_4,
         SPACE_5,
         SPACE_6,
+        build_card,
         primary_button,
     )
 
@@ -70,9 +72,7 @@ def build_header(
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
     return ft.AppBar(
-        leading=ft.Icon(
-            ft.icons.DESCRIPTION_OUTLINED, semantic_label="Aplicação Ata de Registro de Preços"
-        ),
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
         leading_width=40,
         title=ft.Text("Ata de Registro de Preços"),
         bgcolor=ft.colors.INVERSE_PRIMARY,
@@ -80,75 +80,86 @@ def build_header(
             ft.PopupMenuButton(
                 icon=ft.icons.SETTINGS,
                 tooltip="Ferramentas",
-                semantic_label="Ferramentas",
                 items=[
-                    ft.PopupMenuItem(
-                        text="🔍 Verificar Alertas", on_click=verificar_alertas_cb
-                    ),
-                    ft.PopupMenuItem(
-                        text="📊 Relatório Semanal", on_click=relatorio_semanal_cb
-                    ),
-                    ft.PopupMenuItem(
-                        text="📈 Relatório Mensal", on_click=relatorio_mensal_cb
-                    ),
-                    ft.PopupMenuItem(
-                        text="📧 Testar Email", on_click=testar_email_cb
-                    ),
-                    ft.PopupMenuItem(
-                        text="ℹ️ Status Sistema", on_click=status_cb
-                    ),
+                    ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
+                    ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
+                    ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
+                    ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
+                    ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
                 ],
             ),
             primary_button(
                 "Nova Ata",
-                icon=ft.Icon(ft.icons.ADD, semantic_label="Nova ata"),
+                icon=ft.icons.ADD,
                 on_click=nova_ata_cb,
             ),
         ],
     )
 
 
-def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Row:
-    """Return row with filter chips."""
+def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
+    """Return container with filter buttons."""
 
-    def chip(label: str, value: str, icon_name: str) -> ft.Container:
-        selected = filtro_atual == value
-        bg = ft.colors.INDIGO_600 if selected else ft.colors.GREY_200
-        fg = ft.colors.WHITE if selected else ft.colors.BLACK87
-        icon = ft.Icon(icon_name, size=16, color=fg, semantic_label=label)
-        text = ft.Text(label, no_wrap=True, overflow="ellipsis", color=fg)
-        return ft.Container(
-            content=ft.Row(
-                [icon, text], spacing=4, alignment="center", vertical_alignment=ft.CrossAxisAlignment.CENTER
-            ),
-            width=110,
-            padding=SPACE_2,
-            bgcolor=bg,
-            border_radius=8,
+    def button(
+        label: str, value: str, color: str, icon: str, icon_color: str | None = None
+    ) -> ft.ElevatedButton:
+        return ft.ElevatedButton(
+            label,
+            icon=icon,
+            icon_color=icon_color,
             on_click=lambda e: filtro_cb(value),
+            bgcolor=color if filtro_atual == value else ft.colors.SURFACE_VARIANT,
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
+                shape=ft.RoundedRectangleBorder(radius=8),
+            ),
         )
 
-    chips = [
-        chip("Vigente", "vigente", ft.icons.CHECK_CIRCLE),
-        chip("A Vencer", "a_vencer", ft.icons.WARNING_AMBER_ROUNDED),
-        chip("Vencidas", "vencida", ft.icons.CANCEL),
-        chip("Todas", "todos", ft.icons.LIST),
-    ]
+    buttons: list[ft.ElevatedButton] = []
+    for key in ["vigente", "a_vencer", "vencida"]:
+        info = STATUS_INFO[key]
+        buttons.append(
+            button(
+                info["filter"],
+                key,
+                info["button_color"],
+                info["icon"],
+                info["icon_color"],
+            )
+        )
 
-    return ft.Row(chips, spacing=SPACE_2, wrap=True)
+    buttons.append(button("Todas", "todos", ft.colors.BLUE, ft.icons.LIST))
+
+    for b in buttons:
+        b.col = {"xs": 6, "md": 3}
+    row = ft.ResponsiveRow(buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3)
+    return ft.Container(
+        content=row,
+        padding=ft.padding.all(SPACE_4),
+        margin=ft.margin.only(bottom=SPACE_5),
+        expand=True,
+    )
 
 
-def build_search(on_change: Callable, value: str = "") -> ft.TextField:
-    """Return a search text field pre-populated with ``value``."""
-
-    return ft.TextField(
+def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
+    """Return a search container and field pre-populated with ``value``."""
+    search_field = ft.TextField(
         label="Buscar atas...",
-        prefix=ft.Icon(ft.icons.SEARCH, semantic_label="Buscar"),
+        prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
         value=value,
         expand=True,
         height=44,
         content_padding=ft.padding.symmetric(horizontal=SPACE_4),
+    )
+    return (
+        ft.Container(
+            content=search_field,
+            padding=ft.padding.all(SPACE_4),
+            margin=ft.margin.only(bottom=SPACE_6),
+            expand=True,
+        ),
+        search_field,
     )
 
 
@@ -158,70 +169,66 @@ def build_data_table(
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
     status: str,
-) -> ft.DataTable:
-    """Return a DataTable for a list of atas respecting design specs."""
+) -> ft.Column:
+    """Return custom table for a list of atas respecting design specs."""
 
-    columns = [
-        ft.DataColumn(
+    header_labels = ["Número", "Vigência", "Objeto", "Fornecedor", "Situação", "Ações"]
+
+    header_cells = [
+        ft.Container(
             ft.Text(
-                "Número", no_wrap=True, style=ft.TextStyle(weight=ft.FontWeight.W_600)
-            )
-        ),
-        ft.DataColumn(
-            ft.Text(
-                "Vigência", no_wrap=True, style=ft.TextStyle(weight=ft.FontWeight.W_600)
-            )
-        ),
-        ft.DataColumn(
-            ft.Text(
-                "Objeto", no_wrap=True, style=ft.TextStyle(weight=ft.FontWeight.W_600)
-            )
-        ),
-        ft.DataColumn(
-            ft.Text(
-                "Fornecedor", no_wrap=True, style=ft.TextStyle(weight=ft.FontWeight.W_600)
-            )
-        ),
-        ft.DataColumn(
-            ft.Text(
-                "Situação", no_wrap=True, style=ft.TextStyle(weight=ft.FontWeight.W_600)
-            )
-        ),
-        ft.DataColumn(
-            ft.Container(
-                ft.Text(
-                    "Ações",
-                    no_wrap=True,
-                    style=ft.TextStyle(weight=ft.FontWeight.W_600),
-                ),
-                width=80,
-                alignment=ft.alignment.center,
-            )
-        ),
+                lbl.upper(),
+                size=11,
+                weight=ft.FontWeight.W_600,
+                color="#6B7280",
+            ),
+            expand=1,
+        )
+        for lbl in header_labels
     ]
+    header_row = ft.Container(
+        content=ft.Row(header_cells, spacing=SPACE_4),
+        padding=ft.padding.symmetric(vertical=SPACE_3, horizontal=SPACE_4),
+        bgcolor="#F9FAFB",
+        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+    )
 
     badge_colors = {
-        "vigente": (ft.colors.GREEN_800, ft.colors.GREEN_100),
-        "a_vencer": (ft.colors.AMBER_800, ft.colors.AMBER_100),
-        "vencida": (ft.colors.RED_800, ft.colors.RED_100),
+        "vigente": ("#14532D", "#D1FAE5"),
+        "a_vencer": ("#713F12", "#FEF9C3"),
+        "vencida": ("#991B1B", "#FEE2E2"),
     }
 
-    rows: list[ft.DataRow] = []
-    for ata in atas:
+    rows: list[ft.Control] = []
+    total = len(atas)
+    for index, ata in enumerate(atas):
         data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
-
-        badge_fg, badge_bg = badge_colors.get(ata.status, (ft.colors.BLACK, ft.colors.GREY_200))
-        badge = ft.Container(
+        text_cells = [
             ft.Text(
-                ata.status.replace("_", " ").title(),
-                size=12,
+                ata.numero_ata,
                 weight=ft.FontWeight.W_500,
-                color=badge_fg,
-                no_wrap=True,
+                color="#111827",
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
             ),
-            padding=4,
-            bgcolor=badge_bg,
-            border_radius=4,
+            ft.Text(data_formatada, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
+            ft.Text(
+                ata.objeto,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+            ft.Text(
+                ata.fornecedor,
+                max_lines=1,
+                overflow=ft.TextOverflow.ELLIPSIS,
+            ),
+        ]
+        badge_text_color, badge_bg_color = badge_colors[ata.status]
+        badge = ft.Container(
+            ft.Text(ata.status.replace("_", " ").title(), size=12, weight=ft.FontWeight.W_500, color=badge_text_color),
+            padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
+            bgcolor=badge_bg_color,
+            border_radius=6,
         )
 
         actions = ft.Row(
@@ -229,76 +236,65 @@ def build_data_table(
                 ft.IconButton(
                     icon=ft.icons.VISIBILITY,
                     tooltip="Visualizar",
-                    semantic_label="Visualizar ata",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                    ),
                     icon_size=20,
                 ),
                 ft.IconButton(
                     icon=ft.icons.EDIT,
                     tooltip="Editar",
-                    semantic_label="Editar ata",
                     on_click=lambda e, ata=ata: editar_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                    ),
                     icon_size=20,
                 ),
                 ft.IconButton(
                     icon=ft.icons.DELETE,
                     tooltip="Excluir",
-                    semantic_label="Excluir ata",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
+                    style=ft.ButtonStyle(
+                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                    ),
                     icon_size=20,
                 ),
             ],
-            alignment="center",
-            spacing=SPACE_2,
+            spacing=SPACE_3,
+            alignment=ft.MainAxisAlignment.CENTER,
         )
 
-        rows.append(
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(
-                        ft.Text(
-                            ata.numero_ata,
-                            no_wrap=True,
-                            overflow="ellipsis",
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            data_formatada,
-                            no_wrap=True,
-                            overflow="ellipsis",
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            ata.objeto,
-                            no_wrap=True,
-                            overflow="ellipsis",
-                        )
-                    ),
-                    ft.DataCell(
-                        ft.Text(
-                            ata.fornecedor,
-                            no_wrap=True,
-                            overflow="ellipsis",
-                        )
-                    ),
-                    ft.DataCell(badge),
-                    ft.DataCell(
-                        ft.Container(
-                            actions, width=80, alignment=ft.alignment.center
-                        )
-                    ),
-                ]
-            )
+        cells = [
+            ft.Container(text_cells[0], expand=1),
+            ft.Container(text_cells[1], expand=1),
+            ft.Container(text_cells[2], expand=2),
+            ft.Container(text_cells[3], expand=1),
+            ft.Container(badge, expand=1),
+            ft.Container(actions, expand=1),
+        ]
+
+        row_container = ft.Container(
+            content=ft.Row(
+                cells,
+                spacing=SPACE_3,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.padding.all(SPACE_3),
+            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
-    return ft.DataTable(
-        columns=columns,
-        rows=rows,
-        data_row_min_height=48,
-        column_spacing=24,
+        rows.append(row_container)
+
+    body = ft.Column(rows, spacing=0)
+
+    table = ft.Container(
+        content=ft.Column([header_row, body], spacing=0),
+        border=ft.border.all(1, "#E5E7EB"),
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
     )
+
+    return table
 
 
 def build_grouped_data_tables(
@@ -308,7 +304,13 @@ def build_grouped_data_tables(
     excluir_cb: Callable[[Ata], None],
     filtro: str = "todos",
 ) -> ft.Container:
-    """Return layout with status cards for the given ``atas`` respecting ``filtro``."""
+    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
+
+    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
+    corresponding card is returned and it expands to occupy the full available
+    width.  When ``filtro`` is ``todos`` the original layout with three cards is
+    rendered.
+    """
 
     groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
     for ata in atas:
@@ -316,57 +318,57 @@ def build_grouped_data_tables(
 
     statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
 
-    cards: list[ft.Control] = []
+    card_controls: list[ft.Control] = []
     for status in statuses:
         atas_status = groups[status]
+
         info = STATUS_INFO[status]
 
-        header = ft.Row(
-            [
-                ft.Icon(
-                    info["icon"],
-                    color=info["icon_color"],
-                    size=20,
-                    semantic_label=info["title"],
-                ),
-                ft.Text(info["title"], weight=ft.FontWeight.W_600),
-            ],
-            spacing=SPACE_2,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        icon = ft.Container(
+            content=ft.Icon(
+                info["icon"],
+                color=info["icon_color"],
+                size=20,
+            ),
+            width=28,
+            height=28,
+            padding=ft.padding.all(SPACE_1),
+            bgcolor=info["icon_bg"],
+            border_radius=4,
         )
 
-        if atas_status:
-            content = build_data_table(
-                atas_status, visualizar_cb, editar_cb, excluir_cb, status
-            )
-            min_height = 120
+        table = build_data_table(
+            atas_status,
+            visualizar_cb,
+            editar_cb,
+            excluir_cb,
+            status,
+        )
+
+        card = build_card(info["title"], icon, table)
+
+        if filtro == "todos":
+            card.col = {"xs": 12, "lg": 4}
         else:
-            content = ft.Text(
-                "Nenhuma ata encontrada",
-                italic=True,
-                color=ft.colors.GREY_600,
-            )
-            min_height = None
+            # Single card should span the entire content area
+            card.col = 12
+        card_controls.append(card)
 
-        card = ft.Container(
-            content=ft.Column([header, content], spacing=SPACE_4),
-            padding=SPACE_4,
-            border_radius=8,
-            bgcolor=ft.colors.WHITE,
-            border=ft.border.all(1, ft.colors.GREY_300),
-            min_height=min_height,
-        )
-        cards.append(card)
-
-    grid = ft.GridView(
-        max_extent=480,
-        child_aspect_ratio=1.2,
-        spacing=24,
-        controls=cards,
-        expand=True,
+    row = ft.ResponsiveRow(
+        card_controls,
+        columns=12,
+        alignment=ft.MainAxisAlignment.CENTER if filtro == "todos" else ft.MainAxisAlignment.START,
+        spacing=SPACE_6,
+        run_spacing=SPACE_6,
     )
 
-    return ft.Container(content=grid, expand=True)
+    container = ft.Container(
+        content=row,
+        alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
+        padding=0,
+        expand=True,
+    )
+    return container
 
 
 def build_atas_vencimento(
@@ -391,18 +393,8 @@ def build_atas_vencimento(
                     ),
                 ], spacing=4),
                 ft.Row([
-                    ft.IconButton(
-                        icon=ft.icons.VISIBILITY,
-                        tooltip="Visualizar",
-                        semantic_label="Visualizar ata",
-                        on_click=lambda e, ata=ata: visualizar_cb(ata),
-                    ),
-                    ft.IconButton(
-                        icon=ft.icons.EMAIL,
-                        tooltip="Enviar Alerta",
-                        semantic_label="Enviar alerta",
-                        on_click=lambda e, ata=ata: alerta_cb(ata),
-                    ),
+                    ft.IconButton(icon=ft.icons.VISIBILITY, tooltip="Visualizar", on_click=lambda e, ata=ata: visualizar_cb(ata)),
+                    ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
                 ]),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.all(SPACE_3),
