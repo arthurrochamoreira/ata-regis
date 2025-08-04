@@ -2,27 +2,25 @@ import flet as ft
 from typing import Callable, List
 
 try:
-    from .tokens import (
+    from .spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
         SPACE_6,
-        build_card,
-        primary_button,
     )
+    from .tokens import build_card, primary_button
 except Exception:  # pragma: no cover - fallback for standalone execution
-    from tokens import (
+    from spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
         SPACE_6,
-        build_card,
-        primary_button,
     )
+    from tokens import build_card, primary_button
 
 try:
     from ..models.ata import Ata
@@ -482,7 +480,7 @@ def build_atas_vencimento(
                         f"Faltam {ata.dias_restantes} dias",
                         color=ft.colors.RED if ata.dias_restantes <= 30 else ft.colors.ORANGE,
                     ),
-                ], spacing=4),
+                ], spacing=SPACE_1),
                 ft.Row([
                     ft.IconButton(icon=ft.icons.VISIBILITY, tooltip="Visualizar", on_click=lambda e, ata=ata: visualizar_cb(ata)),
                     ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
@@ -538,7 +536,7 @@ def build_stats_panel(ata_service) -> ft.Container:
                 ),
                 ft.Row(
                     [pie_chart, legend],
-                    spacing=32,
+                    spacing=SPACE_6,
                     alignment=ft.MainAxisAlignment.START,
                 ),
                 value_chart,

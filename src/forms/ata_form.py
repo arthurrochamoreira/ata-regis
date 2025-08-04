@@ -3,25 +3,25 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
-    from ..ui.tokens import (
+    from ..ui.spacing import (
+        SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
-        build_section,
-        primary_button,
-        secondary_button,
+        SPACE_6,
     )
+    from ..ui.tokens import build_section, primary_button, secondary_button
 except Exception:  # pragma: no cover
-    from ui.tokens import (
+    from ui.spacing import (
+        SPACE_1,
         SPACE_2,
         SPACE_3,
         SPACE_4,
         SPACE_5,
-        build_section,
-        primary_button,
-        secondary_button,
+        SPACE_6,
     )
+    from ui.tokens import build_section, primary_button, secondary_button
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -210,7 +210,7 @@ class AtaForm:
         header = ft.Row(
             [
                 ft.Column(
-                    spacing=2,
+                    spacing=SPACE_1,
                     controls=[
                         ft.Text(
                             "Ata de Registro de Preços",
@@ -233,7 +233,7 @@ class AtaForm:
         )
 
         card = ft.Container(
-            content=ft.Column([header, content], spacing=32, expand=True),
+            content=ft.Column([header, content], spacing=SPACE_6, expand=True),
             width=1152,
             bgcolor="#FFFFFF",
             padding=SPACE_5,
