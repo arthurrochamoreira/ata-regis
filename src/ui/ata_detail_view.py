@@ -11,9 +11,21 @@ try:
         SPACE_5,
         SPACE_6,
         build_section,
+        primary_button,
+        secondary_button,
     )
 except Exception:  # pragma: no cover
-    from tokens import SPACE_1, SPACE_2, SPACE_3, SPACE_4, SPACE_5, SPACE_6, build_section
+    from tokens import (
+        SPACE_1,
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        SPACE_6,
+        build_section,
+        primary_button,
+        secondary_button,
+    )
 
 try:
     from ..models.ata import Ata
@@ -55,26 +67,16 @@ def build_ata_detail_view(
             ft.Row(
                 spacing=SPACE_3,
                 controls=[
-                    ft.OutlinedButton(
-                        text="Voltar",
+                    secondary_button(
+                        "Voltar",
                         icon=ft.icons.ARROW_BACK_ROUNDED,
                         on_click=on_back,
-                        style=ft.ButtonStyle(
-                            shape=ft.RoundedRectangleBorder(radius=8),
-                            color="#4B5563",
-                            side=ft.BorderSide(1, "#D1D5DB"),
-                        ),
-                        ),
-                        ft.ElevatedButton(
-                            text="Editar",
+                    ),
+                    primary_button(
+                        "Editar",
                         icon=ft.icons.EDIT_OUTLINED,
                         on_click=on_edit,
-                        bgcolor="#3B82F6",
-                        color="#FFFFFF",
-                        style=ft.ButtonStyle(
-                            shape=ft.RoundedRectangleBorder(radius=8)
-                        ),
-                        ),
+                    ),
                 ],
             ),
         ],

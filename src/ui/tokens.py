@@ -6,6 +6,7 @@ SPACE_5 = 24
 SPACE_6 = 32
 
 import flet as ft
+from typing import Callable, Optional
 
 PRIMARY = ft.colors.BLUE
 DANGER = ft.colors.RED
@@ -13,6 +14,44 @@ SUCCESS = ft.colors.GREEN
 WARNING = ft.colors.ORANGE
 GREY_LIGHT = ft.colors.GREY_300
 CARD_BG = "#F8FAFC"
+
+
+def primary_button(
+    text: str,
+    *,
+    icon: Optional[str] = None,
+    on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
+) -> ft.ElevatedButton:
+    """Return a standard primary button used across the app."""
+
+    return ft.ElevatedButton(
+        text=text,
+        icon=icon,
+        on_click=on_click,
+        bgcolor="#3B82F6",
+        color="#FFFFFF",
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
+    )
+
+
+def secondary_button(
+    text: str,
+    *,
+    icon: Optional[str] = None,
+    on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
+) -> ft.OutlinedButton:
+    """Return a standard secondary button used across the app."""
+
+    return ft.OutlinedButton(
+        text=text,
+        icon=icon,
+        on_click=on_click,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=8),
+            color="#4B5563",
+            side=ft.BorderSide(1, "#D1D5DB"),
+        ),
+    )
 
 def build_section(
     title: str,

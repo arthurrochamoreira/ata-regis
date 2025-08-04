@@ -3,9 +3,25 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
-    from ..ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, build_section
+    from ..ui.tokens import (
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        build_section,
+        primary_button,
+        secondary_button,
+    )
 except Exception:  # pragma: no cover
-    from ui.tokens import SPACE_2, SPACE_3, SPACE_4, SPACE_5, build_section
+    from ui.tokens import (
+        SPACE_2,
+        SPACE_3,
+        SPACE_4,
+        SPACE_5,
+        build_section,
+        primary_button,
+        secondary_button,
+    )
 try:
     from ..models.ata import Ata, Item
     from ..utils.validators import Validators, Formatters, MaskUtils
@@ -176,19 +192,20 @@ class AtaForm:
         )
         
         # Botões
-        botoes = ft.Row([
-            ft.ElevatedButton(
-                "Cancelar",
-                on_click=lambda e: self.on_cancel(),
-                color=ft.colors.ON_SURFACE
-            ),
-            ft.ElevatedButton(
-                "Salvar",
-                on_click=self.save_ata,
-                bgcolor=ft.colors.PRIMARY,
-                color=ft.colors.ON_PRIMARY
-            )
-        ], alignment=ft.MainAxisAlignment.END, spacing=SPACE_4)
+        botoes = ft.Row(
+            [
+                secondary_button(
+                    "Cancelar",
+                    on_click=lambda e: self.on_cancel(),
+                ),
+                primary_button(
+                    "Salvar",
+                    on_click=self.save_ata,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.END,
+            spacing=SPACE_4,
+        )
         
         header = ft.Row(
             [
