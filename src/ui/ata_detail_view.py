@@ -27,10 +27,14 @@ except Exception:  # pragma: no cover
         secondary_button,
     )
 
-# Importações absolutas para acessar modelos e utilitários
-from models.ata import Ata
-from utils.validators import Formatters
-from .atas_table import AtasTable
+try:
+    from ..models.ata import Ata
+    from ..utils.validators import Formatters
+    from .atas_table import AtasTable
+except ImportError:  # standalone execution
+    from models.ata import Ata
+    from utils.validators import Formatters
+    from atas_table import AtasTable
 
 
 def build_ata_detail_view(

@@ -3,8 +3,11 @@ import os
 from typing import List, Dict, Any, Optional
 from datetime import date, datetime
 
-# Importação absoluta para uso consistente como script ou módulo
-from models.ata import Ata, Item
+# Importações condicionais para suportar execução direta e como módulo
+try:
+    from ..models.ata import Ata, Item
+except ImportError:
+    from models.ata import Ata, Item
 
 class AtaService:
     """Serviço para gerenciar operações CRUD das atas"""
