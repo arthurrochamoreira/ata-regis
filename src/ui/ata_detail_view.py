@@ -334,7 +334,7 @@ def build_ata_detail_view(
             offset=ft.Offset(0, 5),
         ),
         expand=True,
-        max_width=1152,
+        width=1152,
     )
 
     return card
