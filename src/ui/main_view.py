@@ -110,55 +110,38 @@ def build_header(
 def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
     """Return container with filter buttons."""
 
-    def button(
-        label: str, value: str, color: str, icon: str, icon_color: str | None = None
-    ) -> ft.ElevatedButton:
+    def button(label: str, value: str, color: str) -> ft.FilledButton:
         selected = filtro_atual == value
-        content = ft.Row(
-            [
-                ft.Icon(icon, color=icon_color),
-                ft.Text(
-                    label,
-                    no_wrap=True,
-                    max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS,
-                ),
-            ],
-            spacing=SPACE_2,
-            alignment=ft.MainAxisAlignment.CENTER,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        style = ft.ButtonStyle(
+            padding=ft.padding.symmetric(horizontal=12, vertical=8),
+            alignment=ft.alignment.center,
+            shape=ft.RoundedRectangleBorder(radius=8),
+            overlay_color={
+                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+                ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+            },
+            bgcolor=color if selected else ft.colors.TRANSPARENT,
+            color=ft.colors.WHITE if selected else ft.colors.GRAY_900,
+            side=None if selected else ft.BorderSide(1, ft.colors.GRAY_300),
         )
-        return ft.ElevatedButton(
-            content=content,
+        return ft.FilledButton(
+            text=label,
             on_click=lambda e: filtro_cb(value),
-            bgcolor=color if selected else ft.colors.SURFACE_VARIANT,
-            color=ft.colors.WHITE if selected else ft.colors.BLACK,
-            style=ft.ButtonStyle(
-                padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_2),
-                shape=ft.RoundedRectangleBorder(radius=8),
-            ),
+            style=style,
             expand=True,
         )
 
-    buttons: list[ft.ElevatedButton] = []
+    buttons: list[ft.FilledButton] = []
     for key in ["vigente", "a_vencer", "vencida"]:
         info = STATUS_INFO[key]
-        buttons.append(
-            button(
-                info["filter"],
-                key,
-                info["button_color"],
-                info["icon"],
-                info["icon_color"],
-            )
-        )
+        buttons.append(button(info["filter"], key, info["button_color"]))
 
-    buttons.append(button("Todas", "todos", ft.colors.BLUE, ft.icons.LIST))
+    buttons.append(button("Todas", "todos", ft.colors.BLUE))
 
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
     row = ft.ResponsiveRow(
-        buttons, columns=12, spacing=SPACE_4, run_spacing=SPACE_4
+        buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3
     )
     return ft.Container(
         content=row,
