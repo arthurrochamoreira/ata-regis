@@ -250,7 +250,7 @@ class AtaForm:
                 offset=ft.Offset(0, 5),
             ),
             expand=True,
-            max_width=1152,
+            width=1152,
         )
 
         self.dialog = ft.AlertDialog(content=card, modal=True)
