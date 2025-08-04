@@ -10,6 +10,7 @@ try:
         SPACE_5,
         SPACE_6,
         build_card,
+        primary_button,
     )
 except Exception:  # pragma: no cover - fallback for standalone execution
     from tokens import (
@@ -20,6 +21,7 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_5,
         SPACE_6,
         build_card,
+        primary_button,
     )
 
 try:
@@ -58,15 +60,10 @@ def build_header(
                     ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
                 ],
             ),
-            ft.ElevatedButton(
-                "➕ Nova Ata",
+            primary_button(
+                "Nova Ata",
+                icon=ft.icons.ADD,
                 on_click=nova_ata_cb,
-                bgcolor=ft.colors.BLUE,
-                color=ft.colors.WHITE,
-                style=ft.ButtonStyle(
-                    padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=SPACE_2),
-                    shape=ft.RoundedRectangleBorder(radius=8),
-                ),
             ),
         ],
     )
