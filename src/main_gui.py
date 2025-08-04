@@ -20,7 +20,7 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.spacing import SPACE_2, SPACE_4, SPACE_5
+from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -66,12 +66,7 @@ class AtaApp:
 
         self.navigation_menu = LeftNavigationMenu(self)
         self.body_container = ft.Container(
-            padding=ft.padding.only(
-                left=SPACE_5,
-                right=SPACE_5,
-                top=SPACE_4,
-                bottom=SPACE_4,
-            ),
+            padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,
         )
         self.update_body()

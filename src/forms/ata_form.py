@@ -3,7 +3,7 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 try:
-    from ..ui.spacing import (
+    from ..ui.theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
@@ -13,7 +13,7 @@ try:
     )
     from ..ui.tokens import build_section, primary_button, secondary_button
 except Exception:  # pragma: no cover
-    from ui.spacing import (
+    from ui.theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,

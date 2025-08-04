@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import Callable
 
 try:
-    from .spacing import (
+    from .theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,
@@ -13,7 +13,7 @@ try:
     )
     from .tokens import build_section, primary_button, secondary_button
 except Exception:  # pragma: no cover
-    from spacing import (
+    from theme.spacing import (
         SPACE_1,
         SPACE_2,
         SPACE_3,

@@ -6,9 +6,9 @@ BREAKPOINT_LG = 1280
 
 # maps breakpoints to paddings and font multipliers using design tokens
 try:
-    from .spacing import SPACE_2, SPACE_4, SPACE_5
+    from .theme.spacing import SPACE_2, SPACE_4, SPACE_5
 except Exception:  # pragma: no cover
-    from spacing import SPACE_2, SPACE_4, SPACE_5
+    from theme.spacing import SPACE_2, SPACE_4, SPACE_5
 
 PADDINGS = {
     "xs": SPACE_2,

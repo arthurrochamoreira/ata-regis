@@ -1,9 +1,9 @@
 import flet as ft
 
 try:
-    from .spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
 except Exception:  # pragma: no cover
-    from spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
