@@ -22,6 +22,7 @@ from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.theme.shadows import SHADOW_XL
+from ui.theme.colors import get_theme
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -49,13 +50,16 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = "#F3F4F6"
+        theme = get_theme(self.page.theme_mode)
+        self.page.bgcolor = theme["app_bg"]
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
+        theme = get_theme(self.page.theme_mode)
+
         self.page.appbar = build_header(
             nova_ata_cb=self.nova_ata_click,
             verificar_alertas_cb=self.verificar_alertas_manual,
@@ -63,9 +67,11 @@ class AtaApp:
             relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
             testar_email_cb=self.testar_email,
             status_cb=self.mostrar_status_sistema,
+            theme=theme,
         )
+        self.page.bgcolor = theme["app_bg"]
 
-        self.navigation_menu = LeftNavigationMenu(self)
+        self.navigation_menu = LeftNavigationMenu(self, theme)
         self.body_container = ft.Container(
             padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,
@@ -75,7 +81,7 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=ft.colors.WHITE,
+            bgcolor=theme["sidebar"]["bg"],
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
@@ -110,6 +116,11 @@ class AtaApp:
             self.menu_container.padding = ft.padding.all(SPACE_5)
 
         self.page.update()
+
+    def apply_theme(self):
+        """Rebuild UI applying current theme colors."""
+        self.page.controls.clear()
+        self.build_ui()
     
     def build_stats_panel(self):
         """Retorna o painel de estatísticas"""
@@ -129,9 +140,10 @@ class AtaApp:
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
+        theme = get_theme(self.page.theme_mode)
         filtros = build_filters(self.filtro_atual, self.filtrar_atas)
         search_container, self.search_field = build_search(
-            self.buscar_atas, self.texto_busca
+            self.buscar_atas, self.texto_busca, theme=theme
         )
         filtros.margin = ft.margin.only(bottom=0)
         search_container.margin = ft.margin.only(bottom=0)
@@ -153,6 +165,7 @@ class AtaApp:
             self.editar_ata,
             self.excluir_ata,
             filtro=self.filtro_atual,
+            theme=theme,
         )
         return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
 

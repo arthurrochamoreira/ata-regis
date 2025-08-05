@@ -86,7 +86,10 @@ def build_section(
         border_radius=8,
     )
 
-def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
+def build_card(
+    title: str, icon: ft.Control, content: ft.Control, *, theme: dict | None = None
+) -> ft.Control:
+    theme = theme or {}
     header = ft.Row(
         [
             icon,
@@ -94,7 +97,7 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
                 title,
                 size=16,
                 weight=ft.FontWeight.W_600,
-                color="#1F2937",
+                color=theme.get("table", {}).get("title_text", "#1F2937"),
             ),
         ],
         spacing=SPACE_2,
@@ -105,6 +108,6 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
         padding=SPACE_4,
         border=ft.border.all(1, GREY_LIGHT),
         border_radius=8,
-        bgcolor=ft.colors.WHITE,
+        bgcolor=theme.get("table", {}).get("card_bg", ft.colors.WHITE),
         shadow=SHADOW_MD,
     )
