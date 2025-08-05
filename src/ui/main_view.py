@@ -204,6 +204,9 @@ def build_data_table(
 
     header_labels = ["Número", "Vigência", "Objeto", "Fornecedor", "Situação", "Ações"]
 
+    # Relative width for columns: Número, Vigência, Objeto, Fornecedor, Situação, Ações
+    column_expands = [1, 1, 2, 1, 1, 1]
+
     header_cells = [
         ft.Container(
             ft.Text(
@@ -214,10 +217,10 @@ def build_data_table(
                 no_wrap=True,
                 text_align=ft.TextAlign.CENTER,
             ),
-            expand=1,
+            expand=exp,
             alignment=ft.alignment.center,
         )
-        for lbl in header_labels
+        for lbl, exp in zip(header_labels, column_expands)
     ]
     header_row = ft.Container(
         content=ft.Row(
@@ -282,10 +285,12 @@ def build_data_table(
                 weight=ft.FontWeight.W_500,
                 color=badge_text_color,
                 no_wrap=True,
+                text_align=ft.TextAlign.CENTER,
             ),
             padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
             border_radius=6,
+            alignment=ft.alignment.center,
         )
 
         actions = ft.Row(
@@ -324,36 +329,10 @@ def build_data_table(
         )
 
         cells = [
-            ft.Container(
-                text_cells[0],
-                expand=1,
-                alignment=ft.alignment.center,
-            ),
-            ft.Container(
-                text_cells[1],
-                expand=1,
-                alignment=ft.alignment.center,
-            ),
-            ft.Container(
-                text_cells[2],
-                expand=2,
-                alignment=ft.alignment.center,
-            ),
-            ft.Container(
-                text_cells[3],
-                expand=1,
-                alignment=ft.alignment.center,
-            ),
-            ft.Container(
-                badge,
-                expand=1,
-                alignment=ft.alignment.center,
-            ),
-            ft.Container(
-                actions,
-                expand=1,
-                alignment=ft.alignment.center,
-            ),
+            ft.Container(content, expand=exp, alignment=ft.alignment.center)
+            for content, exp in zip(
+                [*text_cells, badge, actions], column_expands
+            )
         ]
 
         row_container = ft.Container(
