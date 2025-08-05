@@ -111,7 +111,12 @@ class NavigationColumn(ft.Column):
     def item_clicked(self, e):
         self.selected_index = e.control.destination.index
         self.update_selected_item()
-        self.app.navigate_to(self.selected_index)
+        if self.selected_index == 0:
+            self.app.handle_dashboard_click(e)
+        elif self.selected_index == 1:
+            self.app.handle_atas_click(e)
+        elif self.selected_index == 2:
+            self.app.handle_vencimentos_click(e)
 
     def update_selected_item(self):
         for item in self.controls:
@@ -188,11 +193,7 @@ class LeftNavigationMenu(ft.Column):
         ]
 
     def theme_changed(self, e):
-        if self.page.theme_mode == ft.ThemeMode.LIGHT:
-            self.page.theme_mode = ft.ThemeMode.DARK
-        else:
-            self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.app.apply_theme()
+        self.app.handle_theme_toggle(e)
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
