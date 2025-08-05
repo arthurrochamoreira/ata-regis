@@ -59,6 +59,8 @@ STATUS_INFO = {
     },
 }
 
+STATUS_ORDER = ["vigente", "a_vencer", "vencida"]
+
 
 def build_header(
     nova_ata_cb: Callable,
@@ -371,16 +373,16 @@ def build_grouped_data_tables(
 
     When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
     corresponding card is returned and it expands to occupy the full available
-    width.  When ``filtro`` is ``todos`` the original layout with three cards is
-    rendered.
+    width.  When ``filtro`` é ``todos`` os grupos são sempre empilhados
+    verticalmente em uma única coluna.
     """
 
     groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
     for ata in atas:
         groups.setdefault(ata.status, []).append(ata)
 
-    # ``todos`` deve exibir todos os tipos de status disponíveis
-    statuses = [filtro] if filtro != "todos" else list(STATUS_INFO.keys())
+    # ``todos`` deve exibir todos os tipos de status disponíveis na ordem fixa
+    statuses = [filtro] if filtro != "todos" else STATUS_ORDER
 
     card_controls: list[ft.Control] = []
     for status in statuses:
@@ -411,12 +413,10 @@ def build_grouped_data_tables(
 
         card = build_card(info["title"], icon, table)
 
-        if filtro == "todos":
-            card.col = {"xs": 12, "lg": 4}
-        else:
+        card.expand = True
+        if filtro != "todos":
             # Single card should span the entire content area
             card.col = 12
-        card.expand = True
         card_controls.append(card)
 
     if not card_controls:
@@ -431,23 +431,33 @@ def build_grouped_data_tables(
             expand=True,
         )
 
-    row = ft.ResponsiveRow(
-        card_controls,
-        columns=12,
-        alignment=ft.MainAxisAlignment.START,
-        spacing=SPACE_5,
-        run_spacing=SPACE_5,
-        expand=True,
-    )
+    if filtro == "todos":
+        content = ft.Column(
+            card_controls,
+            spacing=SPACE_5,
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+        )
+    else:
+        row = ft.ResponsiveRow(
+            card_controls,
+            columns=12,
+            alignment=ft.MainAxisAlignment.START,
+            spacing=SPACE_5,
+            run_spacing=SPACE_5,
+            expand=True,
+        )
+        content = ft.Column([row], scroll=ft.ScrollMode.AUTO, expand=True)
 
     container = ft.Container(
-        content=ft.Column(
-            [row],
-            scroll=ft.ScrollMode.AUTO,
-            expand=True,
-        ),
+        content=content,
         alignment=ft.alignment.top_left,
-        padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5),
+        padding=ft.padding.only(
+            left=SPACE_5,
+            right=SPACE_5,
+            top=SPACE_5,
+            bottom=SPACE_5,
+        ),
         expand=True,
     )
     return container
