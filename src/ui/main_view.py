@@ -277,7 +277,9 @@ def build_data_table(
                 text_align=ft.TextAlign.CENTER,
             ),
         ]
-        badge_text_color, badge_bg_color = badge_colors[ata.status]
+        badge_text_color, badge_bg_color = badge_colors.get(
+            ata.status, ("#1F2937", "#E5E7EB")
+        )
         badge = ft.Container(
             ft.Text(
                 ata.status.replace("_", " ").title(),
@@ -375,18 +377,26 @@ def build_grouped_data_tables(
     rendered.
     """
 
-    groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
+    groups: dict[str, list[Ata]] = {}
     for ata in atas:
         groups.setdefault(ata.status, []).append(ata)
 
-    # ``todos`` deve exibir todos os tipos de status disponíveis
-    statuses = [filtro] if filtro != "todos" else list(STATUS_INFO.keys())
+    # ``todos`` deve exibir todos os tipos de status disponíveis presentes nas atas
+    statuses = [filtro] if filtro != "todos" else list(groups.keys())
 
     card_controls: list[ft.Control] = []
     for status in statuses:
         atas_status = groups.get(status, [])
 
-        info = STATUS_INFO[status]
+        info = STATUS_INFO.get(
+            status,
+            {
+                "title": f"Atas {status.replace('_', ' ').title()}",
+                "icon": ft.icons.DESCRIPTION_OUTLINED,
+                "icon_color": "#6B7280",
+                "icon_bg": "#F3F4F6",
+            },
+        )
 
         icon = ft.Container(
             content=ft.Icon(
