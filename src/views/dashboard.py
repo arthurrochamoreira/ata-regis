@@ -40,9 +40,9 @@ def create_dashboard(app) -> ft.Column:
     )
 
     line = ft.LineChart(
-        data_series=[
+        lines=[
             ft.LineChartData(
-                data_points=[
+                data=[
                     ft.LineChartDataPoint(1, 10),
                     ft.LineChartDataPoint(2, 20),
                     ft.LineChartDataPoint(3, 40),
