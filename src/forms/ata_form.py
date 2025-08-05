@@ -68,6 +68,7 @@ class AtaForm:
             hint_text="0000/0000",
             on_change=self.on_numero_ata_change,
             expand=True,
+            border_radius=9999,
         )
         
         self.documento_sei_field = ft.TextField(
@@ -75,12 +76,14 @@ class AtaForm:
             hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
             expand=True,
+            border_radius=9999,
         )
         
         self.data_vigencia_field = ft.TextField(
             label="Data de Vigência",
             hint_text="DD/MM/AAAA",
             expand=True,
+            border_radius=9999,
         )
         
         self.objeto_field = ft.TextField(
@@ -89,12 +92,14 @@ class AtaForm:
             multiline=True,
             max_lines=3,
             expand=True,
+            border_radius=9999,
         )
         
         self.fornecedor_field = ft.TextField(
             label="Fornecedor",
             hint_text="Nome da empresa fornecedora",
             expand=True,
+            border_radius=9999,
         )
         
         # Containers para listas dinâmicas
@@ -241,7 +246,7 @@ class AtaForm:
                 top=SPACE_4,
                 bottom=SPACE_4,
             ),
-            border_radius=16,
+            border_radius=8,
             alignment=ft.alignment.center,
             shadow=ft.BoxShadow(
                 spread_radius=1,
@@ -289,7 +294,8 @@ class AtaForm:
             hint_text="(XX) XXXXX-XXXX",
             value=valor,
             on_change=self.on_telefone_change,
-            width=200
+            width=200,
+            border_radius=9999,
         )
         
         remove_btn = ft.IconButton(
@@ -316,7 +322,8 @@ class AtaForm:
             label=f"E-mail {len(self.emails) + 1}",
             hint_text="email@exemplo.com",
             value=valor,
-            width=300
+            width=300,
+            border_radius=9999,
         )
         
         remove_btn = ft.IconButton(
@@ -343,21 +350,24 @@ class AtaForm:
             label="Descrição",
             hint_text="Descrição do item",
             value=item.descricao if item else "",
-            width=300
+            width=300,
+            border_radius=9999,
         )
         
         quantidade_field = ft.TextField(
             label="Quantidade",
             hint_text="0",
             value=str(item.quantidade) if item else "",
-            width=100
+            width=100,
+            border_radius=9999,
         )
         
         valor_field = ft.TextField(
             label="Valor Unitário",
             hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
-            width=150
+            width=150,
+            border_radius=9999,
         )
         
         remove_btn = ft.IconButton(

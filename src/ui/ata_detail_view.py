@@ -325,7 +325,7 @@ def build_ata_detail_view(
             top=SPACE_4,
             bottom=SPACE_4,
         ),
-        border_radius=16,
+        border_radius=8,
         alignment=ft.alignment.center,
         shadow=ft.BoxShadow(
             spread_radius=1,
