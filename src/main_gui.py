@@ -142,6 +142,7 @@ class AtaApp:
                 columns=12,
                 spacing=SPACE_4,
                 run_spacing=SPACE_4,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             margin=ft.margin.only(bottom=0),
         )
