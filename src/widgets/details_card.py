@@ -1,6 +1,6 @@
 """Detailed card for displaying Ata information."""
 import flet as ft
-from ..constants import SPACE_3, SPACE_4, SPACE_5
+from constants import SPACE_3, SPACE_4, SPACE_5
 from .badges import status_badge
 
 

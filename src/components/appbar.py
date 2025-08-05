@@ -1,6 +1,6 @@
 """Top AppBar component."""
 import flet as ft
-from ..constants import SPACE_4
+from constants import SPACE_4
 
 
 def create_appbar(app) -> ft.AppBar:

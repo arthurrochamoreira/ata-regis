@@ -1,6 +1,6 @@
 """Form dialog for creating or editing an Ata."""
 import flet as ft
-from ..constants import SPACE_3, SPACE_4
+from constants import SPACE_3, SPACE_4
 
 
 def create_ata_form(on_cancel, on_save) -> ft.AlertDialog:
