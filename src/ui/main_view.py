@@ -367,12 +367,15 @@ def build_grouped_data_tables(
     excluir_cb: Callable[[Ata], None],
     filtro: str = "todos",
 ) -> ft.Container:
-    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
+    """Return layout with status cards grouped by ``filtro``.
 
-    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
-    corresponding card is returned and it expands to occupy the full available
-    width.  When ``filtro`` is ``todos`` the original layout with three cards is
-    rendered.
+    When ``filtro`` is ``vigente``, ``a_vencer`` or ``vencida`` only the
+    corresponding card is rendered, occupying all available width. When
+    ``filtro`` is ``todos`` the groups are stacked vertically in a column for a
+    fluid, responsive layout.
+
+    This structure ensures each group behaves responsively without fixed widths
+    and documents the vertical stacking logic for future maintenance.
     """
 
     groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
@@ -410,13 +413,7 @@ def build_grouped_data_tables(
         )
 
         card = build_card(info["title"], icon, table)
-
-        if filtro == "todos":
-            card.col = {"xs": 12, "lg": 4}
-        else:
-            # Single card should span the entire content area
-            card.col = 12
-        card.expand = True
+        card.expand = True  # full width inside the Column
         card_controls.append(card)
 
     if not card_controls:
@@ -431,23 +428,16 @@ def build_grouped_data_tables(
             expand=True,
         )
 
-    row = ft.ResponsiveRow(
-        card_controls,
-        columns=12,
-        alignment=ft.MainAxisAlignment.START,
-        spacing=SPACE_5,
-        run_spacing=SPACE_5,
-        expand=True,
-    )
-
     container = ft.Container(
         content=ft.Column(
-            [row],
+            card_controls,
+            spacing=SPACE_5,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
         alignment=ft.alignment.top_left,
-        padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5),
+        padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5),
+        margin=ft.margin.only(bottom=SPACE_5),
         expand=True,
     )
     return container
