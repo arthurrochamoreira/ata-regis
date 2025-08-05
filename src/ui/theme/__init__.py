@@ -1,3 +1,3 @@
-from . import spacing, shadows
+from . import spacing, shadows, typography
 
-__all__ = ["spacing", "shadows"]
+__all__ = ["spacing", "shadows", "typography"]

@@ -23,6 +23,7 @@ from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.theme.shadows import SHADOW_XL
 from ui.responsive import get_breakpoint
+from ui.theme.typography import FONT_SANS
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -50,8 +51,8 @@ class AtaApp:
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
         self.page.bgcolor = "#F3F4F6"
-        self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
-        self.page.theme = ft.Theme(font_family="Inter")
+        self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
+        self.page.theme = ft.Theme(font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):

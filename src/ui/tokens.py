@@ -7,6 +7,13 @@ from .theme.spacing import (
     SPACE_6,
 )
 from .theme.shadows import SHADOW_MD
+from .theme.typography import (
+    text,
+    FONT_BOLD,
+    LEADING_5,
+    TRACKING_WIDER,
+    TEXT_XL,
+)
 
 import flet as ft
 from typing import Callable, Optional
@@ -73,7 +80,14 @@ def build_section(
                 padding=SPACE_2,
                 border_radius=8,
             ),
-            ft.Text(title, size=20, weight=ft.FontWeight.BOLD, color="#1F2937"),
+            text(
+                title,
+                size=TEXT_XL,
+                weight=FONT_BOLD,
+                line_height=LEADING_5,
+                letter_spacing=TRACKING_WIDER,
+                color="#1F2937",
+            ),
         ],
         spacing=SPACE_3,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -90,10 +104,12 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     header = ft.Row(
         [
             icon,
-            ft.Text(
+            text(
                 title,
                 size=16,
                 weight=ft.FontWeight.W_600,
+                line_height=LEADING_5,
+                letter_spacing=TRACKING_WIDER,
                 color="#1F2937",
             ),
         ],
