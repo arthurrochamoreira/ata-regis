@@ -8,7 +8,7 @@ Sistema desktop desenvolvido em Python com Flet para gerenciar Atas de Registro 
 - Interface gráfica desktop com Flet
 - Design inspirado no PNCP
 - Responsiva e intuitiva
-- Suporte a tema claro e escuro
+- Tema claro otimizado
 - Navegação em abas (Dashboard, Atas e Vencimentos)
 
 ### 📊 Painel de Controle

@@ -22,7 +22,6 @@ from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.theme.shadows import SHADOW_XL
-from ui.theme.colors import get_theme, ThemeColors
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -37,7 +36,6 @@ class AtaApp:
         self.current_tab = 0
         self.breakpoint = get_breakpoint(page.width)
         self.setup_page()
-        self.colors: ThemeColors = get_theme(self.page.theme_mode)
         self.build_ui()
         
         # Inicia o agendador de tarefas
@@ -51,7 +49,7 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = ft.colors.WHITE
+        self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
         self.page.on_resize = self.on_page_resize
@@ -77,7 +75,7 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=self.colors.sidebar_bg,
+            bgcolor=ft.colors.WHITE,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
@@ -94,7 +92,6 @@ class AtaApp:
 
         self.page.add(layout)
         self.update_responsive_layout(self.page.width)
-        self.apply_theme()
         self.page.update()
 
     def update_responsive_layout(self, width: int):
@@ -175,37 +172,7 @@ class AtaApp:
         else:
             content = self.build_vencimentos_view()
         self.body_container.content = content
-        self.apply_theme()
-
-    def apply_theme(self):
-        """Apply color scheme based on the current theme mode."""
-        self.colors = get_theme(self.page.theme_mode)
-        self.page.bgcolor = self.colors.background
-        if self.page.appbar:
-            self.page.appbar.bgcolor = self.colors.header_bg
-            if isinstance(self.page.appbar.title, ft.Text):
-                self.page.appbar.title.color = self.colors.header_text
-        self.menu_container.bgcolor = self.colors.sidebar_bg
-        self.navigation_menu.update_colors(self.colors, self.page.theme_mode)
-        # Update search field colors if present
-        if hasattr(self, "search_field") and self.search_field is not None:
-            self.search_field.bgcolor = self.colors.search_bg
-            self.search_field.text_style = ft.TextStyle(
-                size=14, weight=ft.FontWeight.W_500, color=self.colors.search_text
-            )
-            self.search_field.hint_style = ft.TextStyle(
-                size=14, weight=ft.FontWeight.W_500, color=self.colors.search_placeholder
-            )
-            self.search_field.focused_border_color = ft.colors.INDIGO_500
         self.page.update()
-
-    def toggle_theme(self):
-        """Toggle between light and dark themes and apply changes."""
-        if self.page.theme_mode == ft.ThemeMode.LIGHT:
-            self.page.theme_mode = ft.ThemeMode.DARK
-        else:
-            self.page.theme_mode = ft.ThemeMode.LIGHT
-        self.apply_theme()
 
     def navigate_to(self, index: int):
         self.current_tab = index

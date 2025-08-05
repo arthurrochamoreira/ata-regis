@@ -33,17 +33,12 @@ def test_imports():
         
         from utils.email_service import EmailService
         print("✓ Serviço de Email OK")
-
+        
         from utils.chart_utils import ChartUtils
         print("✓ Utilitários de Gráficos OK")
         
         from utils.scheduler import TaskScheduler
         print("✓ Agendador OK")
-
-        from ui.theme.colors import get_theme
-        import flet as ft
-        assert get_theme(ft.ThemeMode.DARK).sidebar_bg == ft.colors.GREY_800
-        print("✓ Tema escuro OK")
         
         # Testa formulários
         # from forms.ata_form import AtaForm
