@@ -426,10 +426,18 @@ def build_grouped_data_tables(
             expand=True,
         )
 
+    row = ft.ResponsiveRow(
+        card_controls,
+        columns=12,
+        alignment=ft.MainAxisAlignment.START,
+        spacing=SPACE_5,
+        run_spacing=SPACE_5,
+        expand=True,
+    )
+
     container = ft.Container(
         content=ft.Column(
-            card_controls,
-            spacing=SPACE_5,
+            [row],
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
