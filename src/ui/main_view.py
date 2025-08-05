@@ -372,7 +372,8 @@ def build_grouped_data_tables(
     When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
     corresponding card is returned and it expands to occupy the full available
     width.  When ``filtro`` is ``todos`` the original layout with three cards is
-    rendered.
+    rendered. Cards are always displayed in a single vertical column,
+    independent of screen size.
     """
 
     groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
@@ -410,12 +411,6 @@ def build_grouped_data_tables(
         )
 
         card = build_card(info["title"], icon, table)
-
-        if filtro == "todos":
-            card.col = {"xs": 12, "lg": 4}
-        else:
-            # Single card should span the entire content area
-            card.col = 12
         card.expand = True
         card_controls.append(card)
 
@@ -431,18 +426,10 @@ def build_grouped_data_tables(
             expand=True,
         )
 
-    row = ft.ResponsiveRow(
-        card_controls,
-        columns=12,
-        alignment=ft.MainAxisAlignment.START,
-        spacing=SPACE_5,
-        run_spacing=SPACE_5,
-        expand=True,
-    )
-
     container = ft.Container(
         content=ft.Column(
-            [row],
+            card_controls,
+            spacing=SPACE_5,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
