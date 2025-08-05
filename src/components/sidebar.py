@@ -1,6 +1,6 @@
 """Sidebar component with navigation and theme controls."""
 import flet as ft
-from ..constants import SPACE_3, SPACE_4, SPACE_5
+from constants import SPACE_3, SPACE_4, SPACE_5
 
 
 def create_sidebar(app) -> ft.Container:
