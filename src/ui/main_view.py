@@ -223,8 +223,10 @@ def build_data_table(
         content=ft.Row(
             header_cells,
             spacing=SPACE_4,
+            alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         ),
+        alignment=ft.alignment.center,
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
         bgcolor="#F9FAFB",
         border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
@@ -358,8 +360,10 @@ def build_data_table(
             content=ft.Row(
                 cells,
                 spacing=SPACE_3,
+                alignment=ft.MainAxisAlignment.CENTER,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
+            alignment=ft.alignment.center,
             padding=ft.padding.all(SPACE_4),
             border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
