@@ -57,7 +57,8 @@ class NavigationItem(ft.Container):
             color = self.theme["sidebar"]["link"]
         self.content.controls[0].color = color
         self.content.controls[1].color = color
-        self.update()
+        if self.page:
+            self.update()
 
     def set_selected(self, selected: bool):
         self.selected = selected
@@ -69,7 +70,8 @@ class NavigationItem(ft.Container):
             color = self.theme["sidebar"]["link"]
         self.content.controls[0].color = color
         self.content.controls[1].color = color
-        self.update()
+        if self.page:
+            self.update()
 
     def set_collapsed(self, collapsed: bool):
         """Show only icon when collapsed"""
