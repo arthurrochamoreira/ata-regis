@@ -497,8 +497,8 @@ def build_grouped_data_tables(
     """Return layout of cards for ``atas`` respecting ``filtro``.
 
     When ``filtro`` is ``vigente``, ``a_vencer`` or ``vencida`` a single card
-    with a data table is returned.  When ``filtro`` is ``todos`` each ``Ata`` is
-    rendered as an individual card stacked vertically and grouped by status.
+    with a data table is returned. When ``filtro`` is ``todos`` a data table
+    for each status is rendered and the cards are displayed side by side.
     """
 
     groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
@@ -506,18 +506,32 @@ def build_grouped_data_tables(
         groups[ata.status].append(ata)
 
     if filtro == "todos":
-        group_columns: list[ft.Control] = []
+        cards: list[ft.Control] = []
         for status in ["vigente", "a_vencer", "vencida"]:
             atas_status = groups[status]
             if not atas_status:
                 continue
-            cards = [
-                build_ata_card(ata, visualizar_cb, editar_cb, excluir_cb)
-                for ata in atas_status
-            ]
-            group_columns.append(ft.Column(cards, spacing=SPACE_5))
+            info = STATUS_INFO[status]
+            icon = ft.Container(
+                content=ft.Icon(info["icon"], color=info["icon_color"], size=20),
+                width=28,
+                height=28,
+                padding=ft.padding.all(SPACE_1),
+                bgcolor=info["icon_bg"],
+                border_radius=4,
+            )
+            table = build_data_table(
+                atas_status,
+                visualizar_cb,
+                editar_cb,
+                excluir_cb,
+                status,
+            )
+            card = build_card(info["title"], icon, table)
+            card.col = {"xs": 12, "md": 6, "lg": 4}
+            cards.append(card)
 
-        if not group_columns:
+        if not cards:
             return ft.Container(
                 content=ft.Text(
                     "Nenhuma ata encontrada",
@@ -529,20 +543,22 @@ def build_grouped_data_tables(
                 expand=True,
             )
 
-        content = ft.Column(
-            group_columns,
-            spacing=SPACE_5,
-            scroll=ft.ScrollMode.AUTO,
-            expand=True,
+        row = ft.ResponsiveRow(
+            cards,
+            columns=12,
+            alignment=ft.MainAxisAlignment.START,
+            spacing=SPACE_6,
+            run_spacing=SPACE_6,
         )
-        return ft.Container(
-            content=content,
+        container = ft.Container(
+            content=ft.Column([row], scroll=ft.ScrollMode.AUTO, expand=True),
             alignment=ft.alignment.top_left,
             padding=ft.padding.only(
                 left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5
             ),
             expand=True,
         )
+        return container
 
     # When filtering by a specific status, keep the original card with data table
     status = filtro
