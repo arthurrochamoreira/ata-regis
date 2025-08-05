@@ -152,18 +152,30 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
 def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
     search_field = ft.TextField(
-        label="Buscar atas...",
+        hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
         value=value,
         expand=True,
-        height=44,
-        content_padding=ft.padding.symmetric(horizontal=SPACE_4),
+        height=40,
+        text_style=ft.TextStyle(
+            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+        ),
+        hint_style=ft.TextStyle(
+            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+        ),
+        border_radius=8,
+        border_color=ft.colors.GREY_300,
+        focused_border_color="#3B82F6",
+        bgcolor=ft.colors.WHITE,
+        hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
+        content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
     return (
         ft.Container(
             content=search_field,
-            padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
+            alignment=ft.alignment.center,
+            padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_5),
             margin=ft.margin.only(bottom=SPACE_6),
             expand=True,
         ),
