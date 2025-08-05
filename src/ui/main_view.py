@@ -163,8 +163,10 @@ def build_search(on_change: Callable, value: str = "", theme: dict = None) -> tu
     theme = theme or {}
     search_field = ft.TextField(
         hint_text="Buscar atas...",
-        prefix_icon=ft.icons.SEARCH,
-        prefix_icon_color=theme.get("header", {}).get("search_icon"),
+        prefix=ft.Icon(
+            ft.icons.SEARCH,
+            color=theme.get("header", {}).get("search_icon"),
+        ),
         on_change=on_change,
         value=value,
         expand=True,
