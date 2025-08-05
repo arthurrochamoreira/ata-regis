@@ -360,6 +360,133 @@ def build_data_table(
     return table
 
 
+def build_ata_card(
+    ata: Ata,
+    visualizar_cb: Callable[[Ata], None],
+    editar_cb: Callable[[Ata], None],
+    excluir_cb: Callable[[Ata], None],
+) -> ft.Control:
+    """Return a card representing a single ``Ata``."""
+
+    data_formatada = Formatters.formatar_data_brasileira(ata.data_vigencia)
+
+    info = STATUS_INFO[ata.status]
+    icon = ft.Container(
+        content=ft.Icon(info["icon"], color=info["icon_color"], size=20),
+        width=28,
+        height=28,
+        padding=ft.padding.all(SPACE_1),
+        bgcolor=info["icon_bg"],
+        border_radius=4,
+    )
+
+    column_expands = [1, 1, 2, 1, 1, 1]
+    text_cells = [
+        ft.Text(
+            ata.numero_ata,
+            weight=ft.FontWeight.W_500,
+            color="#111827",
+            max_lines=1,
+            no_wrap=True,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            text_align=ft.TextAlign.CENTER,
+        ),
+        ft.Text(
+            data_formatada,
+            max_lines=1,
+            no_wrap=True,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            text_align=ft.TextAlign.CENTER,
+        ),
+        ft.Text(
+            ata.objeto,
+            max_lines=1,
+            no_wrap=True,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            text_align=ft.TextAlign.CENTER,
+        ),
+        ft.Text(
+            ata.fornecedor,
+            max_lines=1,
+            no_wrap=True,
+            overflow=ft.TextOverflow.ELLIPSIS,
+            text_align=ft.TextAlign.CENTER,
+        ),
+    ]
+
+    badge_colors = {
+        "vigente": ("#14532D", "#D1FAE5"),
+        "a_vencer": ("#713F12", "#FEF9C3"),
+        "vencida": ("#991B1B", "#FEE2E2"),
+    }
+    badge_text_color, badge_bg_color = badge_colors[ata.status]
+    badge = ft.Container(
+        ft.Text(
+            ata.status.replace("_", " ").title(),
+            size=12,
+            weight=ft.FontWeight.W_500,
+            color=badge_text_color,
+            no_wrap=True,
+            text_align=ft.TextAlign.CENTER,
+        ),
+        padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
+        bgcolor=badge_bg_color,
+        border_radius=6,
+        alignment=ft.alignment.center,
+    )
+
+    actions = ft.Row(
+        [
+            ft.IconButton(
+                icon=ft.icons.VISIBILITY,
+                tooltip="Visualizar",
+                on_click=lambda e, ata=ata: visualizar_cb(ata),
+                style=ft.ButtonStyle(
+                    color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                ),
+                icon_size=20,
+            ),
+            ft.IconButton(
+                icon=ft.icons.EDIT,
+                tooltip="Editar",
+                on_click=lambda e, ata=ata: editar_cb(ata),
+                style=ft.ButtonStyle(
+                    color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                ),
+                icon_size=20,
+            ),
+            ft.IconButton(
+                icon=ft.icons.DELETE,
+                tooltip="Excluir",
+                on_click=lambda e, ata=ata: excluir_cb(ata),
+                style=ft.ButtonStyle(
+                    color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                ),
+                icon_size=20,
+            ),
+        ],
+        spacing=SPACE_3,
+        alignment=ft.MainAxisAlignment.CENTER,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    cells = [
+        ft.Container(content, expand=exp, alignment=ft.alignment.center)
+        for content, exp in zip([*text_cells, badge, actions], column_expands)
+    ]
+
+    content_row = ft.Row(
+        cells,
+        spacing=SPACE_3,
+        alignment=ft.MainAxisAlignment.START,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    card = build_card(f"Ata Nº {ata.numero_ata}", icon, content_row)
+    card.expand = True
+    return card
+
+
 def build_grouped_data_tables(
     atas: List[Ata],
     visualizar_cb: Callable[[Ata], None],
@@ -367,59 +494,60 @@ def build_grouped_data_tables(
     excluir_cb: Callable[[Ata], None],
     filtro: str = "todos",
 ) -> ft.Container:
-    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
+    """Return layout of cards for ``atas`` respecting ``filtro``.
 
-    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
-    corresponding card is returned and it expands to occupy the full available
-    width.  When ``filtro`` is ``todos`` the original layout with three cards is
-    rendered.
+    When ``filtro`` is ``vigente``, ``a_vencer`` or ``vencida`` a single card
+    with a data table is returned.  When ``filtro`` is ``todos`` each ``Ata`` is
+    rendered as an individual card stacked vertically and grouped by status.
     """
 
     groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
     for ata in atas:
         groups[ata.status].append(ata)
 
-    statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
+    if filtro == "todos":
+        group_columns: list[ft.Control] = []
+        for status in ["vigente", "a_vencer", "vencida"]:
+            atas_status = groups[status]
+            if not atas_status:
+                continue
+            cards = [
+                build_ata_card(ata, visualizar_cb, editar_cb, excluir_cb)
+                for ata in atas_status
+            ]
+            group_columns.append(ft.Column(cards, spacing=SPACE_5))
 
-    card_controls: list[ft.Control] = []
-    for status in statuses:
-        atas_status = groups[status]
-        if not atas_status and filtro == "todos":
-            continue
+        if not group_columns:
+            return ft.Container(
+                content=ft.Text(
+                    "Nenhuma ata encontrada",
+                    color="#6B7280",
+                    no_wrap=True,
+                ),
+                alignment=ft.alignment.center,
+                padding=ft.padding.all(SPACE_4),
+                expand=True,
+            )
 
-        info = STATUS_INFO[status]
-
-        icon = ft.Container(
-            content=ft.Icon(
-                info["icon"],
-                color=info["icon_color"],
-                size=20,
+        content = ft.Column(
+            group_columns,
+            spacing=SPACE_5,
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+        )
+        return ft.Container(
+            content=content,
+            alignment=ft.alignment.top_left,
+            padding=ft.padding.only(
+                left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5
             ),
-            width=28,
-            height=28,
-            padding=ft.padding.all(SPACE_1),
-            bgcolor=info["icon_bg"],
-            border_radius=4,
+            expand=True,
         )
 
-        table = build_data_table(
-            atas_status,
-            visualizar_cb,
-            editar_cb,
-            excluir_cb,
-            status,
-        )
-
-        card = build_card(info["title"], icon, table)
-
-        if filtro == "todos":
-            card.col = {"xs": 12, "lg": 4}
-        else:
-            # Single card should span the entire content area
-            card.col = 12
-        card_controls.append(card)
-
-    if not card_controls:
+    # When filtering by a specific status, keep the original card with data table
+    status = filtro
+    atas_status = groups[status]
+    if not atas_status:
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
@@ -431,21 +559,38 @@ def build_grouped_data_tables(
             expand=True,
         )
 
+    info = STATUS_INFO[status]
+    icon = ft.Container(
+        content=ft.Icon(info["icon"], color=info["icon_color"], size=20),
+        width=28,
+        height=28,
+        padding=ft.padding.all(SPACE_1),
+        bgcolor=info["icon_bg"],
+        border_radius=4,
+    )
+
+    table = build_data_table(
+        atas_status,
+        visualizar_cb,
+        editar_cb,
+        excluir_cb,
+        status,
+    )
+
+    card = build_card(info["title"], icon, table)
+    card.col = 12
+
     row = ft.ResponsiveRow(
-        card_controls,
+        [card],
         columns=12,
-        alignment=ft.MainAxisAlignment.CENTER if filtro == "todos" else ft.MainAxisAlignment.START,
+        alignment=ft.MainAxisAlignment.START,
         spacing=SPACE_6,
         run_spacing=SPACE_6,
     )
 
     container = ft.Container(
-        content=ft.Column(
-            [row],
-            scroll=ft.ScrollMode.AUTO,
-            expand=True,
-        ),
-        alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
+        content=ft.Column([row], scroll=ft.ScrollMode.AUTO, expand=True),
+        alignment=ft.alignment.top_left,
         padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5),
         expand=True,
     )
