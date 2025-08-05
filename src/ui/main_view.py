@@ -410,7 +410,12 @@ def build_grouped_data_tables(
         )
 
         card = build_card(info["title"], icon, table)
-        card.col = 12
+
+        if filtro == "todos":
+            card.col = {"xs": 12, "lg": 4}
+        else:
+            # Single card should span the entire content area
+            card.col = 12
         card.expand = True
         card_controls.append(card)
 
@@ -426,21 +431,18 @@ def build_grouped_data_tables(
             expand=True,
         )
 
-    if filtro == "todos":
-        layout = ft.Column(card_controls, spacing=SPACE_5, expand=True)
-    else:
-        layout = ft.ResponsiveRow(
-            card_controls,
-            columns=12,
-            alignment=ft.MainAxisAlignment.START,
-            spacing=SPACE_5,
-            run_spacing=SPACE_5,
-            expand=True,
-        )
+    row = ft.ResponsiveRow(
+        card_controls,
+        columns=12,
+        alignment=ft.MainAxisAlignment.START,
+        spacing=SPACE_5,
+        run_spacing=SPACE_5,
+        expand=True,
+    )
 
     container = ft.Container(
         content=ft.Column(
-            [layout],
+            [row],
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
