@@ -11,6 +11,7 @@ try:
         SPACE_5,
         SPACE_6,
     )
+    from ..ui.theme.shadows import SHADOW_LG
     from ..ui.tokens import build_section, primary_button, secondary_button
 except Exception:  # pragma: no cover
     from ui.theme.spacing import (
@@ -21,6 +22,7 @@ except Exception:  # pragma: no cover
         SPACE_5,
         SPACE_6,
     )
+    from ui.theme.shadows import SHADOW_LG
     from ui.tokens import build_section, primary_button, secondary_button
 try:
     from ..models.ata import Ata, Item
@@ -248,12 +250,7 @@ class AtaForm:
             ),
             border_radius=8,
             alignment=ft.alignment.center,
-            shadow=ft.BoxShadow(
-                spread_radius=1,
-                blur_radius=15,
-                color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
-                offset=ft.Offset(0, 5),
-            ),
+            shadow=SHADOW_LG,
             expand=True,
             width=1152,
         )

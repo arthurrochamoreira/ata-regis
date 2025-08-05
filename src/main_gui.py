@@ -21,6 +21,7 @@ from ui.main_view import (
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
+from ui.theme.shadows import SHADOW_XL
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -81,7 +82,7 @@ class AtaApp:
                 top=SPACE_5,
                 bottom=SPACE_5,
             ),
-            shadow=ft.BoxShadow(blur_radius=1, spread_radius=0),
+            shadow=SHADOW_XL,
         )
 
         layout = ft.Row(
