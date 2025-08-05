@@ -47,7 +47,10 @@ class AtaApp:
         self.page.title = "Ata de Registro de Preços 0016/2024"
         self.page.window_width = 1200
         self.page.window_height = 800
-        self.page.theme_mode = ft.ThemeMode.LIGHT
+        stored_mode = self.page.client_storage.get("theme_mode")
+        self.page.theme_mode = (
+            ft.ThemeMode.DARK if stored_mode == "dark" else ft.ThemeMode.LIGHT
+        )
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
         theme = get_theme(self.page.theme_mode)
@@ -72,11 +75,13 @@ class AtaApp:
         self.page.bgcolor = theme["app_bg"]
 
         self.navigation_menu = LeftNavigationMenu(self, theme)
-        self.body_container = ft.Container(
+        self.main_container = ft.Container(
             padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,
         )
-        self.update_body()
+        self.build_views()
+        self.navigation_menu.rail.selected_index = self.current_tab
+        self.navigation_menu.rail.update_selected_item()
 
         self.menu_container = ft.Container(
             content=self.navigation_menu,
@@ -91,10 +96,10 @@ class AtaApp:
             shadow=SHADOW_XL,
         )
 
-        layout = ft.Row(
-            [self.menu_container, self.body_container],
-            expand=True,
-        )
+        layout = ft.Row([
+            self.menu_container,
+            self.main_container,
+        ], expand=True)
 
         self.page.add(layout)
         self.update_responsive_layout(self.page.width)
@@ -177,19 +182,63 @@ class AtaApp:
         )
         return ft.Column([self.atas_vencimento_container], spacing=0, expand=True)
 
-    def update_body(self):
-        if self.current_tab == 0:
-            content = self.build_dashboard_view()
-        elif self.current_tab == 1:
-            content = self.build_atas_view()
-        else:
-            content = self.build_vencimentos_view()
-        self.body_container.content = content
+    def build_views(self):
+        animation = ft.animation.Animation(200, ft.AnimationCurve.EASE)
+        self.dashboard_container = ft.Container(
+            content=self.build_dashboard_view(),
+            expand=True,
+            visible=self.current_tab == 0,
+            animate_opacity=animation,
+        )
+        self.atas_container = ft.Container(
+            content=self.build_atas_view(),
+            expand=True,
+            visible=self.current_tab == 1,
+            animate_opacity=animation,
+        )
+        self.vencimentos_container = ft.Container(
+            content=self.build_vencimentos_view(),
+            expand=True,
+            visible=self.current_tab == 2,
+            animate_opacity=animation,
+        )
+        self.main_container.content = ft.Stack(
+            [self.dashboard_container, self.atas_container, self.vencimentos_container],
+            expand=True,
+        )
+
+    def show_view(self, index: int):
+        print(f"Trocar para view {index}")
+        self.current_tab = index
+        self.dashboard_container.visible = index == 0
+        self.atas_container.visible = index == 1
+        self.vencimentos_container.visible = index == 2
         self.page.update()
 
-    def navigate_to(self, index: int):
-        self.current_tab = index
-        self.update_body()
+    def handle_dashboard_click(self, e):
+        print("Dashboard clicado")
+        self.show_view(0)
+
+    def handle_atas_click(self, e):
+        print("Atas clicado")
+        self.show_view(1)
+
+    def handle_vencimentos_click(self, e):
+        print("Vencimentos clicado")
+        self.show_view(2)
+
+    def handle_theme_toggle(self, e):
+        new_mode = (
+            ft.ThemeMode.DARK
+            if self.page.theme_mode == ft.ThemeMode.LIGHT
+            else ft.ThemeMode.LIGHT
+        )
+        self.page.theme_mode = new_mode
+        self.page.client_storage.set(
+            "theme_mode", "dark" if new_mode == ft.ThemeMode.DARK else "light"
+        )
+        print(f"Tema alterado para {new_mode}")
+        self.apply_theme()
 
     def on_page_resize(self, e):
         self.update_responsive_layout(self.page.width)
@@ -236,8 +285,14 @@ class AtaApp:
         self.page.update()
     
     def refresh_ui(self):
-        """Atualiza a interface"""
-        self.update_body()
+        """Atualiza a interface da view atual"""
+        if self.current_tab == 0:
+            self.dashboard_container.content = self.build_dashboard_view()
+        elif self.current_tab == 1:
+            self.atas_container.content = self.build_atas_view()
+        else:
+            self.vencimentos_container.content = self.build_vencimentos_view()
+        self.page.update()
 
     
     def nova_ata_click(self, e):
