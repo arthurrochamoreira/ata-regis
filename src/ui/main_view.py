@@ -144,8 +144,7 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
     return ft.Container(
         content=row,
-        padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
-        margin=ft.margin.only(bottom=SPACE_4),
+        padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_5),
         expand=True,
     )
 
@@ -446,10 +445,11 @@ def build_grouped_data_tables(
     )
 
     container = ft.Container(
-        content=row,
+        content=ft.Container(content=row, padding=ft.padding.only(bottom=SPACE_5)),
         alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
-        padding=ft.padding.symmetric(horizontal=SPACE_5),
+        padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5),
         expand=True,
+        scroll=ft.ScrollMode.AUTO,
     )
     return container
 

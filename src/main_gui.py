@@ -143,7 +143,7 @@ class AtaApp:
                 spacing=SPACE_4,
                 run_spacing=SPACE_4,
             ),
-            margin=ft.margin.only(bottom=SPACE_4),
+            margin=ft.margin.only(bottom=0),
             expand=True,
         )
         self.grouped_tables = build_grouped_data_tables(
