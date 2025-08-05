@@ -32,7 +32,7 @@ def primary_button(
         on_click=on_click,
         bgcolor="#3B82F6",
         color="#FFFFFF",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)),
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
     )
 
 
@@ -49,7 +49,7 @@ def secondary_button(
         icon=icon,
         on_click=on_click,
         style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=8),
+            shape=ft.RoundedRectangleBorder(radius=9999),
             color="#4B5563",
             side=ft.BorderSide(1, "#D1D5DB"),
         ),
@@ -82,7 +82,7 @@ def build_section(
         content=ft.Column([header, body], spacing=SPACE_5),
         bgcolor=CARD_BG,
         padding=SPACE_4,
-        border_radius=12,
+        border_radius=8,
     )
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
@@ -103,7 +103,7 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
         content=ft.Column([header, content], spacing=SPACE_4),
         padding=SPACE_4,
         border=ft.border.all(1, GREY_LIGHT),
-        border_radius=12,
+        border_radius=8,
         bgcolor=ft.colors.WHITE,
         shadow=ft.BoxShadow(
             spread_radius=0,
