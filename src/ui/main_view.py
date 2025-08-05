@@ -375,17 +375,16 @@ def build_grouped_data_tables(
     rendered.
     """
 
-    groups: dict[str, list[Ata]] = {"vigente": [], "a_vencer": [], "vencida": []}
+    groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
     for ata in atas:
-        groups[ata.status].append(ata)
+        groups.setdefault(ata.status, []).append(ata)
 
-    statuses = [filtro] if filtro != "todos" else ["vigente", "a_vencer", "vencida"]
+    # ``todos`` deve exibir todos os tipos de status disponíveis
+    statuses = [filtro] if filtro != "todos" else list(STATUS_INFO.keys())
 
     card_controls: list[ft.Control] = []
     for status in statuses:
-        atas_status = groups[status]
-        if not atas_status and filtro == "todos":
-            continue
+        atas_status = groups.get(status, [])
 
         info = STATUS_INFO[status]
 
@@ -417,6 +416,7 @@ def build_grouped_data_tables(
         else:
             # Single card should span the entire content area
             card.col = 12
+        card.expand = True
         card_controls.append(card)
 
     if not card_controls:
@@ -434,9 +434,10 @@ def build_grouped_data_tables(
     row = ft.ResponsiveRow(
         card_controls,
         columns=12,
-        alignment=ft.MainAxisAlignment.CENTER if filtro == "todos" else ft.MainAxisAlignment.START,
-        spacing=SPACE_6,
-        run_spacing=SPACE_6,
+        alignment=ft.MainAxisAlignment.START,
+        spacing=SPACE_5,
+        run_spacing=SPACE_5,
+        expand=True,
     )
 
     container = ft.Container(
@@ -445,7 +446,7 @@ def build_grouped_data_tables(
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
+        alignment=ft.alignment.top_left,
         padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5, bottom=SPACE_5),
         expand=True,
     )
