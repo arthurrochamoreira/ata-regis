@@ -2,8 +2,10 @@ import flet as ft
 
 try:
     from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from .theme.colors import ThemeColors
 except Exception:  # pragma: no cover
     from theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from theme.colors import ThemeColors
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
@@ -27,9 +29,16 @@ class NavigationDestination:
         self.index = index
 
 class NavigationItem(ft.Container):
-    def __init__(self, destination: NavigationDestination, item_clicked):
+    def __init__(
+        self,
+        destination: NavigationDestination,
+        item_clicked,
+        *,
+        colors: ThemeColors,
+    ):
         super().__init__()
         self.destination = destination
+        self.colors = colors
         self.ink = True
         self.padding = SPACE_3
         self.border_radius = 8
@@ -38,6 +47,38 @@ class NavigationItem(ft.Container):
             spacing=SPACE_2,
         )
         self.on_click = item_clicked
+        self.on_hover = self._handle_hover
+        self._selected = False
+        self._apply_default_colors()
+
+    def _apply_default_colors(self):
+        for ctrl in self.content.controls:
+            ctrl.color = self.colors.sidebar_link
+
+    def _apply_active_colors(self):
+        self.bgcolor = self.colors.sidebar_link_active_bg
+        for ctrl in self.content.controls:
+            ctrl.color = self.colors.sidebar_link_active_text
+
+    def _handle_hover(self, e: ft.HoverEvent):
+        if self._selected:
+            return
+        if e.data == "true":
+            self.bgcolor = self.colors.sidebar_link_hover_bg
+            for ctrl in self.content.controls:
+                ctrl.color = self.colors.sidebar_link_hover_text
+        else:
+            self.bgcolor = None
+            self._apply_default_colors()
+        self.update()
+
+    def set_selected(self, selected: bool):
+        self._selected = selected
+        if selected:
+            self._apply_active_colors()
+        else:
+            self.bgcolor = None
+            self._apply_default_colors()
 
     def set_collapsed(self, collapsed: bool):
         """Show only icon when collapsed"""
@@ -70,7 +111,9 @@ class NavigationColumn(ft.Column):
     def get_navigation_items(self):
         items = []
         for d in self.destinations:
-            items.append(NavigationItem(d, item_clicked=self.item_clicked))
+            items.append(
+                NavigationItem(d, item_clicked=self.item_clicked, colors=self.app.colors)
+            )
         return items
 
     def item_clicked(self, e):
@@ -80,11 +123,15 @@ class NavigationColumn(ft.Column):
 
     def update_selected_item(self):
         for item in self.controls:
-            item.bgcolor = None
             item.content.controls[0].name = item.destination.icon
+            item.set_selected(item.destination.index == self.selected_index)
         sel = self.controls[self.selected_index]
-        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
         sel.content.controls[0].name = sel.destination.selected_icon
+
+    def update_colors(self, colors: ThemeColors):
+        for item in self.controls:
+            item.colors = colors
+            item.set_selected(item._selected)
 
 class LeftNavigationMenu(ft.Column):
     def __init__(self, app):
@@ -97,7 +144,11 @@ class LeftNavigationMenu(ft.Column):
         ]
         self.rail = NavigationColumn(app, self.destinations)
         self.dark_light_text = ft.Text("Light theme")
-        self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
+        self.dark_light_icon = ft.IconButton(
+            icon=ft.icons.WB_SUNNY,
+            tooltip="Toggle brightness",
+            on_click=self.theme_changed,
+        )
         self.padding = 0
         self.spacing = SPACE_3
         self.controls = [
@@ -133,15 +184,20 @@ class LeftNavigationMenu(ft.Column):
         ]
 
     def theme_changed(self, e):
-        if self.page.theme_mode == ft.ThemeMode.LIGHT:
-            self.page.theme_mode = ft.ThemeMode.DARK
-            self.dark_light_text.value = "Dark theme"
-            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_HIGH
-        else:
-            self.page.theme_mode = ft.ThemeMode.LIGHT
+        self.app.toggle_theme()
+
+    def update_colors(self, colors: ThemeColors, mode: ft.ThemeMode):
+        self.rail.update_colors(colors)
+        self.dark_light_text.color = colors.text
+        self.dark_light_icon.bgcolor = colors.toggle_bg
+        self.dark_light_icon.icon_color = colors.toggle_icon
+        if mode == ft.ThemeMode.LIGHT:
             self.dark_light_text.value = "Light theme"
-            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
-        self.page.update()
+            self.dark_light_icon.icon = ft.icons.WB_SUNNY
+        else:
+            self.dark_light_text.value = "Dark theme"
+            self.dark_light_icon.icon = ft.icons.NIGHTLIGHT_ROUND
+        self.update()
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
