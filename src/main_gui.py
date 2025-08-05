@@ -21,6 +21,7 @@ from ui.main_view import (
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
+from ui.theme import colors as theme_colors
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -48,7 +49,8 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = "#F3F4F6"
+        # Apply initial theme colors
+        self.apply_theme()
         self.page.fonts = {"Inter": "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family="Inter")
         self.page.on_resize = self.on_page_resize
@@ -56,6 +58,7 @@ class AtaApp:
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
         self.page.appbar = build_header(
+            self.page,
             nova_ata_cb=self.nova_ata_click,
             verificar_alertas_cb=self.verificar_alertas_manual,
             relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
@@ -71,10 +74,11 @@ class AtaApp:
         )
         self.update_body()
 
+        scheme = theme_colors.scheme(self.page)
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=ft.colors.WHITE,
+            bgcolor=scheme["sidebar_bg"],
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
@@ -109,6 +113,22 @@ class AtaApp:
             self.menu_container.padding = ft.padding.all(SPACE_5)
 
         self.page.update()
+
+    def apply_theme(self):
+        """Atualiza cores baseadas no tema atual."""
+        scheme = theme_colors.scheme(self.page)
+        self.page.bgcolor = scheme["app_bg"]
+        if hasattr(self, "menu_container"):
+            self.menu_container.bgcolor = scheme["sidebar_bg"]
+        if hasattr(self, "navigation_menu"):
+            self.navigation_menu.refresh_theme()
+        if self.page.appbar:
+            self.page.appbar.bgcolor = scheme["header_bg"]
+            if isinstance(self.page.appbar.title, ft.Text):
+                self.page.appbar.title.color = scheme["header_title"]
+            if isinstance(self.page.appbar.leading, ft.Icon):
+                self.page.appbar.leading.color = scheme["sidebar_title"]
+        self.page.update()
     
     def build_stats_panel(self):
         """Retorna o painel de estatísticas"""
@@ -130,7 +150,7 @@ class AtaApp:
     def build_atas_view(self):
         filtros = build_filters(self.filtro_atual, self.filtrar_atas)
         search_container, self.search_field = build_search(
-            self.buscar_atas, self.texto_busca
+            self.buscar_atas, self.texto_busca, self.page
         )
         filtros.margin = ft.margin.only(bottom=0)
         search_container.margin = ft.margin.only(bottom=0)

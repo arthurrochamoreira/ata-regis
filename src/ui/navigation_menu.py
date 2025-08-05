@@ -2,8 +2,10 @@ import flet as ft
 
 try:
     from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from .theme import colors as theme_colors
 except Exception:  # pragma: no cover
     from theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from theme import colors as theme_colors
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
@@ -33,11 +35,35 @@ class NavigationItem(ft.Container):
         self.ink = True
         self.padding = SPACE_3
         self.border_radius = 5
-        self.content = ft.Row(
-            [ft.Icon(destination.icon), ft.Text(destination.label)],
-            spacing=SPACE_2,
-        )
+        self.selected = False
+        self.icon = ft.Icon(destination.icon)
+        self.label = ft.Text(destination.label)
+        self.content = ft.Row([self.icon, self.label], spacing=SPACE_2)
         self.on_click = item_clicked
+        self.on_hover = self.handle_hover
+        self.apply_theme()
+
+    def handle_hover(self, e: ft.HoverEvent):
+        scheme = theme_colors.scheme(self.page)
+        if e.data == "true":
+            self.bgcolor = scheme["nav_link_hover_bg"]
+            color = scheme["nav_link_hover_text"]
+            self.icon.color = color
+            self.label.color = color
+        else:
+            self.apply_theme()
+        self.update()
+
+    def apply_theme(self):
+        scheme = theme_colors.scheme(self.page)
+        if self.selected:
+            self.bgcolor = scheme["nav_link_active_bg"]
+            color = scheme["nav_link_active_text"]
+        else:
+            self.bgcolor = None
+            color = scheme["nav_link"]
+        self.icon.color = color
+        self.label.color = color
 
     def set_collapsed(self, collapsed: bool):
         """Show only icon when collapsed"""
@@ -79,12 +105,14 @@ class NavigationColumn(ft.Column):
         self.app.navigate_to(self.selected_index)
 
     def update_selected_item(self):
+        for index, item in enumerate(self.controls):
+            item.selected = index == self.selected_index
+            item.icon.name = item.destination.selected_icon if item.selected else item.destination.icon
+            item.apply_theme()
+
+    def apply_theme(self):
         for item in self.controls:
-            item.bgcolor = None
-            item.content.controls[0].name = item.destination.icon
-        sel = self.controls[self.selected_index]
-        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
-        sel.content.controls[0].name = sel.destination.selected_icon
+            item.apply_theme()
 
 class LeftNavigationMenu(ft.Column):
     def __init__(self, app):
@@ -131,6 +159,7 @@ class LeftNavigationMenu(ft.Column):
                 ),
             ),
         ]
+        self.refresh_theme()
 
     def theme_changed(self, e):
         if self.page.theme_mode == ft.ThemeMode.LIGHT:
@@ -141,7 +170,17 @@ class LeftNavigationMenu(ft.Column):
             self.page.theme_mode = ft.ThemeMode.LIGHT
             self.dark_light_text.value = "Light theme"
             self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
-        self.page.update()
+        self.app.apply_theme()
+        self.app.refresh_ui()
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
+
+    def refresh_theme(self):
+        """Apply theme colors to navigation menu."""
+        scheme = theme_colors.scheme(self.page)
+        self.dark_light_text.color = scheme["nav_link"]
+        self.dark_light_icon.icon_color = (
+            scheme["toggle_moon"] if self.page.theme_mode == ft.ThemeMode.LIGHT else scheme["toggle_sun"]
+        )
+        self.rail.apply_theme()

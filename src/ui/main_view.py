@@ -10,7 +10,8 @@ try:
         SPACE_5,
         SPACE_6,
     )
-    from .tokens import build_card, primary_button
+    from .tokens import build_card
+    from .theme import colors as theme_colors
 except Exception:  # pragma: no cover - fallback for standalone execution
     from theme.spacing import (
         SPACE_1,
@@ -20,7 +21,8 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_5,
         SPACE_6,
     )
-    from tokens import build_card, primary_button
+    from tokens import build_card
+    from theme import colors as theme_colors
 
 try:
     from ..models.ata import Ata
@@ -61,6 +63,7 @@ STATUS_INFO = {
 
 
 def build_header(
+    page: ft.Page,
     nova_ata_cb: Callable,
     verificar_alertas_cb: Callable,
     relatorio_semanal_cb: Callable,
@@ -69,6 +72,22 @@ def build_header(
     status_cb: Callable,
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
+    scheme = theme_colors.scheme(page)
+
+    new_btn = ft.FilledButton(
+        text="Nova Ata",
+        icon=ft.icons.ADD,
+        on_click=nova_ata_cb,
+        style=ft.ButtonStyle(
+            bgcolor={
+                ft.MaterialState.DEFAULT: scheme["new_button_bg"],
+                ft.MaterialState.HOVERED: scheme["new_button_hover"],
+            },
+            color={ft.MaterialState.DEFAULT: scheme["new_button_text"]},
+            shape=ft.RoundedRectangleBorder(radius=8),
+        ),
+    )
+
     actions_row = ft.Row(
         [
             ft.PopupMenuButton(
@@ -82,21 +101,17 @@ def build_header(
                     ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
                 ],
             ),
-            primary_button(
-                "Nova Ata",
-                icon=ft.icons.ADD,
-                on_click=nova_ata_cb,
-            ),
+            new_btn,
         ],
         spacing=SPACE_4,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
     return ft.AppBar(
-        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED, color=scheme["sidebar_title"]),
         leading_width=40,
-        title=ft.Text("Ata de Registro de Preços"),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
+        title=ft.Text("Ata de Registro de Preços", color=scheme["header_title"]),
+        bgcolor=scheme["header_bg"],
         actions=[
             ft.Container(
                 content=actions_row,
@@ -149,8 +164,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
 
 
-def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
+def build_search(on_change: Callable, value: str = "", page: ft.Page | None = None) -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
+    page = page or ft.Page()
+    scheme = theme_colors.scheme(page)
     search_field = ft.TextField(
         hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
@@ -159,16 +176,16 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         expand=True,
         height=40,
         text_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+            size=14, weight=ft.FontWeight.W_500, color=scheme["app_text"]
         ),
         hint_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+            size=14, weight=ft.FontWeight.W_500, color=scheme["app_text"]
         ),
         border_radius=8,
-        border_color=ft.colors.GREY_300,
-        focused_border_color="#3B82F6",
-        bgcolor=ft.colors.WHITE,
-        hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
+        border_color=scheme["tabs_border"],
+        focused_border_color=scheme["search_focus_border"],
+        bgcolor=scheme["search_bg"],
+        prefix_icon_color=scheme["search_icon"],
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
     return (
