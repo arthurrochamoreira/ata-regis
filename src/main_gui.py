@@ -136,7 +136,7 @@ class AtaApp:
         search_container.margin = ft.margin.only(bottom=0)
         filtros.col = {"xs": 12, "md": 4, "lg": 4}
         search_container.col = {"xs": 12, "md": 8, "lg": 8}
-        filtros_search_row = ft.Container(
+        self.filtros_container = ft.Container(
             content=ft.ResponsiveRow(
                 [filtros, search_container],
                 columns=12,
@@ -153,7 +153,7 @@ class AtaApp:
             self.excluir_ata,
             filtro=self.filtro_atual,
         )
-        return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
+        return ft.Column([self.filtros_container, self.grouped_tables], spacing=0, expand=True)
 
     def build_vencimentos_view(self):
         self.atas_vencimento_container = build_atas_vencimento(
@@ -202,9 +202,38 @@ class AtaApp:
         return atas
     
     def filtrar_atas(self, filtro: str):
-        """Filtra as atas por status"""
+        """Filtra as atas por status e atualiza a lista exibida."""
         self.filtro_atual = filtro
-        self.refresh_ui()
+
+        # Reconstrói os botões de filtro para refletir a seleção atual
+        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
+        filtros.margin = ft.margin.only(bottom=0)
+        filtros.col = {"xs": 12, "md": 4, "lg": 4}
+
+        search_container, self.search_field = build_search(
+            self.buscar_atas, self.texto_busca
+        )
+        search_container.margin = ft.margin.only(bottom=0)
+        search_container.col = {"xs": 12, "md": 8, "lg": 8}
+
+        self.filtros_container.content = ft.ResponsiveRow(
+            [filtros, search_container],
+            columns=12,
+            spacing=SPACE_4,
+            run_spacing=SPACE_4,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+
+        # Atualiza a tabela de atas de acordo com o novo filtro
+        new_table = build_grouped_data_tables(
+            self.get_atas_filtradas(),
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
+            filtro=self.filtro_atual,
+        )
+        self.grouped_tables.content = new_table.content
+        self.page.update()
     
     def buscar_atas(self, e):
         """Busca atas por texto"""
