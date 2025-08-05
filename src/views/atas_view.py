@@ -1,6 +1,6 @@
 """Main Atas view with filters and tables."""
 import flet as ft
-from constants import SPACE_4, SPACE_5
+from ..constants import SPACE_4, SPACE_5
 from widgets.badges import status_badge
 
 SAMPLE_ATAS = [

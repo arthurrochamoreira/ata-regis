@@ -1,6 +1,6 @@
 """Dashboard view."""
 import flet as ft
-from constants import SPACE_4, SPACE_5
+from ..constants import SPACE_4, SPACE_5
 
 
 def create_dashboard(app) -> ft.Column:
