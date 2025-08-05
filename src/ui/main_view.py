@@ -10,7 +10,7 @@ try:
         SPACE_5,
         SPACE_6,
     )
-    from .tokens import build_card, primary_button
+    from .tokens import build_card
 except Exception:  # pragma: no cover - fallback for standalone execution
     from theme.spacing import (
         SPACE_1,
@@ -20,7 +20,7 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_5,
         SPACE_6,
     )
-    from tokens import build_card, primary_button
+    from tokens import build_card
 
 try:
     from ..models.ata import Ata
@@ -67,6 +67,7 @@ def build_header(
     relatorio_mensal_cb: Callable,
     testar_email_cb: Callable,
     status_cb: Callable,
+    theme: dict,
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
     actions_row = ft.Row(
@@ -82,10 +83,18 @@ def build_header(
                     ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
                 ],
             ),
-            primary_button(
+            ft.ElevatedButton(
                 "Nova Ata",
                 icon=ft.icons.ADD,
                 on_click=nova_ata_cb,
+                style=ft.ButtonStyle(
+                    bgcolor={
+                        "": theme["header"]["button_bg"],
+                        ft.MaterialState.HOVERED: theme["header"]["button_hover_bg"],
+                    },
+                    color=theme["header"]["button_text"],
+                    shape=ft.RoundedRectangleBorder(radius=9999),
+                ),
             ),
         ],
         spacing=SPACE_4,
@@ -93,10 +102,10 @@ def build_header(
     )
 
     return ft.AppBar(
-        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED, color=theme["header"]["title"]),
         leading_width=40,
-        title=ft.Text("Ata de Registro de Preços"),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
+        title=ft.Text("Ata de Registro de Preços", color=theme["header"]["title"]),
+        bgcolor=theme["header"]["bg"],
         actions=[
             ft.Container(
                 content=actions_row,
@@ -149,25 +158,31 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
 
 
-def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
+def build_search(on_change: Callable, value: str = "", theme: dict = None) -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
+    theme = theme or {}
     search_field = ft.TextField(
         hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
+        prefix_icon_color=theme.get("header", {}).get("search_icon"),
         on_change=on_change,
         value=value,
         expand=True,
         height=40,
         text_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+            size=14,
+            weight=ft.FontWeight.W_500,
+            color=theme.get("header", {}).get("search_text"),
         ),
         hint_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+            size=14,
+            weight=ft.FontWeight.W_500,
+            color=theme.get("header", {}).get("search_placeholder"),
         ),
         border_radius=9999,
         border_color=ft.colors.GREY_300,
-        focused_border_color="#3B82F6",
-        bgcolor=ft.colors.WHITE,
+        focused_border_color=theme.get("header", {}).get("search_focus"),
+        bgcolor=theme.get("header", {}).get("search_bg"),
         hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
@@ -189,13 +204,14 @@ def build_data_table(
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
     status: str,
+    theme: dict,
 ) -> ft.Column:
     """Return custom table for a list of atas respecting design specs."""
     if not atas:
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
-                color="#6B7280",
+                color=theme["table"]["no_record"],
                 no_wrap=True,
             ),
             alignment=ft.alignment.center,
@@ -213,7 +229,7 @@ def build_data_table(
                 lbl.upper(),
                 size=11,
                 weight=ft.FontWeight.W_600,
-                color="#6B7280",
+                color=theme["table"]["header_text"],
                 no_wrap=True,
                 text_align=ft.TextAlign.CENTER,
             ),
@@ -231,14 +247,23 @@ def build_data_table(
         ),
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
-        bgcolor="#F9FAFB",
-        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+        bgcolor=theme["table"]["header_bg"],
+        border=ft.border.only(bottom=ft.BorderSide(1, theme["table"]["header_border"])),
     )
 
     badge_colors = {
-        "vigente": ("#14532D", "#D1FAE5"),
-        "a_vencer": ("#713F12", "#FEF9C3"),
-        "vencida": ("#991B1B", "#FEE2E2"),
+        "vigente": (
+            theme["badges"]["vigente_text"],
+            theme["badges"]["vigente_bg"],
+        ),
+        "a_vencer": (
+            theme["badges"]["a_vencer_text"],
+            theme["badges"]["a_vencer_bg"],
+        ),
+        "vencida": (
+            theme["badges"]["vencida_text"],
+            theme["badges"]["vencida_bg"],
+        ),
     }
 
     rows: list[ft.Control] = []
@@ -249,7 +274,7 @@ def build_data_table(
             ft.Text(
                 ata.numero_ata,
                 weight=ft.FontWeight.W_500,
-                color="#111827",
+                color=theme["table"]["number_text"],
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -261,6 +286,7 @@ def build_data_table(
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
                 text_align=ft.TextAlign.CENTER,
+                color=theme["table"]["other_text"],
             ),
             ft.Text(
                 ata.objeto,
@@ -268,6 +294,7 @@ def build_data_table(
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
                 text_align=ft.TextAlign.CENTER,
+                color=theme["table"]["other_text"],
             ),
             ft.Text(
                 ata.fornecedor,
@@ -275,6 +302,7 @@ def build_data_table(
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
                 text_align=ft.TextAlign.CENTER,
+                color=theme["table"]["other_text"],
             ),
         ]
         badge_text_color, badge_bg_color = badge_colors[ata.status]
@@ -300,7 +328,10 @@ def build_data_table(
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                        color={
+                            ft.MaterialState.HOVERED: theme["actions"]["view_hover"],
+                            "": theme["actions"]["view"],
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -309,7 +340,10 @@ def build_data_table(
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                        color={
+                            ft.MaterialState.HOVERED: theme["actions"]["edit_hover"],
+                            "": theme["actions"]["edit"],
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -318,7 +352,10 @@ def build_data_table(
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                        color={
+                            ft.MaterialState.HOVERED: theme["actions"]["delete_hover"],
+                            "": theme["actions"]["delete"],
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -344,7 +381,11 @@ def build_data_table(
             ),
             alignment=ft.alignment.center,
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
+            border=ft.border.only(
+                bottom=ft.BorderSide(1, theme["table"]["divider"])
+            )
+            if index < total - 1
+            else None,
         )
 
         rows.append(row_container)
@@ -353,8 +394,9 @@ def build_data_table(
 
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
-        border=ft.border.all(1, "#E5E7EB"),
+        border=ft.border.all(1, theme["table"]["divider"]),
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        bgcolor=theme["table"]["card_bg"],
     )
 
     return table
@@ -366,6 +408,7 @@ def build_grouped_data_tables(
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
     filtro: str = "todos",
+    theme: dict | None = None,
 ) -> ft.Container:
     """Return layout with status cards for the given ``atas`` respecting ``filtro``.
 
@@ -383,6 +426,7 @@ def build_grouped_data_tables(
     # ``todos`` deve exibir todos os tipos de status disponíveis
     statuses = [filtro] if filtro != "todos" else list(STATUS_INFO.keys())
 
+    theme = theme or {}
     card_controls: list[ft.Control] = []
     for status in statuses:
         atas_status = groups.get(status, [])
@@ -408,9 +452,10 @@ def build_grouped_data_tables(
             editar_cb,
             excluir_cb,
             status,
+            theme,
         )
 
-        card = build_card(info["title"], icon, table)
+        card = build_card(info["title"], icon, table, theme=theme)
         card.expand = True
         card_controls.append(card)
 
