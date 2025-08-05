@@ -164,7 +164,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         hint_style=ft.TextStyle(
             size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
         ),
-        border_radius=8,
+        border_radius=9999,
         border_color=ft.colors.GREY_300,
         focused_border_color="#3B82F6",
         bgcolor=ft.colors.WHITE,
@@ -289,7 +289,7 @@ def build_data_table(
             ),
             padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
-            border_radius=6,
+            border_radius=9999,
             alignment=ft.alignment.center,
         )
 
@@ -399,7 +399,7 @@ def build_grouped_data_tables(
             height=28,
             padding=ft.padding.all(SPACE_1),
             bgcolor=info["icon_bg"],
-            border_radius=4,
+            border_radius=8,
         )
 
         table = build_data_table(
