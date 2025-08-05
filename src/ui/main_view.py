@@ -11,6 +11,15 @@ try:
         SPACE_6,
     )
     from .tokens import build_card, primary_button
+    from .theme.typography import (
+        text,
+        text_style,
+        FONT_BOLD,
+        TEXT_SM,
+        TEXT_XL,
+        LEADING_5,
+        TRACKING_WIDER,
+    )
 except Exception:  # pragma: no cover - fallback for standalone execution
     from theme.spacing import (
         SPACE_1,
@@ -21,6 +30,15 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         SPACE_6,
     )
     from tokens import build_card, primary_button
+    from theme.typography import (
+        text,
+        text_style,
+        FONT_BOLD,
+        TEXT_SM,
+        TEXT_XL,
+        LEADING_5,
+        TRACKING_WIDER,
+    )
 
 try:
     from ..models.ata import Ata
@@ -95,7 +113,13 @@ def build_header(
     return ft.AppBar(
         leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
         leading_width=40,
-        title=ft.Text("Ata de Registro de Preços"),
+        title=text(
+            "Ata de Registro de Preços",
+            size=TEXT_XL,
+            weight=FONT_BOLD,
+            line_height=LEADING_5,
+            letter_spacing=TRACKING_WIDER,
+        ),
         bgcolor=ft.colors.INVERSE_PRIMARY,
         actions=[
             ft.Container(
@@ -158,11 +182,19 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         value=value,
         expand=True,
         height=40,
-        text_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+        text_style=text_style(
+            size=TEXT_SM,
+            weight=ft.FontWeight.W_500,
+            line_height=LEADING_5,
+            letter_spacing=TRACKING_WIDER,
+            color=ft.colors.GREY_900,
         ),
-        hint_style=ft.TextStyle(
-            size=14, weight=ft.FontWeight.W_500, color=ft.colors.GREY_900
+        hint_style=text_style(
+            size=TEXT_SM,
+            weight=ft.FontWeight.W_500,
+            line_height=LEADING_5,
+            letter_spacing=TRACKING_WIDER,
+            color=ft.colors.GREY_900,
         ),
         border_radius=9999,
         border_color=ft.colors.GREY_300,
