@@ -32,7 +32,7 @@ class NavigationItem(ft.Container):
         self.destination = destination
         self.ink = True
         self.padding = SPACE_3
-        self.border_radius = 5
+        self.border_radius = 8
         self.content = ft.Row(
             [ft.Icon(destination.icon), ft.Text(destination.label)],
             spacing=SPACE_2,
