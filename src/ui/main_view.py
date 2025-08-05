@@ -444,12 +444,17 @@ def build_grouped_data_tables(
         run_spacing=SPACE_6,
     )
 
+    scrollable_content = ft.Column(
+        [ft.Container(content=row, padding=ft.padding.only(bottom=SPACE_5))],
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
+    )
+
     container = ft.Container(
-        content=ft.Container(content=row, padding=ft.padding.only(bottom=SPACE_5)),
+        content=scrollable_content,
         alignment=ft.alignment.center if filtro == "todos" else ft.alignment.top_left,
         padding=ft.padding.only(left=SPACE_5, right=SPACE_5, top=SPACE_5),
         expand=True,
-        scroll=ft.ScrollMode.AUTO,
     )
     return container
 
