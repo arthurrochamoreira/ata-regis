@@ -1,6 +1,6 @@
 """Badge and indicator widgets."""
 from flet import colors, Container, padding, Text
-from constants import SPACE_1, SPACE_3
+from ..constants import SPACE_1, SPACE_3
 
 
 def status_badge(status: str) -> Container:

@@ -1,6 +1,6 @@
 """View listing Atas close to expiration."""
 import flet as ft
-from constants import SPACE_4
+from ..constants import SPACE_4
 
 SAMPLE_VENCIMENTOS = [
     {"numero": "001/2024", "fornecedor": "Tech Ltda", "dias": 20},
