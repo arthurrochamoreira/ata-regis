@@ -6,6 +6,7 @@ from .theme.spacing import (
     SPACE_5,
     SPACE_6,
 )
+from .theme.shadows import SHADOW_MD
 
 import flet as ft
 from typing import Callable, Optional
@@ -105,10 +106,5 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
         border=ft.border.all(1, GREY_LIGHT),
         border_radius=8,
         bgcolor=ft.colors.WHITE,
-        shadow=ft.BoxShadow(
-            spread_radius=0,
-            blur_radius=6,
-            color=ft.colors.with_opacity(0.1, ft.colors.BLACK),
-            offset=ft.Offset(0, 2),
-        ),
+        shadow=SHADOW_MD,
     )
