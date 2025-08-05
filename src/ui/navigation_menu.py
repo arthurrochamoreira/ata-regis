@@ -43,6 +43,8 @@ class NavigationItem(ft.Container):
             ],
             spacing=SPACE_2,
         )
+        # Store destination index in `data` so it is preserved in events
+        self.data = destination.index
         self.on_click = item_clicked
         self.on_hover = self.hovered
 
@@ -109,7 +111,8 @@ class NavigationColumn(ft.Column):
         return items
 
     def item_clicked(self, e):
-        self.selected_index = e.control.destination.index
+        # Retrieve index from control data set in NavigationItem
+        self.selected_index = int(e.control.data)
         self.update_selected_item()
         if self.selected_index == 0:
             self.app.handle_dashboard_click(e)
