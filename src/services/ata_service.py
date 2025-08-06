@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict, Any, Optional
 from datetime import date, datetime
+from settings import settings
 
 # Importações condicionais para suportar execução direta e como módulo
 try:
@@ -12,8 +13,8 @@ except ImportError:
 class AtaService:
     """Serviço para gerenciar operações CRUD das atas"""
     
-    def __init__(self, data_file: str = "atas.json"):
-        self.data_file = data_file
+    def __init__(self, data_file: str | None = None):
+        self.data_file = data_file or settings.JSON_DATA_FILE
         self.atas: List[Ata] = []
         self.load_data()
     

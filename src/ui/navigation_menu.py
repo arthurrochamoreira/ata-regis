@@ -1,9 +1,19 @@
 import flet as ft
 
 try:
-    from .theme.spacing import SPACE_2, SPACE_3
+    from .ui_tokens import (
+        SPACE_2,
+        SPACE_3,
+        MENU_WIDTH_EXPANDED,
+        MENU_WIDTH_COLLAPSED,
+    )
 except Exception:  # pragma: no cover
-    from theme.spacing import SPACE_2, SPACE_3
+    from ui_tokens import (
+        SPACE_2,
+        SPACE_3,
+        MENU_WIDTH_EXPANDED,
+        MENU_WIDTH_COLLAPSED,
+    )
 
 class NavigationDestination:
     def __init__(self, name: str, label: str, icon: str, selected_icon: str, index: int):
@@ -19,7 +29,7 @@ class NavigationItem(ft.Container):
         self.destination = destination
         self.ink = True
         self.padding = SPACE_3
-        self.border_radius = 8
+        self.border_radius = SPACE_2
         self.content = ft.Row(
             [ft.Icon(destination.icon), ft.Text(destination.label)],
             spacing=SPACE_2,
@@ -41,12 +51,12 @@ class NavigationColumn(ft.Column):
         self.expand = 4
         self.spacing = 0
         self.scroll = ft.ScrollMode.ALWAYS
-        self.width = 200
+        self.width = MENU_WIDTH_EXPANDED
         self.controls = self.get_navigation_items()
 
     def update_layout(self, width: int):
         collapsed = width < 1024
-        self.width = 60 if collapsed else 200
+        self.width = MENU_WIDTH_COLLAPSED if collapsed else MENU_WIDTH_EXPANDED
         for item in self.controls:
             item.set_collapsed(collapsed)
 

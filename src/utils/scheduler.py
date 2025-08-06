@@ -2,6 +2,7 @@ import threading
 import time
 from datetime import datetime, time as dt_time
 from typing import Callable, Dict, Any
+from settings import settings
 
 # Importações condicionais para suportar execução direta e como módulo
 try:
@@ -48,34 +49,52 @@ class TaskScheduler:
                 current_date = now.date()
                 current_time = now.time()
                 
-                # Verificação diária às 09:00
-                if (current_time >= dt_time(9, 0) and 
-                    current_time <= dt_time(9, 5) and 
-                    last_daily_check != current_date):
+                # Verificação diária no horário configurado
+                if (
+                    current_time
+                    >= dt_time(settings.DAILY_CHECK_HOUR, settings.DAILY_CHECK_MINUTE)
+                    and current_time
+                    <= dt_time(
+                        settings.DAILY_CHECK_HOUR, settings.DAILY_CHECK_MINUTE + 5
+                    )
+                    and last_daily_check != current_date
+                ):
                     
                     self._executar_verificacao_diaria()
                     last_daily_check = current_date
                 
-                # Verificação semanal (segunda-feira às 08:00)
-                if (now.weekday() == 0 and  # Segunda-feira
-                    current_time >= dt_time(8, 0) and 
-                    current_time <= dt_time(8, 5) and 
-                    last_weekly_check != current_date):
+                # Verificação semanal no dia e horário configurados
+                if (
+                    now.weekday() == settings.WEEKLY_CHECK_WEEKDAY
+                    and current_time
+                    >= dt_time(settings.WEEKLY_CHECK_HOUR, settings.WEEKLY_CHECK_MINUTE)
+                    and current_time
+                    <= dt_time(
+                        settings.WEEKLY_CHECK_HOUR, settings.WEEKLY_CHECK_MINUTE + 5
+                    )
+                    and last_weekly_check != current_date
+                ):
                     
                     self._executar_verificacao_semanal()
                     last_weekly_check = current_date
                 
-                # Verificação mensal (primeiro dia do mês às 07:00)
-                if (now.day == 1 and 
-                    current_time >= dt_time(7, 0) and 
-                    current_time <= dt_time(7, 5) and 
-                    last_monthly_check != current_date):
+                # Verificação mensal no dia e horário configurados
+                if (
+                    now.day == settings.MONTHLY_CHECK_DAY
+                    and current_time
+                    >= dt_time(settings.MONTHLY_CHECK_HOUR, settings.MONTHLY_CHECK_MINUTE)
+                    and current_time
+                    <= dt_time(
+                        settings.MONTHLY_CHECK_HOUR, settings.MONTHLY_CHECK_MINUTE + 5
+                    )
+                    and last_monthly_check != current_date
+                ):
                     
                     self._executar_verificacao_mensal()
                     last_monthly_check = current_date
                 
-                # Aguarda 5 minutos antes da próxima verificação
-                time.sleep(300)  # 5 minutos
+                # Aguarda o intervalo configurado antes da próxima verificação
+                time.sleep(settings.SCHEDULER_INTERVAL)
                 
             except Exception as e:
                 print(f"Erro no agendador: {e}")

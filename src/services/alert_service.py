@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from typing import List, Dict, Any
+from settings import settings
 
 # Importações condicionais para suportar execução direta e como módulo
 try:
@@ -24,52 +25,21 @@ class AlertService:
             "erros": []
         }
         
-        hoje = date.today()
-        
         for ata in atas:
             dias_restantes = ata.dias_restantes
-            
+
             # Regras de alerta automático
             deve_alertar = False
             tipo_alerta = ""
-            
-            # Alerta D-90 (90 dias antes do vencimento)
-            if dias_restantes == 90:
-                deve_alertar = True
-                tipo_alerta = "D-90"
-            
-            # Alerta D-60 (60 dias antes do vencimento)
-            elif dias_restantes == 60:
-                deve_alertar = True
-                tipo_alerta = "D-60"
-            
-            # Alerta D-30 (30 dias antes do vencimento)
-            elif dias_restantes == 30:
-                deve_alertar = True
-                tipo_alerta = "D-30"
-            
-            # Alerta D-15 (15 dias antes do vencimento)
-            elif dias_restantes == 15:
-                deve_alertar = True
-                tipo_alerta = "D-15"
-            
-            # Alerta D-7 (7 dias antes do vencimento)
-            elif dias_restantes == 7:
-                deve_alertar = True
-                tipo_alerta = "D-7"
-            
-            # Alerta D-1 (1 dia antes do vencimento)
-            elif dias_restantes == 1:
-                deve_alertar = True
-                tipo_alerta = "D-1"
-            
-            # Alerta de vencimento (no dia do vencimento)
-            elif dias_restantes == 0:
-                deve_alertar = True
-                tipo_alerta = "VENCIMENTO"
-            
+
+            for limite, label in settings.ALERT_THRESHOLDS.items():
+                if dias_restantes == limite:
+                    deve_alertar = True
+                    tipo_alerta = label
+                    break
+
             # Alerta pós-vencimento (atas vencidas)
-            elif dias_restantes < 0 and dias_restantes >= -30:  # Até 30 dias após vencimento
+            if not deve_alertar and dias_restantes < 0 and dias_restantes >= -settings.POST_EXPIRY_DAYS:
                 deve_alertar = True
                 tipo_alerta = "POS-VENCIMENTO"
             

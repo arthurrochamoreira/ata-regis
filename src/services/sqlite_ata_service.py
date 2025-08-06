@@ -1,6 +1,7 @@
 import sqlite3
 from typing import List, Dict, Any, Optional
 from datetime import date, datetime
+from settings import settings
 
 try:
     from ..models.ata import Ata, Item
@@ -10,8 +11,8 @@ except ImportError:  # pragma: no cover - support execution without package
 class SQLiteAtaService:
     """Serviço de Atas usando SQLite como persistência."""
 
-    def __init__(self, db_file: str = "atas.db"):
-        self.db_file = db_file
+    def __init__(self, db_file: str | None = None):
+        self.db_file = db_file or settings.DB_FILE
         self.conn = sqlite3.connect(self.db_file, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         # Garante que chaves estrangeiras executem os comandos ON DELETE CASCADE
@@ -177,7 +178,8 @@ class SQLiteAtaService:
             stats[ata.status] += 1
         return stats
 
-    def get_atas_vencimento_proximo(self, dias: int = 90) -> List[Ata]:
+    def get_atas_vencimento_proximo(self, dias: int | None = None) -> List[Ata]:
+        dias = dias or settings.VENCIMENTO_ALERT_DAYS
         atas = [ata for ata in self.listar_todas() if 0 <= ata.dias_restantes <= dias]
         return sorted(atas, key=lambda x: x.dias_restantes)
 
