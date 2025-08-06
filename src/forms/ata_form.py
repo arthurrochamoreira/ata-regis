@@ -198,20 +198,26 @@ class AtaForm:
             ], spacing=SPACE_2),
         )
         
-        # Botões
-        botoes = ft.Row(
+        # Botões responsivos: ocupam toda a largura em telas pequenas
+        botoes = ft.ResponsiveRow(
             [
                 secondary_button(
                     "Cancelar",
                     on_click=lambda e: self.on_cancel(),
+                    expand=True,
+                    col={"xs": 12, "md": 6},
                 ),
                 primary_button(
                     "Salvar",
                     on_click=self.save_ata,
+                    expand=True,
+                    col={"xs": 12, "md": 6},
                 ),
             ],
-            alignment=ft.MainAxisAlignment.END,
+            columns=12,
             spacing=SPACE_4,
+            run_spacing=SPACE_4,
+            alignment=ft.MainAxisAlignment.END,
         )
         
         header = ft.Row(
@@ -291,16 +297,23 @@ class AtaForm:
             hint_text="(XX) XXXXX-XXXX",
             value=valor,
             on_change=self.on_telefone_change,
-            width=200,
             border_radius=9999,
-        )
-        
-        remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE,
-            tooltip="Remover telefone"
+            expand=True,
+            col={"xs": 10, "md": 11},
         )
 
-        row = ft.Row([telefone_field, remove_btn], spacing=SPACE_2)
+        remove_btn = ft.IconButton(
+            icon=ft.icons.DELETE,
+            tooltip="Remover telefone",
+            col={"xs": 2, "md": 1},
+        )
+
+        row = ft.ResponsiveRow(
+            [telefone_field, remove_btn],
+            columns=12,
+            spacing=SPACE_2,
+            run_spacing=SPACE_2,
+        )
         remove_btn.on_click = lambda e, field=telefone_field, r=row: self.remove_telefone(field, r)
         self.telefones.append((telefone_field, row))
         self.telefones_container.controls.append(row)
@@ -319,16 +332,23 @@ class AtaForm:
             label=f"E-mail {len(self.emails) + 1}",
             hint_text="email@exemplo.com",
             value=valor,
-            width=300,
             border_radius=9999,
-        )
-        
-        remove_btn = ft.IconButton(
-            icon=ft.icons.DELETE,
-            tooltip="Remover e-mail"
+            expand=True,
+            col={"xs": 10, "md": 11},
         )
 
-        row = ft.Row([email_field, remove_btn], spacing=SPACE_2)
+        remove_btn = ft.IconButton(
+            icon=ft.icons.DELETE,
+            tooltip="Remover e-mail",
+            col={"xs": 2, "md": 1},
+        )
+
+        row = ft.ResponsiveRow(
+            [email_field, remove_btn],
+            columns=12,
+            spacing=SPACE_2,
+            run_spacing=SPACE_2,
+        )
         remove_btn.on_click = lambda e, field=email_field, r=row: self.remove_email(field, r)
         self.emails.append((email_field, row))
         self.emails_container.controls.append(row)
@@ -347,39 +367,49 @@ class AtaForm:
             label="Descrição",
             hint_text="Descrição do item",
             value=item.descricao if item else "",
-            width=300,
             border_radius=9999,
+            expand=True,
+            col={"xs": 12, "md": 5},
         )
-        
+
         quantidade_field = ft.TextField(
             label="Quantidade",
             hint_text="0",
             value=str(item.quantidade) if item else "",
-            width=100,
             border_radius=9999,
+            expand=True,
+            col={"xs": 12, "md": 2},
         )
-        
+
         valor_field = ft.TextField(
             label="Valor Unitário",
             hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
-            width=150,
             border_radius=9999,
+            expand=True,
+            col={"xs": 12, "md": 3},
         )
-        
+
         remove_btn = ft.IconButton(
             icon=ft.icons.DELETE,
             tooltip="Remover item",
-            on_click=lambda e: self.remove_item(descricao_field, row)
+            col={"xs": 12, "md": 2},
         )
-        
-        row = ft.Row([
-            descricao_field,
-            quantidade_field,
-            valor_field,
-            remove_btn
-        ], spacing=SPACE_2)
-        
+
+        row = ft.ResponsiveRow(
+            [
+                descricao_field,
+                quantidade_field,
+                valor_field,
+                remove_btn,
+            ],
+            columns=12,
+            spacing=SPACE_2,
+            run_spacing=SPACE_2,
+        )
+
+        remove_btn.on_click = lambda e: self.remove_item(descricao_field, row)
+
         self.itens.append((descricao_field, quantidade_field, valor_field, row))
         self.itens_container.controls.append(row)
         self.page.update()
