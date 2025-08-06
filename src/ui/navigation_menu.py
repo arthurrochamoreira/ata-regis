@@ -72,7 +72,7 @@ class NavigationColumn(ft.Column):
             item.bgcolor = None
             item.content.controls[0].name = item.destination.icon
         sel = self.controls[self.selected_index]
-        sel.bgcolor = colors.SIDEBAR_LINK_ACTIVE_BG
+        sel.bgcolor = colors.SECONDARY_CONTAINER
         sel.content.controls[0].name = sel.destination.selected_icon
 
 class LeftNavigationMenu(ft.Column):
