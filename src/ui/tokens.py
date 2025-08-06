@@ -38,14 +38,9 @@ def primary_button(
         text=text,
         icon=icon,
         on_click=on_click,
+        bgcolor=colors.PRIMARY_BG,
         color=colors.PRIMARY_TEXT,
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=9999),
-            bgcolor={
-                ft.MaterialState.DEFAULT: colors.PRIMARY_BG,
-                ft.MaterialState.HOVERED: colors.PRIMARY_HOVER,
-            },
-        ),
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
         **kwargs,
     )
 

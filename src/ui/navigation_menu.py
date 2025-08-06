@@ -2,10 +2,8 @@ import flet as ft
 
 try:
     from .theme.spacing import SPACE_2, SPACE_3
-    from .theme import colors
 except Exception:  # pragma: no cover
     from theme.spacing import SPACE_2, SPACE_3
-    from theme import colors
 
 class NavigationDestination:
     def __init__(self, name: str, label: str, icon: str, selected_icon: str, index: int):
@@ -22,31 +20,11 @@ class NavigationItem(ft.Container):
         self.ink = True
         self.padding = SPACE_3
         self.border_radius = 8
-        self.selected = False
         self.content = ft.Row(
             [ft.Icon(destination.icon), ft.Text(destination.label)],
             spacing=SPACE_2,
         )
-        self._set_colors(colors.TEXT_MUTED)
         self.on_click = item_clicked
-        self.on_hover = self._on_hover
-
-    def _set_colors(self, color: str):
-        self.content.controls[0].color = color
-        self.content.controls[1].color = color
-
-    def _on_hover(self, e):
-        if self.selected:
-            self.bgcolor = ft.colors.INDIGO_50
-            self._set_colors(ft.colors.INDIGO_600)
-        else:
-            if e.data == "true":
-                self.bgcolor = ft.colors.INDIGO_100
-                self._set_colors(ft.colors.INDIGO_600)
-            else:
-                self.bgcolor = None
-                self._set_colors(colors.TEXT_MUTED)
-        self.update()
 
     def set_collapsed(self, collapsed: bool):
         """Show only icon when collapsed"""
@@ -90,14 +68,10 @@ class NavigationColumn(ft.Column):
     def update_selected_item(self):
         for item in self.controls:
             item.bgcolor = None
-            item.selected = False
             item.content.controls[0].name = item.destination.icon
-            item._set_colors(colors.TEXT_MUTED)
         sel = self.controls[self.selected_index]
-        sel.selected = True
-        sel.bgcolor = ft.colors.INDIGO_50
+        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
         sel.content.controls[0].name = sel.destination.selected_icon
-        sel._set_colors(ft.colors.INDIGO_600)
 
 class LeftNavigationMenu(ft.Column):
     def __init__(self, app):
