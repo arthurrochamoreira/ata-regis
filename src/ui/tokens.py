@@ -1,17 +1,10 @@
-from .ui_tokens import (
+from .theme.spacing import (
     SPACE_1,
     SPACE_2,
     SPACE_3,
     SPACE_4,
     SPACE_5,
     SPACE_6,
-    PRIMARY,
-    SUCCESS,
-    WARNING,
-    DANGER,
-    NEUTRAL,
-    BORDER,
-    RADIUS_PILL,
 )
 from .theme.shadows import SHADOW_MD
 from .theme.typography import (
@@ -24,6 +17,13 @@ from .theme.typography import (
 
 import flet as ft
 from typing import Callable, Optional
+
+PRIMARY = ft.colors.BLUE
+DANGER = ft.colors.RED
+SUCCESS = ft.colors.GREEN
+WARNING = ft.colors.ORANGE
+GREY_LIGHT = ft.colors.GREY_300
+CARD_BG = "#F8FAFC"
 
 
 def primary_button(
@@ -44,9 +44,9 @@ def primary_button(
         text=text,
         icon=icon,
         on_click=on_click,
-        bgcolor=PRIMARY,
-        color=ft.colors.WHITE,
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=RADIUS_PILL)),
+        bgcolor="#3B82F6",
+        color="#FFFFFF",
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
         **kwargs,
     )
 
@@ -69,9 +69,9 @@ def secondary_button(
         icon=icon,
         on_click=on_click,
         style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=RADIUS_PILL),
-            color=PRIMARY,
-            side=ft.BorderSide(1, BORDER),
+            shape=ft.RoundedRectangleBorder(radius=9999),
+            color="#4B5563",
+            side=ft.BorderSide(1, "#D1D5DB"),
         ),
         **kwargs,
     )
@@ -91,7 +91,7 @@ def build_section(
                 content=ft.Icon(icon_name, color=icon_color),
                 bgcolor=icon_bg,
                 padding=SPACE_2,
-                border_radius=SPACE_2,
+                border_radius=8,
             ),
             text(
                 title,
@@ -99,7 +99,7 @@ def build_section(
                 weight=FONT_BOLD,
                 line_height=LEADING_5,
                 letter_spacing=TRACKING_WIDER,
-                color=ft.colors.BLACK,
+                color="#1F2937",
             ),
         ],
         spacing=SPACE_3,
@@ -108,9 +108,9 @@ def build_section(
 
     return ft.Container(
         content=ft.Column([header, body], spacing=SPACE_5),
-        bgcolor=NEUTRAL,
+        bgcolor=CARD_BG,
         padding=SPACE_4,
-        border_radius=SPACE_2,
+        border_radius=8,
     )
 
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
@@ -119,11 +119,11 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
             icon,
             text(
                 title,
-                size=TEXT_XL,
+                size=16,
                 weight=ft.FontWeight.W_600,
                 line_height=LEADING_5,
                 letter_spacing=TRACKING_WIDER,
-                color=ft.colors.BLACK,
+                color="#1F2937",
             ),
         ],
         spacing=SPACE_2,
@@ -132,8 +132,8 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     return ft.Container(
         content=ft.Column([header, content], spacing=SPACE_4),
         padding=SPACE_4,
-        border=ft.border.all(1, BORDER),
-        border_radius=SPACE_2,
+        border=ft.border.all(1, GREY_LIGHT),
+        border_radius=8,
         bgcolor=ft.colors.WHITE,
         shadow=SHADOW_MD,
     )
