@@ -13,6 +13,7 @@ try:
     )
     from .theme.shadows import SHADOW_LG
     from .tokens import build_section, primary_button, secondary_button
+    from .theme import colors
 except Exception:  # pragma: no cover
     from theme.spacing import (
         SPACE_1,
@@ -24,6 +25,7 @@ except Exception:  # pragma: no cover
     )
     from theme.shadows import SHADOW_LG
     from tokens import build_section, primary_button, secondary_button
+    from theme import colors
 
 try:
     from ..models.ata import Ata
@@ -43,8 +45,8 @@ def build_ata_detail_view(
     def info_row(label: str, value: str) -> ft.Row:
         return ft.Row(
             [
-                ft.Text(label, weight=ft.FontWeight.W_500, color="#6B7280", width=128),
-                ft.Text(value, color="#1F2937", expand=True),
+                ft.Text(label, weight=ft.FontWeight.W_500, color=colors.TEXT_SECONDARY, width=128),
+                ft.Text(value, color=colors.TEXT_PRIMARY, expand=True),
             ]
         )
 
@@ -80,9 +82,9 @@ def build_ata_detail_view(
                         "Ata de Registro de Preços",
                         size=30,
                         weight=ft.FontWeight.BOLD,
-                        color="#111827",
+                        color=colors.TEXT_DARK,
                     ),
-                    ft.Text(f"Nº {ata.numero_ata}", size=16, color="#6B7280"),
+                    ft.Text(f"Nº {ata.numero_ata}", size=16, color=colors.TEXT_SECONDARY),
                 ],
                 col={"xs": 12, "md": 6},
             ),
@@ -102,11 +104,11 @@ def build_ata_detail_view(
                 "Linha do Tempo da Vigência",
                 size=18,
                 weight=ft.FontWeight.W_600,
-                color="#374151",
+                color=colors.TEXT_MUTED,
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN),
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=colors.GREEN),
                     ft.Column(
                         [
                             ft.Text("Início da vigência"),
@@ -120,7 +122,7 @@ def build_ata_detail_view(
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CALENDAR_MONTH, color=ft.colors.RED),
+                    ft.Icon(ft.icons.CALENDAR_MONTH, color=colors.RED),
                     ft.Column(
                         [
                             ft.Text("Fim da vigência"),
@@ -150,8 +152,8 @@ def build_ata_detail_view(
     dados_gerais = build_section(
         "Dados Gerais",
         ft.icons.DESCRIPTION_OUTLINED,
-        "#4F46E5",
-        "#E0E7FF",
+        colors.INDIGO,
+        colors.INDIGO_BG,
         dados_gerais_body,
     )
 
@@ -259,7 +261,7 @@ def build_ata_detail_view(
                 ),
             ],
         ),
-        bgcolor="#EEF2FF",
+        bgcolor=colors.RESUMO_BG,
         padding=SPACE_4,
         border_radius=8,
     )
@@ -268,8 +270,8 @@ def build_ata_detail_view(
     itens_section = build_section(
         "Itens da Ata",
         ft.icons.LIST_ALT_OUTLINED,
-        "#4F46E5",
-        "#E0E7FF",
+        colors.INDIGO,
+        colors.INDIGO_BG,
         itens_body,
     )
 
@@ -277,8 +279,8 @@ def build_ata_detail_view(
     fornecedor_section = build_section(
         "Fornecedor",
         ft.icons.BUSINESS_OUTLINED,
-        "#EA580C",
-        "#FFEDD5",
+        colors.ORANGE,
+        colors.ORANGE_BG,
         fornecedor_body,
     )
 
@@ -287,19 +289,19 @@ def build_ata_detail_view(
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.PHONE_OUTLINED, color="#6B7280"),
+                    ft.Icon(ft.icons.PHONE_OUTLINED, color=colors.TEXT_SECONDARY),
                     ft.Text(tel),
                 ],
                 spacing=SPACE_2,
             )
         )
     if ata.telefones_fornecedor:
-        contatos_list.append(ft.Divider(height=1, color="#9CA3AF"))
+        contatos_list.append(ft.Divider(height=1, color=colors.GREY_DIVIDER))
     for email in ata.emails_fornecedor:
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.EMAIL_OUTLINED, color="#6B7280"),
+                    ft.Icon(ft.icons.EMAIL_OUTLINED, color=colors.TEXT_SECONDARY),
                     ft.Text(email),
                 ],
                 spacing=SPACE_2,
@@ -310,8 +312,8 @@ def build_ata_detail_view(
     contatos_section = build_section(
         "Contatos",
         ft.icons.HEADSET_MIC_OUTLINED,
-        "#0F766E",
-        "#CCFBF1",
+        colors.TEAL,
+        colors.TEAL_BG,
         contatos_body,
     )
 
@@ -331,7 +333,7 @@ def build_ata_detail_view(
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        bgcolor="#FFFFFF",
+        bgcolor=colors.WHITE,
         padding=ft.padding.only(
             left=SPACE_5,
             right=SPACE_5,
