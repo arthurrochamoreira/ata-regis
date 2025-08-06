@@ -24,6 +24,7 @@ from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.theme.shadows import SHADOW_XL
 from ui.responsive import get_breakpoint
 from ui.theme.typography import FONT_SANS
+from ui.theme.colors import get_color
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -50,14 +51,16 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = "#F3F4F6"
+        self.page.bgcolor = get_color(self.page, "background")
         self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
+        self.page.bgcolor = get_color(self.page, "background")
         self.page.appbar = build_header(
+            self.page,
             nova_ata_cb=self.nova_ata_click,
             verificar_alertas_cb=self.verificar_alertas_manual,
             relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
@@ -76,7 +79,7 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=ft.colors.WHITE,
+            bgcolor=get_color(self.page, "sidebar_bg"),
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
@@ -94,6 +97,11 @@ class AtaApp:
         self.page.add(layout)
         self.update_responsive_layout(self.page.width)
         self.page.update()
+
+    def rebuild_ui(self):
+        """Reconstrói a interface após mudança de tema"""
+        self.page.controls.clear()
+        self.build_ui()
 
     def update_responsive_layout(self, width: int):
         """Atualiza visibilidade e dimensões da barra lateral conforme ``width``."""
@@ -132,7 +140,7 @@ class AtaApp:
     def build_atas_view(self):
         filtros = build_filters(self.filtro_atual, self.filtrar_atas)
         search_container, self.search_field = build_search(
-            self.buscar_atas, self.texto_busca
+            self.page, self.buscar_atas, self.texto_busca
         )
         filtros.margin = ft.margin.only(bottom=0)
         search_container.margin = ft.margin.only(bottom=0)
@@ -149,6 +157,7 @@ class AtaApp:
             margin=ft.margin.only(bottom=0),
         )
         self.grouped_tables = build_grouped_data_tables(
+            self.page,
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
@@ -213,6 +222,7 @@ class AtaApp:
         self.texto_busca = e.control.value.strip()
         # Atualiza apenas a tabela mantendo o texto digitado
         new_table = build_grouped_data_tables(
+            self.page,
             self.get_atas_filtradas(),
             self.visualizar_ata,
             self.editar_ata,
