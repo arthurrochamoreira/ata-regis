@@ -1,9 +1,9 @@
 import flet as ft
 
 try:
-    from .theme.spacing import SPACE_2, SPACE_3, SPACE_5
+    from .theme.spacing import SPACE_2, SPACE_3
 except Exception:  # pragma: no cover
-    from theme.spacing import SPACE_2, SPACE_3, SPACE_5
+    from theme.spacing import SPACE_2, SPACE_3
 
 class NavigationDestination:
     def __init__(self, name: str, label: str, icon: str, selected_icon: str, index: int):
@@ -83,35 +83,9 @@ class LeftNavigationMenu(ft.Column):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.rail = NavigationColumn(app, self.destinations)
-        self.dark_light_text = ft.Text("Light theme")
-        self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
         self.padding = 0
         self.spacing = SPACE_3
-        self.controls = [
-            self.rail,
-            ft.Container(
-                padding=ft.padding.only(top=SPACE_5),
-                content=ft.Column(
-                    expand=1,
-                    spacing=SPACE_3,
-                    alignment=ft.MainAxisAlignment.END,
-                    controls=[
-                        ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2)
-                    ],
-                ),
-            ),
-        ]
-
-    def theme_changed(self, e):
-        if self.page.theme_mode == ft.ThemeMode.LIGHT:
-            self.page.theme_mode = ft.ThemeMode.DARK
-            self.dark_light_text.value = "Dark theme"
-            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_HIGH
-        else:
-            self.page.theme_mode = ft.ThemeMode.LIGHT
-            self.dark_light_text.value = "Light theme"
-            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
-        self.page.update()
+        self.controls = [self.rail]
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
