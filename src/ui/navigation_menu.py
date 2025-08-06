@@ -1,22 +1,9 @@
 import flet as ft
 
 try:
-    from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+    from .theme.spacing import SPACE_2, SPACE_3, SPACE_5
 except Exception:  # pragma: no cover
-    from theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
-
-class PopupColorItem(ft.PopupMenuItem):
-    def __init__(self, color: str, name: str):
-        super().__init__()
-        self.content = ft.Row(
-            controls=[ft.Icon(name=ft.icons.COLOR_LENS_OUTLINED, color=color), ft.Text(name)]
-        )
-        self.data = color
-        self.on_click = self.seed_color_changed
-
-    def seed_color_changed(self, e):
-        self.page.theme = self.page.dark_theme = ft.Theme(color_scheme_seed=self.data)
-        self.page.update()
+    from theme.spacing import SPACE_2, SPACE_3, SPACE_5
 
 class NavigationDestination:
     def __init__(self, name: str, label: str, icon: str, selected_icon: str, index: int):
@@ -109,24 +96,7 @@ class LeftNavigationMenu(ft.Column):
                     spacing=SPACE_3,
                     alignment=ft.MainAxisAlignment.END,
                     controls=[
-                        ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
-                        ft.Row([
-                            ft.PopupMenuButton(
-                                icon=ft.icons.COLOR_LENS_OUTLINED,
-                                items=[
-                                    PopupColorItem(color="deeppurple", name="Deep purple"),
-                                    PopupColorItem(color="indigo", name="Indigo"),
-                                    PopupColorItem(color="blue", name="Blue"),
-                                    PopupColorItem(color="teal", name="Teal"),
-                                    PopupColorItem(color="green", name="Green"),
-                                    PopupColorItem(color="yellow", name="Yellow"),
-                                    PopupColorItem(color="orange", name="Orange"),
-                                    PopupColorItem(color="deeporange", name="Deep orange"),
-                                    PopupColorItem(color="pink", name="Pink"),
-                                ],
-                            ),
-                            ft.Text("Seed color"),
-                        ], spacing=SPACE_2)
+                        ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2)
                     ],
                 ),
             ),
