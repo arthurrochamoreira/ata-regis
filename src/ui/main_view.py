@@ -20,7 +20,6 @@ try:
         LEADING_5,
         TRACKING_WIDER,
     )
-    from .theme.colors import get_color
 except Exception:  # pragma: no cover - fallback for standalone execution
     from theme.spacing import (
         SPACE_1,
@@ -40,7 +39,6 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         LEADING_5,
         TRACKING_WIDER,
     )
-    from theme.colors import get_color
 
 try:
     from ..models.ata import Ata
@@ -81,7 +79,6 @@ STATUS_INFO = {
 
 
 def build_header(
-    page: ft.Page,
     nova_ata_cb: Callable,
     verificar_alertas_cb: Callable,
     relatorio_semanal_cb: Callable,
@@ -114,7 +111,7 @@ def build_header(
     )
 
     return ft.AppBar(
-        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED, color=get_color(page, "header_title")),
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
         leading_width=40,
         title=text(
             "Ata de Registro de Preços",
@@ -122,9 +119,8 @@ def build_header(
             weight=FONT_BOLD,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=get_color(page, "header_title"),
         ),
-        bgcolor=get_color(page, "header_bg"),
+        bgcolor=ft.colors.INVERSE_PRIMARY,
         actions=[
             ft.Container(
                 content=actions_row,
@@ -177,12 +173,11 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
     )
 
 
-def build_search(page: ft.Page, on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
+def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
     search_field = ft.TextField(
         hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
-        prefix_icon_color=get_color(page, "search_icon"),
         on_change=on_change,
         value=value,
         expand=True,
@@ -192,19 +187,19 @@ def build_search(page: ft.Page, on_change: Callable, value: str = "") -> tuple[f
             weight=ft.FontWeight.W_500,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=get_color(page, "search_text"),
+            color=ft.colors.GREY_900,
         ),
         hint_style=text_style(
             size=TEXT_SM,
             weight=ft.FontWeight.W_500,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=get_color(page, "search_text"),
+            color=ft.colors.GREY_900,
         ),
         border_radius=9999,
         border_color=ft.colors.GREY_300,
-        focused_border_color=get_color(page, "search_focus_border"),
-        bgcolor=get_color(page, "search_bg"),
+        focused_border_color="#3B82F6",
+        bgcolor=ft.colors.WHITE,
         hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
@@ -221,7 +216,6 @@ def build_search(page: ft.Page, on_change: Callable, value: str = "") -> tuple[f
 
 
 def build_data_table(
-    page: ft.Page,
     atas: List[Ata],
     visualizar_cb: Callable[[Ata], None],
     editar_cb: Callable[[Ata], None],
@@ -233,7 +227,7 @@ def build_data_table(
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
-                color=get_color(page, "table_empty"),
+                color="#6B7280",
                 no_wrap=True,
             ),
             alignment=ft.alignment.center,
@@ -251,7 +245,7 @@ def build_data_table(
                 lbl.upper(),
                 size=11,
                 weight=ft.FontWeight.W_600,
-                color=get_color(page, "table_header_text"),
+                color="#6B7280",
                 no_wrap=True,
                 text_align=ft.TextAlign.CENTER,
             ),
@@ -269,14 +263,14 @@ def build_data_table(
         ),
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
-        bgcolor=get_color(page, "table_header_bg"),
-        border=ft.border.only(bottom=ft.BorderSide(1, get_color(page, "table_header_border"))),
+        bgcolor="#F9FAFB",
+        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
     )
 
     badge_colors = {
-        "vigente": (get_color(page, "badge_vigente_text"), get_color(page, "badge_vigente_bg")),
-        "a_vencer": (get_color(page, "badge_a_vencer_text"), get_color(page, "badge_a_vencer_bg")),
-        "vencida": (get_color(page, "badge_vencida_text"), get_color(page, "badge_vencida_bg")),
+        "vigente": ("#14532D", "#D1FAE5"),
+        "a_vencer": ("#713F12", "#FEF9C3"),
+        "vencida": ("#991B1B", "#FEE2E2"),
     }
 
     rows: list[ft.Control] = []
@@ -287,7 +281,7 @@ def build_data_table(
             ft.Text(
                 ata.numero_ata,
                 weight=ft.FontWeight.W_500,
-                color=get_color(page, "table_text_number"),
+                color="#111827",
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -295,7 +289,6 @@ def build_data_table(
             ),
             ft.Text(
                 data_formatada,
-                color=get_color(page, "table_text_other"),
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -303,7 +296,6 @@ def build_data_table(
             ),
             ft.Text(
                 ata.objeto,
-                color=get_color(page, "table_text_other"),
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -311,7 +303,6 @@ def build_data_table(
             ),
             ft.Text(
                 ata.fornecedor,
-                color=get_color(page, "table_text_other"),
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -341,10 +332,7 @@ def build_data_table(
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={
-                            ft.MaterialState.HOVERED: get_color(page, "view_hover_icon"),
-                            "": get_color(page, "view_icon"),
-                        }
+                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
                     ),
                     icon_size=20,
                 ),
@@ -353,10 +341,7 @@ def build_data_table(
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={
-                            ft.MaterialState.HOVERED: get_color(page, "edit_hover_icon"),
-                            "": get_color(page, "edit_icon"),
-                        }
+                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
                     ),
                     icon_size=20,
                 ),
@@ -365,10 +350,7 @@ def build_data_table(
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
                     style=ft.ButtonStyle(
-                        color={
-                            ft.MaterialState.HOVERED: get_color(page, "delete_hover_icon"),
-                            "": get_color(page, "delete_icon"),
-                        }
+                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
                     ),
                     icon_size=20,
                 ),
@@ -394,7 +376,7 @@ def build_data_table(
             ),
             alignment=ft.alignment.center,
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.only(bottom=ft.BorderSide(1, get_color(page, "table_divider"))) if index < total - 1 else None,
+            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
         )
 
         rows.append(row_container)
@@ -403,16 +385,14 @@ def build_data_table(
 
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
-        border=ft.border.all(1, get_color(page, "table_divider")),
+        border=ft.border.all(1, "#E5E7EB"),
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
-        bgcolor=get_color(page, "table_bg"),
     )
 
     return table
 
 
 def build_grouped_data_tables(
-    page: ft.Page,
     atas: List[Ata],
     visualizar_cb: Callable[[Ata], None],
     editar_cb: Callable[[Ata], None],
@@ -455,7 +435,6 @@ def build_grouped_data_tables(
         )
 
         table = build_data_table(
-            page,
             atas_status,
             visualizar_cb,
             editar_cb,
@@ -463,7 +442,7 @@ def build_grouped_data_tables(
             status,
         )
 
-        card = build_card(info["title"], icon, table, page)
+        card = build_card(info["title"], icon, table)
         card.expand = True
         card_controls.append(card)
 
@@ -471,7 +450,7 @@ def build_grouped_data_tables(
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
-                color=get_color(page, "table_empty"),
+                color="#6B7280",
                 no_wrap=True,
             ),
             alignment=ft.alignment.center,

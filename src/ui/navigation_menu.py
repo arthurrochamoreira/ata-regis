@@ -2,10 +2,8 @@ import flet as ft
 
 try:
     from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
-    from .theme.colors import get_color
 except Exception:  # pragma: no cover
     from theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
-    from theme.colors import get_color
 
 class PopupColorItem(ft.PopupMenuItem):
     def __init__(self, color: str, name: str):
@@ -40,29 +38,6 @@ class NavigationItem(ft.Container):
             spacing=SPACE_2,
         )
         self.on_click = item_clicked
-        self.on_hover = self._on_hover
-        self.selected = False
-        self.update_colors()
-
-    def _on_hover(self, e):
-        self.update_colors(hovered=e.data == "true")
-
-    def update_colors(self, hovered: bool = False):
-        page = self.page
-        if page is None:
-            return
-        if self.selected:
-            self.bgcolor = get_color(page, "sidebar_active_bg")
-            for c in self.content.controls:
-                c.color = get_color(page, "sidebar_active_text")
-        elif hovered:
-            self.bgcolor = get_color(page, "sidebar_hover_bg")
-            for c in self.content.controls:
-                c.color = get_color(page, "sidebar_hover_text")
-        else:
-            self.bgcolor = None
-            for c in self.content.controls:
-                c.color = get_color(page, "sidebar_link")
 
     def set_collapsed(self, collapsed: bool):
         """Show only icon when collapsed"""
@@ -105,13 +80,11 @@ class NavigationColumn(ft.Column):
 
     def update_selected_item(self):
         for item in self.controls:
-            item.selected = False
+            item.bgcolor = None
             item.content.controls[0].name = item.destination.icon
-            item.update_colors()
         sel = self.controls[self.selected_index]
-        sel.selected = True
+        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
         sel.content.controls[0].name = sel.destination.selected_icon
-        sel.update_colors()
 
 class LeftNavigationMenu(ft.Column):
     def __init__(self, app):
@@ -123,29 +96,11 @@ class LeftNavigationMenu(ft.Column):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.rail = NavigationColumn(app, self.destinations)
-        self.dark_light_text = ft.Text(
-            "Light theme" if self.page.theme_mode == ft.ThemeMode.LIGHT else "Dark theme",
-            color=get_color(self.page, "sidebar_link"),
-        )
-        initial_icon = ft.icons.WB_SUNNY if self.page.theme_mode == ft.ThemeMode.LIGHT else ft.icons.BRIGHTNESS_2
-        initial_color = get_color(self.page, "toggle_sun" if self.page.theme_mode == ft.ThemeMode.LIGHT else "toggle_moon")
-        self.dark_light_icon = ft.IconButton(
-            icon=initial_icon,
-            tooltip="Toggle brightness",
-            on_click=self.theme_changed,
-            icon_color=initial_color,
-        )
-        self.toggle_container = ft.Container(
-            ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
-            bgcolor=get_color(self.page, "sidebar_toggle_bg"),
-            padding=ft.padding.all(SPACE_2),
-            border_radius=8,
-        )
-        self.title = ft.Text("Atas de Preços", color=get_color(self.page, "sidebar_title"), weight=ft.FontWeight.BOLD)
+        self.dark_light_text = ft.Text("Light theme")
+        self.dark_light_icon = ft.IconButton(icon=ft.icons.BRIGHTNESS_2_OUTLINED, tooltip="Toggle brightness", on_click=self.theme_changed)
         self.padding = 0
         self.spacing = SPACE_3
         self.controls = [
-            self.title,
             self.rail,
             ft.Container(
                 padding=ft.padding.only(top=SPACE_5),
@@ -154,27 +109,24 @@ class LeftNavigationMenu(ft.Column):
                     spacing=SPACE_3,
                     alignment=ft.MainAxisAlignment.END,
                     controls=[
-                        self.toggle_container,
-                        ft.Row(
-                            [
-                                ft.PopupMenuButton(
-                                    icon=ft.icons.COLOR_LENS_OUTLINED,
-                                    items=[
-                                        PopupColorItem(color="deeppurple", name="Deep purple"),
-                                        PopupColorItem(color="indigo", name="Indigo"),
-                                        PopupColorItem(color="blue", name="Blue"),
-                                        PopupColorItem(color="teal", name="Teal"),
-                                        PopupColorItem(color="green", name="Green"),
-                                        PopupColorItem(color="yellow", name="Yellow"),
-                                        PopupColorItem(color="orange", name="Orange"),
-                                        PopupColorItem(color="deeporange", name="Deep orange"),
-                                        PopupColorItem(color="pink", name="Pink"),
-                                    ],
-                                ),
-                                ft.Text("Seed color", color=get_color(self.page, "sidebar_link")),
-                            ],
-                            spacing=SPACE_2,
-                        )
+                        ft.Row([self.dark_light_icon, self.dark_light_text], spacing=SPACE_2),
+                        ft.Row([
+                            ft.PopupMenuButton(
+                                icon=ft.icons.COLOR_LENS_OUTLINED,
+                                items=[
+                                    PopupColorItem(color="deeppurple", name="Deep purple"),
+                                    PopupColorItem(color="indigo", name="Indigo"),
+                                    PopupColorItem(color="blue", name="Blue"),
+                                    PopupColorItem(color="teal", name="Teal"),
+                                    PopupColorItem(color="green", name="Green"),
+                                    PopupColorItem(color="yellow", name="Yellow"),
+                                    PopupColorItem(color="orange", name="Orange"),
+                                    PopupColorItem(color="deeporange", name="Deep orange"),
+                                    PopupColorItem(color="pink", name="Pink"),
+                                ],
+                            ),
+                            ft.Text("Seed color"),
+                        ], spacing=SPACE_2)
                     ],
                 ),
             ),
@@ -184,14 +136,12 @@ class LeftNavigationMenu(ft.Column):
         if self.page.theme_mode == ft.ThemeMode.LIGHT:
             self.page.theme_mode = ft.ThemeMode.DARK
             self.dark_light_text.value = "Dark theme"
-            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
-            self.dark_light_icon.icon_color = get_color(self.page, "toggle_moon")
+            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_HIGH
         else:
             self.page.theme_mode = ft.ThemeMode.LIGHT
             self.dark_light_text.value = "Light theme"
-            self.dark_light_icon.icon = ft.icons.WB_SUNNY
-            self.dark_light_icon.icon_color = get_color(self.page, "toggle_sun")
-        self.app.rebuild_ui()
+            self.dark_light_icon.icon = ft.icons.BRIGHTNESS_2
+        self.page.update()
 
     def update_layout(self, width: int):
         self.rail.update_layout(width)
