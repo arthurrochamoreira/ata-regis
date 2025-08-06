@@ -2,10 +2,8 @@ import flet as ft
 
 try:
     from .theme.spacing import SPACE_2, SPACE_3
-    from .theme import colors
 except Exception:  # pragma: no cover
     from theme.spacing import SPACE_2, SPACE_3
-    from theme import colors
 
 class NavigationDestination:
     def __init__(self, name: str, label: str, icon: str, selected_icon: str, index: int):
@@ -72,7 +70,7 @@ class NavigationColumn(ft.Column):
             item.bgcolor = None
             item.content.controls[0].name = item.destination.icon
         sel = self.controls[self.selected_index]
-        sel.bgcolor = colors.SECONDARY_CONTAINER
+        sel.bgcolor = ft.colors.SECONDARY_CONTAINER
         sel.content.controls[0].name = sel.destination.selected_icon
 
 class LeftNavigationMenu(ft.Column):

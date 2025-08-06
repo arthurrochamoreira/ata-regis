@@ -48,11 +48,12 @@ class AtaApp:
         self.page.title = "Ata de Registro de Preços 0016/2024"
         self.page.window_width = 1200
         self.page.window_height = 800
+        self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
         self.page.bgcolor = colors.PAGE_BG
         self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
-        self.page.theme = ft.Theme(font_family=FONT_SANS)
+        self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
@@ -76,7 +77,7 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=colors.WHITE,
+            bgcolor=ft.colors.WHITE,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
