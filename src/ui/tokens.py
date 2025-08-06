@@ -17,12 +17,12 @@ from .theme.typography import (
 
 import flet as ft
 from typing import Callable, Optional
+from .theme.colors import get_color
 
 PRIMARY = ft.colors.BLUE
 DANGER = ft.colors.RED
 SUCCESS = ft.colors.GREEN
 WARNING = ft.colors.ORANGE
-GREY_LIGHT = ft.colors.GREY_300
 CARD_BG = "#F8FAFC"
 
 
@@ -38,9 +38,14 @@ def primary_button(
         text=text,
         icon=icon,
         on_click=on_click,
-        bgcolor="#3B82F6",
-        color="#FFFFFF",
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
+        style=ft.ButtonStyle(
+            bgcolor={
+                ft.MaterialState.HOVERED: ft.colors.INDIGO_700,
+                "": ft.colors.INDIGO_600,
+            },
+            color={"": ft.colors.WHITE},
+            shape=ft.RoundedRectangleBorder(radius=9999),
+        ),
     )
 
 
@@ -100,7 +105,7 @@ def build_section(
         border_radius=8,
     )
 
-def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
+def build_card(title: str, icon: ft.Control, content: ft.Control, page: ft.Page) -> ft.Control:
     header = ft.Row(
         [
             icon,
@@ -110,7 +115,7 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
                 weight=ft.FontWeight.W_600,
                 line_height=LEADING_5,
                 letter_spacing=TRACKING_WIDER,
-                color="#1F2937",
+                color=get_color(page, "table_title"),
             ),
         ],
         spacing=SPACE_2,
@@ -119,8 +124,8 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     return ft.Container(
         content=ft.Column([header, content], spacing=SPACE_4),
         padding=SPACE_4,
-        border=ft.border.all(1, GREY_LIGHT),
+        border=ft.border.all(1, get_color(page, "table_divider")),
         border_radius=8,
-        bgcolor=ft.colors.WHITE,
+        bgcolor=get_color(page, "table_bg"),
         shadow=SHADOW_MD,
     )
