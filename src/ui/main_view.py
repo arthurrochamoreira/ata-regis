@@ -20,6 +20,8 @@ try:
         LEADING_5,
         TRACKING_WIDER,
     )
+    from .theme import colors
+    from ..utils.color_utils import get_status_colors
 except Exception:  # pragma: no cover - fallback for standalone execution
     from theme.spacing import (
         SPACE_1,
@@ -39,6 +41,8 @@ except Exception:  # pragma: no cover - fallback for standalone execution
         LEADING_5,
         TRACKING_WIDER,
     )
+    from theme import colors
+    from utils.color_utils import get_status_colors
 
 try:
     from ..models.ata import Ata
@@ -55,25 +59,25 @@ STATUS_INFO = {
         "title": "Atas Vigentes",
         "filter": "Vigentes",
         "icon": ft.icons.CHECK_CIRCLE,
-        "icon_color": "#16A34A",
-        "icon_bg": "#D1FAE5",
-        "button_color": ft.colors.GREEN,
+        "icon_color": colors.GREEN,
+        "icon_bg": colors.GREEN_BG,
+        "button_color": colors.GREEN,
     },
     "a_vencer": {
         "title": "Atas a Vencer",
         "filter": "A Vencer",
         "icon": ft.icons.WARNING_AMBER_ROUNDED,
-        "icon_color": "#CA8A04",
-        "icon_bg": "#FEF9C3",
-        "button_color": ft.colors.ORANGE,
+        "icon_color": colors.YELLOW,
+        "icon_bg": colors.YELLOW_BG,
+        "button_color": colors.YELLOW,
     },
     "vencida": {
         "title": "Atas Vencidas",
         "filter": "Vencidas",
         "icon": ft.icons.CANCEL,
-        "icon_color": "#DC2626",
-        "icon_bg": "#FEE2E2",
-        "button_color": ft.colors.RED,
+        "icon_color": colors.RED,
+        "icon_bg": colors.RED_BG,
+        "button_color": colors.RED,
     },
 }
 
@@ -136,17 +140,17 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
 
     def button(label: str, value: str, color: str) -> ft.FilledButton:
         selected = filtro_atual == value
-        style = ft.ButtonStyle(
-            padding=ft.padding.symmetric(horizontal=12, vertical=8),
-            shape=ft.RoundedRectangleBorder(radius=8),
-            overlay_color={
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-            },
-            bgcolor=color if selected else ft.colors.TRANSPARENT,
-            color=ft.colors.WHITE if selected else ft.colors.GREY_900,
-            side=None if selected else ft.BorderSide(1, ft.colors.GREY_300),
-        )
+            style = ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=12, vertical=8),
+                shape=ft.RoundedRectangleBorder(radius=8),
+                overlay_color={
+                    ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+                    ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+                },
+                bgcolor=color if selected else ft.colors.TRANSPARENT,
+                color=colors.WHITE if selected else colors.TEXT_DARK,
+                side=None if selected else ft.BorderSide(1, colors.GREY_LIGHT),
+            )
         return ft.FilledButton(
             text=label,
             on_click=lambda e: filtro_cb(value),
@@ -159,7 +163,7 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
         info = STATUS_INFO[key]
         buttons.append(button(info["filter"], key, info["button_color"]))
 
-    buttons.append(button("Todas", "todos", ft.colors.BLUE))
+    buttons.append(button("Todas", "todos", colors.PRIMARY))
 
     for b in buttons:
         b.col = {"xs": 6, "md": 3}
@@ -187,19 +191,19 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
             weight=ft.FontWeight.W_500,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=ft.colors.GREY_900,
+            color=colors.TEXT_DARK,
         ),
         hint_style=text_style(
             size=TEXT_SM,
             weight=ft.FontWeight.W_500,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=ft.colors.GREY_900,
+            color=colors.TEXT_DARK,
         ),
         border_radius=9999,
-        border_color=ft.colors.GREY_300,
-        focused_border_color="#3B82F6",
-        bgcolor=ft.colors.WHITE,
+        border_color=colors.GREY_LIGHT,
+        focused_border_color=colors.FOCUSED_BORDER,
+        bgcolor=colors.WHITE,
         hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
@@ -227,7 +231,7 @@ def build_data_table(
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
-                color="#6B7280",
+                color=colors.TEXT_SECONDARY,
                 no_wrap=True,
             ),
             alignment=ft.alignment.center,
@@ -241,14 +245,14 @@ def build_data_table(
 
     header_cells = [
         ft.Container(
-            ft.Text(
-                lbl.upper(),
-                size=11,
-                weight=ft.FontWeight.W_600,
-                color="#6B7280",
-                no_wrap=True,
-                text_align=ft.TextAlign.CENTER,
-            ),
+                ft.Text(
+                    lbl.upper(),
+                    size=11,
+                    weight=ft.FontWeight.W_600,
+                    color=colors.TEXT_SECONDARY,
+                    no_wrap=True,
+                    text_align=ft.TextAlign.CENTER,
+                ),
             expand=exp,
             alignment=ft.alignment.center,
         )
@@ -263,15 +267,9 @@ def build_data_table(
         ),
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
-        bgcolor="#F9FAFB",
-        border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")),
+        bgcolor=colors.HEADER_BG,
+        border=ft.border.only(bottom=ft.BorderSide(1, colors.GREY_LIGHT)),
     )
-
-    badge_colors = {
-        "vigente": ("#14532D", "#D1FAE5"),
-        "a_vencer": ("#713F12", "#FEF9C3"),
-        "vencida": ("#991B1B", "#FEE2E2"),
-    }
 
     rows: list[ft.Control] = []
     total = len(atas)
@@ -281,7 +279,7 @@ def build_data_table(
             ft.Text(
                 ata.numero_ata,
                 weight=ft.FontWeight.W_500,
-                color="#111827",
+                color=colors.TEXT_DARK,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -309,7 +307,7 @@ def build_data_table(
                 text_align=ft.TextAlign.CENTER,
             ),
         ]
-        badge_text_color, badge_bg_color = badge_colors[ata.status]
+        badge_text_color, badge_bg_color = get_status_colors(ata.status)
         badge = ft.Container(
             ft.Text(
                 ata.status.replace("_", " ").title(),
@@ -332,7 +330,7 @@ def build_data_table(
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#2563EB", "": "#6B7280"}
+                        color={ft.MaterialState.HOVERED: colors.BLUE_HOVER, "": colors.TEXT_SECONDARY}
                     ),
                     icon_size=20,
                 ),
@@ -341,7 +339,7 @@ def build_data_table(
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#CA8A04", "": "#6B7280"}
+                        color={ft.MaterialState.HOVERED: colors.YELLOW, "": colors.TEXT_SECONDARY}
                     ),
                     icon_size=20,
                 ),
@@ -350,7 +348,7 @@ def build_data_table(
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: "#DC2626", "": "#6B7280"}
+                        color={ft.MaterialState.HOVERED: colors.RED, "": colors.TEXT_SECONDARY}
                     ),
                     icon_size=20,
                 ),
@@ -376,7 +374,7 @@ def build_data_table(
             ),
             alignment=ft.alignment.center,
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.only(bottom=ft.BorderSide(1, "#E5E7EB")) if index < total - 1 else None,
+            border=ft.border.only(bottom=ft.BorderSide(1, colors.GREY_LIGHT)) if index < total - 1 else None,
         )
 
         rows.append(row_container)
@@ -385,7 +383,7 @@ def build_data_table(
 
     table = ft.Container(
         content=ft.Column([header_row, body], spacing=0),
-        border=ft.border.all(1, "#E5E7EB"),
+        border=ft.border.all(1, colors.GREY_LIGHT),
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
     )
 
@@ -450,7 +448,7 @@ def build_grouped_data_tables(
         return ft.Container(
             content=ft.Text(
                 "Nenhuma ata encontrada",
-                color="#6B7280",
+                color=colors.TEXT_SECONDARY,
                 no_wrap=True,
             ),
             alignment=ft.alignment.center,
@@ -498,7 +496,7 @@ def build_atas_vencimento(
                     ft.Text(f"Vencimento: {data_formatada}"),
                     ft.Text(
                         f"Faltam {ata.dias_restantes} dias",
-                        color=ft.colors.RED if ata.dias_restantes <= 30 else ft.colors.ORANGE,
+                        color=colors.RED if ata.dias_restantes <= 30 else colors.ORANGE,
                     ),
                 ], spacing=SPACE_1),
                 ft.Row([
@@ -508,9 +506,9 @@ def build_atas_vencimento(
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.all(SPACE_3),
             margin=ft.margin.only(bottom=SPACE_2),
-            border=ft.border.all(1, ft.colors.ORANGE),
+            border=ft.border.all(1, colors.ORANGE),
             border_radius=8,
-            bgcolor=ft.colors.ORANGE_50,
+            bgcolor=colors.ORANGE_BG,
         )
         items.append(item)
 
@@ -529,7 +527,7 @@ def build_atas_vencimento(
         ),
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
-        border=ft.border.all(1, ft.colors.OUTLINE),
+        border=ft.border.all(1, colors.OUTLINE),
         border_radius=8,
     )
 
@@ -564,7 +562,7 @@ def build_stats_panel(ata_service) -> ft.Container:
             spacing=SPACE_4,
         ),
         padding=ft.padding.all(SPACE_4),
-        border=ft.border.all(1, ft.colors.OUTLINE),
+        border=ft.border.all(1, colors.OUTLINE),
         border_radius=8,
         expand=True,
     )
