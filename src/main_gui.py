@@ -52,7 +52,8 @@ class AtaApp:
         self.page.padding = 0
         self.page.bgcolor = "#F3F4F6"
         self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
-        self.page.theme = ft.Theme(font_family=FONT_SANS)
+        self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
+        self.page.dark_theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
