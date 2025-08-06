@@ -2,37 +2,20 @@ import flet as ft
 from datetime import timedelta
 from typing import Callable
 
-try:
-    from .theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
-    from .theme.shadows import SHADOW_LG
-    from .tokens import build_section, primary_button, secondary_button
-    from .theme import colors
-except Exception:  # pragma: no cover
-    from theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
-    from theme.shadows import SHADOW_LG
-    from tokens import build_section, primary_button, secondary_button
-    from theme import colors
+from .theme.spacing import (
+    SPACE_1,
+    SPACE_2,
+    SPACE_3,
+    SPACE_4,
+    SPACE_5,
+    SPACE_6,
+)
+from .theme.shadows import SHADOW_LG
+from .tokens import build_section, primary_button, secondary_button
+from .theme import colors
 
-try:
-    from ..models.ata import Ata
-    from ..utils.validators import Formatters
-except ImportError:  # standalone execution
-    from models.ata import Ata
-    from utils.validators import Formatters
+from models.ata import Ata
+from utils.validators import Formatters
 
 
 def build_ata_detail_view(

@@ -1,11 +1,7 @@
 from datetime import date
 from typing import List
 
-# Importações condicionais para suportar execução direta e como módulo
-try:
-    from ..models.ata import Ata
-except ImportError:
-    from models.ata import Ata
+from models.ata import Ata
 
 class EmailService:
     """Serviço para envio de emails (simulado com print)"""
