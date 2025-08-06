@@ -31,8 +31,14 @@ def primary_button(
     *,
     icon: Optional[str] = None,
     on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
+    **kwargs,
 ) -> ft.ElevatedButton:
-    """Return a standard primary button used across the app."""
+    """Return a standard primary button used across the app.
+
+    Additional ``kwargs`` are forwarded to :class:`flet.ElevatedButton` so
+    callers can specify properties like ``expand`` or ``col`` to make buttons
+    responsive inside ``ResponsiveRow`` containers.
+    """
 
     return ft.ElevatedButton(
         text=text,
@@ -41,6 +47,7 @@ def primary_button(
         bgcolor="#3B82F6",
         color="#FFFFFF",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
+        **kwargs,
     )
 
 
@@ -49,8 +56,13 @@ def secondary_button(
     *,
     icon: Optional[str] = None,
     on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
+    **kwargs,
 ) -> ft.OutlinedButton:
-    """Return a standard secondary button used across the app."""
+    """Return a standard secondary button used across the app.
+
+    ``kwargs`` are passed to the underlying button allowing controls to specify
+    responsive parameters like ``expand`` or ``col``.
+    """
 
     return ft.OutlinedButton(
         text=text,
@@ -61,6 +73,7 @@ def secondary_button(
             color="#4B5563",
             side=ft.BorderSide(1, "#D1D5DB"),
         ),
+        **kwargs,
     )
 
 def build_section(

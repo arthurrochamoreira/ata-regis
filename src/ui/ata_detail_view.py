@@ -48,7 +48,30 @@ def build_ata_detail_view(
             ]
         )
 
-    header = ft.Row(
+    header_buttons = ft.ResponsiveRow(
+        [
+            secondary_button(
+                "Voltar",
+                icon=ft.icons.ARROW_BACK_ROUNDED,
+                on_click=on_back,
+                expand=True,
+                col={"xs": 12, "md": 6},
+            ),
+            primary_button(
+                "Editar",
+                icon=ft.icons.EDIT_OUTLINED,
+                on_click=on_edit,
+                expand=True,
+                col={"xs": 12, "md": 6},
+            ),
+        ],
+        columns=12,
+        spacing=SPACE_3,
+        run_spacing=SPACE_3,
+        alignment=ft.MainAxisAlignment.END,
+    )
+
+    header = ft.ResponsiveRow(
         [
             ft.Column(
                 spacing=SPACE_1,
@@ -61,23 +84,11 @@ def build_ata_detail_view(
                     ),
                     ft.Text(f"Nº {ata.numero_ata}", size=16, color="#6B7280"),
                 ],
+                col={"xs": 12, "md": 6},
             ),
-            ft.Row(
-                spacing=SPACE_3,
-                controls=[
-                    secondary_button(
-                        "Voltar",
-                        icon=ft.icons.ARROW_BACK_ROUNDED,
-                        on_click=on_back,
-                    ),
-                    primary_button(
-                        "Editar",
-                        icon=ft.icons.EDIT_OUTLINED,
-                        on_click=on_edit,
-                    ),
-                ],
-            ),
+            header_buttons,
         ],
+        columns=12,
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
