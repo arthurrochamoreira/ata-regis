@@ -1,23 +1,13 @@
 import subprocess
 import sys
 import time
-from pathlib import Path
 
 try:
     import importlib.metadata as metadata
 except ImportError:
     import importlib_metadata as metadata  # Python < 3.8
 
-sys.path.append(str(Path(__file__).resolve().parent.parent / "src"))
-from ui.theme import colors
-from rich.progress import (
-    Progress,
-    SpinnerColumn,
-    BarColumn,
-    TextColumn,
-    TimeElapsedColumn,
-    TaskProgressColumn,
-)
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn, TaskProgressColumn
 from rich.console import Console
 
 console = Console()
@@ -29,7 +19,7 @@ console.print("[bold cyan]Dependências:[/bold cyan]")
 for p in pkgs:
     try:
         metadata.version(p)
-        console.print(f"  - {p} [{colors.GREEN}](já instalado)[/]")
+        console.print(f"  - {p} [green](já instalado)[/green]")
     except metadata.PackageNotFoundError:
         console.print(f"  - {p}")
 
@@ -42,10 +32,7 @@ with Progress(
     TaskProgressColumn(),
     TimeElapsedColumn(),
 ) as progress:
-    total_task = progress.add_task(
-        f"[bold {colors.GREEN}]Progresso total",
-        total=len(pkgs),
-    )
+    total_task = progress.add_task("[bold green]Progresso total", total=len(pkgs))
     for pkg in pkgs:
         try:
             metadata.version(pkg)

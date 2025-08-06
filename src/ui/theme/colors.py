@@ -2,15 +2,8 @@ import flet as ft
 
 # Base colors
 WHITE = ft.colors.WHITE
-BLACK = ft.colors.BLACK
-BLACK12 = ft.colors.BLACK12
-TRANSPARENT = ft.colors.TRANSPARENT
-
-# Background colors
 PAGE_BG = "#F3F4F6"
 CARD_BG = "#F8FAFC"
-HEADER_BG = "#F9FAFB"
-RESUMO_BG = "#EEF2FF"
 
 # Text colors
 TEXT_DARK = "#111827"
@@ -28,14 +21,13 @@ FOCUSED_BORDER = "#3B82F6"
 # Neutral colors
 GREY_LIGHT = "#E5E7EB"
 GREY_DIVIDER = "#9CA3AF"
+HEADER_BG = "#F9FAFB"
 
 # Section colors
 INDIGO = "#4F46E5"
 INDIGO_BG = "#E0E7FF"
 ORANGE = "#EA580C"
 ORANGE_BG = "#FFEDD5"
-ORANGE_50 = ft.colors.ORANGE_50
-ORANGE_200 = ft.colors.ORANGE_200
 TEAL = "#0F766E"
 TEAL_BG = "#CCFBF1"
 
@@ -43,29 +35,18 @@ TEAL_BG = "#CCFBF1"
 GREEN = "#16A34A"
 GREEN_BG = "#D1FAE5"
 GREEN_DARK = "#14532D"
-GREEN_50 = ft.colors.GREEN_50
-GREEN_200 = ft.colors.GREEN_200
 YELLOW = "#CA8A04"
 YELLOW_BG = "#FEF9C3"
 YELLOW_DARK = "#713F12"
 RED = "#DC2626"
 RED_BG = "#FEE2E2"
 RED_DARK = "#991B1B"
-RED_50 = ft.colors.RED_50
-RED_200 = ft.colors.RED_200
-BLUE = ft.colors.BLUE
-BLUE_50 = ft.colors.BLUE_50
 BLUE_HOVER = "#2563EB"
+RESUMO_BG = "#EEF2FF"
 
 # Semantic aliases
-PRIMARY = PRIMARY_BG
-DANGER = RED
-SUCCESS = GREEN
-WARNING = ORANGE
-OUTLINE = SECONDARY_BORDER
-SECONDARY_CONTAINER = GREY_LIGHT
-SURFACE_VARIANT = CARD_BG
-HOVER_OVERLAY = ft.colors.with_opacity(0.08, BLACK)
-
-__all__ = [name for name in globals() if name.isupper()]
-
+PRIMARY = ft.colors.BLUE
+DANGER = ft.colors.RED
+SUCCESS = ft.colors.GREEN
+WARNING = ft.colors.ORANGE
+OUTLINE = ft.colors.OUTLINE
