@@ -140,17 +140,17 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
 
     def button(label: str, value: str, color: str) -> ft.FilledButton:
         selected = filtro_atual == value
-            style = ft.ButtonStyle(
-                padding=ft.padding.symmetric(horizontal=12, vertical=8),
-                shape=ft.RoundedRectangleBorder(radius=8),
-                overlay_color={
-                    ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                    ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                },
-                bgcolor=color if selected else ft.colors.TRANSPARENT,
-                color=colors.WHITE if selected else colors.TEXT_DARK,
-                side=None if selected else ft.BorderSide(1, colors.GREY_LIGHT),
-            )
+        style = ft.ButtonStyle(
+            padding=ft.padding.symmetric(horizontal=12, vertical=8),
+            shape=ft.RoundedRectangleBorder(radius=8),
+            overlay_color={
+                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+                ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+            },
+            bgcolor=color if selected else ft.colors.TRANSPARENT,
+            color=colors.WHITE if selected else colors.TEXT_DARK,
+            side=None if selected else ft.BorderSide(1, colors.GREY_LIGHT),
+        )
         return ft.FilledButton(
             text=label,
             on_click=lambda e: filtro_cb(value),
