@@ -1,57 +1,30 @@
 import flet as ft
 from typing import Callable, List
 
-try:
-    from .theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
-    from .tokens import build_card, primary_button
-    from .theme.typography import (
-        text,
-        text_style,
-        FONT_BOLD,
-        TEXT_SM,
-        TEXT_XL,
-        LEADING_5,
-        TRACKING_WIDER,
-    )
-    from .theme import colors
-    from ..utils.color_utils import get_status_colors
-except Exception:  # pragma: no cover - fallback for standalone execution
-    from theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
-    from tokens import build_card, primary_button
-    from theme.typography import (
-        text,
-        text_style,
-        FONT_BOLD,
-        TEXT_SM,
-        TEXT_XL,
-        LEADING_5,
-        TRACKING_WIDER,
-    )
-    from theme import colors
-    from utils.color_utils import get_status_colors
+from .theme.spacing import (
+    SPACE_1,
+    SPACE_2,
+    SPACE_3,
+    SPACE_4,
+    SPACE_5,
+    SPACE_6,
+)
+from .tokens import build_card, primary_button
+from .theme.typography import (
+    text,
+    text_style,
+    FONT_BOLD,
+    TEXT_SM,
+    TEXT_XL,
+    LEADING_5,
+    TRACKING_WIDER,
+)
+from .theme import colors
+from utils.color_utils import get_status_colors
 
-try:
-    from ..models.ata import Ata
-    from ..utils.validators import Formatters
-    from ..utils.chart_utils import ChartUtils
-except ImportError:  # for standalone execution
-    from models.ata import Ata
-    from utils.validators import Formatters
-    from utils.chart_utils import ChartUtils
+from models.ata import Ata
+from utils.validators import Formatters
+from utils.chart_utils import ChartUtils
 
 
 STATUS_INFO = {

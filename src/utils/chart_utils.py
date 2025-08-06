@@ -2,30 +2,15 @@ import flet as ft
 from typing import List, Dict, Any, Tuple
 from datetime import date, datetime, timedelta
 
-# Importações condicionais para suportar execução direta e como módulo
-try:
-    from ..models.ata import Ata
-except ImportError:
-    from models.ata import Ata
-
-try:
-    from ..ui.theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
-except Exception:  # pragma: no cover
-    from ui.theme.spacing import (
-        SPACE_1,
-        SPACE_2,
-        SPACE_3,
-        SPACE_4,
-        SPACE_5,
-        SPACE_6,
-    )
+from models.ata import Ata
+from ui.theme.spacing import (
+    SPACE_1,
+    SPACE_2,
+    SPACE_3,
+    SPACE_4,
+    SPACE_5,
+    SPACE_6,
+)
 
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""

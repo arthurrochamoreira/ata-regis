@@ -3,13 +3,8 @@ import time
 from datetime import datetime, time as dt_time
 from typing import Callable, Dict, Any
 
-# Importações condicionais para suportar execução direta e como módulo
-try:
-    from ..services.alert_service import AlertService
-    from ..services.ata_service import AtaService
-except ImportError:
-    from services.alert_service import AlertService
-    from services.ata_service import AtaService
+from services.alert_service import AlertService
+from services.ata_service import AtaService
 
 class TaskScheduler:
     """Agendador de tarefas para verificações automáticas"""
