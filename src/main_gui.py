@@ -20,18 +20,10 @@ from ui.main_view import (
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
-from ui.ui_tokens import (
-    SPACE_2,
-    SPACE_4,
-    SPACE_5,
-    NEUTRAL,
-    MENU_WIDTH_EXPANDED,
-    MENU_WIDTH_COLLAPSED,
-)
+from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
 from ui.theme.shadows import SHADOW_XL
 from ui.responsive import get_breakpoint
 from ui.theme.typography import FONT_SANS
-from settings import settings
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -52,15 +44,16 @@ class AtaApp:
     
     def setup_page(self):
         """Configurações da página"""
-        self.page.title = settings.PAGE_TITLE
+        self.page.title = "Ata de Registro de Preços 0016/2024"
+        self.page.window_width = 1200
+        self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = NEUTRAL
-        self.page.fonts = {FONT_SANS: settings.FONT_URL}
+        self.page.bgcolor = "#F3F4F6"
+        self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
-        self.page.scroll = ft.ScrollMode.AUTO
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
@@ -82,7 +75,7 @@ class AtaApp:
 
         self.menu_container = ft.Container(
             content=self.navigation_menu,
-            width=MENU_WIDTH_EXPANDED,
+            width=200,
             bgcolor=ft.colors.WHITE,
             padding=ft.padding.only(
                 left=SPACE_5,
@@ -110,11 +103,11 @@ class AtaApp:
             self.menu_container.visible = False
         elif width < 1024:
             self.menu_container.visible = True
-            self.menu_container.width = MENU_WIDTH_COLLAPSED
+            self.menu_container.width = 80
             self.menu_container.padding = ft.padding.all(SPACE_2)
         else:
             self.menu_container.visible = True
-            self.menu_container.width = MENU_WIDTH_EXPANDED
+            self.menu_container.width = 200
             self.menu_container.padding = ft.padding.all(SPACE_5)
 
         self.page.update()

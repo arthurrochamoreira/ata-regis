@@ -1,6 +1,5 @@
 from datetime import date
 from typing import List
-from settings import settings
 
 # Importações condicionais para suportar execução direta e como módulo
 try:
@@ -11,8 +10,11 @@ except ImportError:
 class EmailService:
     """Serviço para envio de emails (simulado com print)"""
     
-    def __init__(self, default_recipients: List[str] | None = None):
-        self.destinatarios_padrao = default_recipients or settings.DEFAULT_EMAIL_RECIPIENTS
+    def __init__(self):
+        self.destinatarios_padrao = [
+            "diatu@trf1.jus.br",
+            "seae1@trf1.jus.br"
+        ]
     
     def enviar_alerta_vencimento(self, ata: Ata, destinatarios: List[str] = None) -> bool:
         """Envia alerta de vencimento de ata (simulado com print)"""
