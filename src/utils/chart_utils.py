@@ -11,6 +11,7 @@ from ui.theme.spacing import (
     SPACE_5,
     SPACE_6,
 )
+from ui.theme import colors as theme_colors
 
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""
@@ -48,18 +49,18 @@ class ChartUtils:
                         radius=60,
                         title_style=ft.TextStyle(
                             size=12,
-                            color=ft.colors.WHITE,
-                            weight=ft.FontWeight.BOLD
-                        )
+                            color=theme_colors.TEXT_ON_DARK,
+                            weight=ft.FontWeight.BOLD,
+                        ),
                     )
                 )
-        
+
         return ft.PieChart(
             sections=sections,
             sections_space=4,
             center_space_radius=40,
             width=width,
-            height=height
+            height=height,
         )
     
     @staticmethod
@@ -214,8 +215,11 @@ class ChartUtils:
         return ft.Container(
             content=ft.Column([
                 ft.Text("Valores por Status", size=14, weight=ft.FontWeight.BOLD),
-                ft.Text(f"Total: R$ {total_value:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), 
-                       size=12, color=ft.colors.SECONDARY),
+                ft.Text(
+                    f"Total: R$ {total_value:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+                    size=12,
+                    color=theme_colors.TEXT_LABEL,
+                ),
                 ft.Column(bars, spacing=0)
             ], spacing=SPACE_4),
             padding=ft.padding.all(SPACE_4),
@@ -229,13 +233,16 @@ class ChartUtils:
         if not atas_vencimento:
             return ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.icons.CHECK_CIRCLE, color=ft.colors.GREEN, size=24),
-                    ft.Text("Nenhuma ata próxima do vencimento", color=ft.colors.GREEN)
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=theme_colors.TEXT_SUCCESS, size=24),
+                    ft.Text(
+                        "Nenhuma ata próxima do vencimento",
+                        color=theme_colors.TEXT_SUCCESS,
+                    ),
                 ], spacing=SPACE_2),
                 padding=ft.padding.all(SPACE_4),
-                border=ft.border.all(1, ft.colors.GREEN),
+                border=ft.border.all(1, theme_colors.TEXT_SUCCESS),
                 border_radius=8,
-                bgcolor=ft.colors.GREEN_50
+                bgcolor=ft.colors.GREEN_50,
             )
         
         # Classifica por urgência
@@ -245,17 +252,17 @@ class ChartUtils:
         
         # Determina cor e ícone baseado na urgência
         if urgente > 0:
-            color = ft.colors.RED
+            color = theme_colors.TEXT_ERROR
             bgcolor = ft.colors.RED_50
             icon = ft.icons.ERROR
             message = f"🚨 {urgente} ata(s) vencendo em 7 dias ou menos!"
         elif atencao > 0:
-            color = ft.colors.ORANGE
+            color = theme_colors.TEXT_WARNING
             bgcolor = ft.colors.ORANGE_50
             icon = ft.icons.WARNING
             message = f"⚠️ {atencao} ata(s) vencendo em 30 dias ou menos!"
         else:
-            color = ft.colors.BLUE
+            color = theme_colors.TEXT_INFO
             bgcolor = ft.colors.BLUE_50
             icon = ft.icons.INFO
             message = f"ℹ️ {alerta} ata(s) vencendo em 90 dias ou menos"
@@ -288,7 +295,7 @@ class ChartUtils:
                     ft.Text(
                         "Total de Atas",
                         size=12,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -296,7 +303,7 @@ class ChartUtils:
                     ft.Text(
                         "cadastradas",
                         size=10,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -320,7 +327,7 @@ class ChartUtils:
                     ft.Text(
                         "Valor Total",
                         size=12,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -328,7 +335,7 @@ class ChartUtils:
                     ft.Text(
                         "em atas",
                         size=10,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -352,7 +359,7 @@ class ChartUtils:
                     ft.Text(
                         "Vigentes",
                         size=12,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -360,12 +367,12 @@ class ChartUtils:
                         str(stats["vigente"]),
                         size=24,
                         weight=ft.FontWeight.BOLD,
-                        color=ft.colors.GREEN,
+                        color=theme_colors.TEXT_SUCCESS,
                     ),
                     ft.Text(
                         f"{vigentes_pct:.1f}%",
                         size=10,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -389,7 +396,7 @@ class ChartUtils:
                     ft.Text(
                         "A Vencer",
                         size=12,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -397,12 +404,12 @@ class ChartUtils:
                         str(stats["a_vencer"]),
                         size=24,
                         weight=ft.FontWeight.BOLD,
-                        color=ft.colors.ORANGE,
+                        color=theme_colors.TEXT_WARNING,
                     ),
                     ft.Text(
                         f"{vencer_pct:.1f}%",
                         size=10,
-                        color=ft.colors.SECONDARY,
+                        color=theme_colors.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
