@@ -50,7 +50,7 @@ class AtaApp:
         self.page.window_height = 800
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = colors.PAGE_BG
+        self.page.bgcolor = colors.APP_BG
         self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
@@ -76,7 +76,7 @@ class AtaApp:
         self.menu_container = ft.Container(
             content=self.navigation_menu,
             width=200,
-            bgcolor=colors.WHITE,
+            bgcolor=colors.SIDEBAR_BG,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,

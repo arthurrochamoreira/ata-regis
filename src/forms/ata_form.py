@@ -124,8 +124,8 @@ class AtaForm:
         dados_gerais = build_section(
             "Dados Gerais",
             ft.icons.DESCRIPTION_OUTLINED,
-            colors.INDIGO,
-            colors.INDIGO_BG,
+            colors.TAB_ACTIVE_TEXT,
+            colors.SIDEBAR_LINK_HOVER_BG,
             dados_gerais_body,
         )
         
@@ -137,8 +137,8 @@ class AtaForm:
         telefones_section = build_section(
             "Telefones",
             ft.icons.PHONE_OUTLINED,
-            colors.TEXT_SECONDARY,
-            colors.GREY_LIGHT,
+            colors.TABS_HOVER_TEXT,
+            colors.TABLE_DIVIDER,
             ft.Column([
                 ft.Row([
                     telefones_header_btn
@@ -155,8 +155,8 @@ class AtaForm:
         emails_section = build_section(
             "E-mails",
             ft.icons.EMAIL_OUTLINED,
-            colors.TEXT_SECONDARY,
-            colors.GREY_LIGHT,
+            colors.TABS_HOVER_TEXT,
+            colors.TABLE_DIVIDER,
             ft.Column([
                 ft.Row([
                     emails_header_btn
@@ -173,8 +173,8 @@ class AtaForm:
         itens_section = build_section(
             "Itens",
             ft.icons.LIST_ALT_OUTLINED,
-            colors.INDIGO,
-            colors.INDIGO_BG,
+            colors.TAB_ACTIVE_TEXT,
+            colors.SIDEBAR_LINK_HOVER_BG,
             ft.Column([
                 ft.Row([
                     itens_header_btn
@@ -214,9 +214,9 @@ class AtaForm:
                             "Ata de Registro de Preços",
                             size=30,
                             weight=ft.FontWeight.BOLD,
-                            color=colors.TEXT_DARK,
+                            color=colors.APP_TEXT,
                         ),
-                        ft.Text(titulo, size=16, color=colors.TEXT_SECONDARY),
+                        ft.Text(titulo, size=16, color=colors.TABS_HOVER_TEXT),
                     ],
                 )
             ],
@@ -232,7 +232,7 @@ class AtaForm:
 
         card = ft.Container(
             content=ft.Column([header, content], spacing=SPACE_6, expand=True),
-            bgcolor=colors.WHITE,
+            bgcolor=colors.CARD_BG,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
