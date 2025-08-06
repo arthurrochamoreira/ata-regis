@@ -96,8 +96,9 @@ def build_header(
             weight=FONT_BOLD,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
+            color=colors.TEXT_DARK,
         ),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
+        bgcolor=colors.HEADER_BG,
         actions=[
             ft.Container(
                 content=actions_row,
@@ -155,6 +156,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
     search_field = ft.TextField(
         hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
+        prefix_icon_color=ft.colors.GREY_400,
         on_change=on_change,
         value=value,
         expand=True,
@@ -171,12 +173,12 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
             weight=ft.FontWeight.W_500,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
-            color=colors.TEXT_DARK,
+            color=colors.TEXT_SECONDARY,
         ),
         border_radius=9999,
         border_color=colors.GREY_LIGHT,
         focused_border_color=colors.FOCUSED_BORDER,
-        bgcolor=colors.WHITE,
+        bgcolor=ft.colors.GREY_100,
         hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
@@ -240,7 +242,7 @@ def build_data_table(
         ),
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(vertical=SPACE_4, horizontal=SPACE_4),
-        bgcolor=colors.HEADER_BG,
+        bgcolor=colors.TABLE_HEAD_BG,
         border=ft.border.only(bottom=ft.BorderSide(1, colors.GREY_LIGHT)),
     )
 
@@ -260,6 +262,7 @@ def build_data_table(
             ),
             ft.Text(
                 data_formatada,
+                color=colors.TEXT_SECONDARY,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -267,6 +270,7 @@ def build_data_table(
             ),
             ft.Text(
                 ata.objeto,
+                color=colors.TEXT_SECONDARY,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -274,6 +278,7 @@ def build_data_table(
             ),
             ft.Text(
                 ata.fornecedor,
+                color=colors.TEXT_SECONDARY,
                 max_lines=1,
                 no_wrap=True,
                 overflow=ft.TextOverflow.ELLIPSIS,
@@ -303,7 +308,10 @@ def build_data_table(
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: colors.BLUE_HOVER, "": colors.TEXT_SECONDARY}
+                        color={
+                            ft.MaterialState.HOVERED: ft.colors.INDIGO_900,
+                            "": ft.colors.INDIGO_600,
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -312,7 +320,10 @@ def build_data_table(
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: colors.YELLOW, "": colors.TEXT_SECONDARY}
+                        color={
+                            ft.MaterialState.HOVERED: ft.colors.GREY_900,
+                            "": ft.colors.GREY_600,
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -321,7 +332,10 @@ def build_data_table(
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
                     style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: colors.RED, "": colors.TEXT_SECONDARY}
+                        color={
+                            ft.MaterialState.HOVERED: ft.colors.RED_900,
+                            "": ft.colors.RED_600,
+                        }
                     ),
                     icon_size=20,
                 ),
@@ -358,6 +372,7 @@ def build_data_table(
         content=ft.Column([header_row, body], spacing=0),
         border=ft.border.all(1, colors.GREY_LIGHT),
         clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        bgcolor=colors.WHITE,
     )
 
     return table
