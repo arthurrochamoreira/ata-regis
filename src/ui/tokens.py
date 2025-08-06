@@ -38,9 +38,12 @@ def primary_button(
         text=text,
         icon=icon,
         on_click=on_click,
-        bgcolor=colors.PRIMARY_BG,
-        color=colors.PRIMARY_TEXT,
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
+        bgcolor=colors.BTN_NOVA_ATA_BG,
+        color=colors.BTN_NOVA_ATA_TEXT,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=9999),
+            bgcolor={ft.MaterialState.HOVERED: colors.BTN_NOVA_ATA_HOVER_BG},
+        ),
         **kwargs,
     )
 
@@ -64,8 +67,8 @@ def secondary_button(
         on_click=on_click,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=9999),
-            color=colors.SECONDARY_TEXT,
-            side=ft.BorderSide(1, colors.SECONDARY_BORDER),
+            color=colors.TABS_HOVER_TEXT,
+            side=ft.BorderSide(1, colors.TABLE_DIVIDER),
         ),
         **kwargs,
     )
@@ -93,7 +96,7 @@ def build_section(
                 weight=FONT_BOLD,
                 line_height=LEADING_5,
                 letter_spacing=TRACKING_WIDER,
-                color=colors.TEXT_PRIMARY,
+                color=colors.APP_TEXT,
             ),
         ],
         spacing=SPACE_3,
@@ -117,7 +120,7 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
                 weight=ft.FontWeight.W_600,
                 line_height=LEADING_5,
                 letter_spacing=TRACKING_WIDER,
-                color=colors.TEXT_PRIMARY,
+                color=colors.APP_TEXT,
             ),
         ],
         spacing=SPACE_2,
@@ -126,8 +129,8 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     return ft.Container(
         content=ft.Column([header, content], spacing=SPACE_4),
         padding=SPACE_4,
-        border=ft.border.all(1, colors.GREY_LIGHT),
+        border=ft.border.all(1, colors.TABLE_DIVIDER),
         border_radius=8,
-        bgcolor=colors.WHITE,
+        bgcolor=colors.CARD_BG,
         shadow=SHADOW_MD,
     )

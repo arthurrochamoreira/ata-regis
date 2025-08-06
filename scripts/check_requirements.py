@@ -29,7 +29,7 @@ console.print("[bold cyan]Dependências:[/bold cyan]")
 for p in pkgs:
     try:
         metadata.version(p)
-        console.print(f"  - {p} [{colors.GREEN}](já instalado)[/]")
+        console.print(f"  - {p} [{colors.BADGE_VIGENTE_TEXT}](já instalado)[/]")
     except metadata.PackageNotFoundError:
         console.print(f"  - {p}")
 
@@ -43,7 +43,7 @@ with Progress(
     TimeElapsedColumn(),
 ) as progress:
     total_task = progress.add_task(
-        f"[bold {colors.GREEN}]Progresso total",
+        f"[bold {colors.BADGE_VIGENTE_TEXT}]Progresso total",
         total=len(pkgs),
     )
     for pkg in pkgs:
