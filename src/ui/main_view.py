@@ -96,8 +96,9 @@ def build_header(
             weight=FONT_BOLD,
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
+            color=colors.TEXT_DARK,
         ),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
+        bgcolor=colors.HEADER_BG,
         actions=[
             ft.Container(
                 content=actions_row,
@@ -117,10 +118,10 @@ def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Con
             padding=ft.padding.symmetric(horizontal=12, vertical=8),
             shape=ft.RoundedRectangleBorder(radius=8),
             overlay_color={
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
+                ft.MaterialState.HOVERED: colors.HOVER_OVERLAY,
+                ft.MaterialState.FOCUSED: colors.HOVER_OVERLAY,
             },
-            bgcolor=color if selected else ft.colors.TRANSPARENT,
+            bgcolor=color if selected else colors.TRANSPARENT,
             color=colors.WHITE if selected else colors.TEXT_DARK,
             side=None if selected else ft.BorderSide(1, colors.GREY_LIGHT),
         )
@@ -177,7 +178,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         border_color=colors.GREY_LIGHT,
         focused_border_color=colors.FOCUSED_BORDER,
         bgcolor=colors.WHITE,
-        hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
+        hover_color=colors.HOVER_OVERLAY,
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
     return (
