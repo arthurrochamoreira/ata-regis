@@ -1,4 +1,6 @@
 import json
+import math
+
 import flet as ft
 
 from .theme.spacing import SPACE_2, SPACE_3, SPACE_5
@@ -62,7 +64,14 @@ class SidebarItem(ft.TextButton):
 
 
 class Sidebar(ft.Container):
-    def __init__(self, app, open_width: int = 260, closed_width: int = 0, duration: int = 300, curve: str = "ease"):
+    def __init__(
+        self,
+        app,
+        open_width: int = 260,
+        closed_width: int = 56,
+        duration: int = 300,
+        curve: str = "ease",
+    ):
         self.app = app
         self.open_width = open_width
         self.closed_width = closed_width
@@ -75,11 +84,37 @@ class Sidebar(ft.Container):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.items: list[SidebarItem] = []
-        controls = []
+
+        # Collapse/expand button
+        self.toggle_button = ft.IconButton(
+            icon=ft.icons.CHEVRON_LEFT,
+            tooltip="Colapsar menu",
+            on_click=self.toggle_sidebar,
+            rotate=ft.transform.Rotate(0),
+            animate_rotation=ft.animation.Animation(200, "ease"),
+        )
+        button_container = ft.Container(
+            content=self.toggle_button,
+            alignment=ft.alignment.center_left,
+            padding=ft.padding.all(SPACE_3),
+        )
+
+        # Navigation items
+        nav_controls = []
         for d in self.destinations:
-            controls.append(self.render_sidebar_item(d.icon, d.label, d.name, d.index == self.app.current_tab))
+            nav_controls.append(
+                self.render_sidebar_item(
+                    d.icon, d.label, d.name, d.index == self.app.current_tab
+                )
+            )
+        nav_column = ft.Column(
+            nav_controls,
+            spacing=SPACE_3,
+            expand=True,
+        )
+
         content = ft.Column(
-            controls,
+            [button_container, nav_column],
             spacing=SPACE_3,
             expand=True,
         )
@@ -122,7 +157,14 @@ class Sidebar(ft.Container):
         self.sidebar_open = value
         self.width = self.open_width if value else self.closed_width
         for item in self.items:
-            item.visible = value
+            item.set_collapsed(not value)
+        self.toggle_button.icon = (
+            ft.icons.CHEVRON_LEFT if value else ft.icons.CHEVRON_RIGHT
+        )
+        self.toggle_button.tooltip = (
+            "Colapsar menu" if value else "Expandir menu"
+        )
+        self.toggle_button.rotate = ft.transform.Rotate(0 if value else math.pi)
         self.app.page.client_storage.set("sidebar_open", json.dumps(value))
         if self.page:
             self.update()
