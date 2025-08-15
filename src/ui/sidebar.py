@@ -2,7 +2,7 @@ import json
 import math
 import flet as ft
 
-from .theme.spacing import SPACE_2, SPACE_3, SPACE_4, SPACE_5
+from .theme.spacing import SPACE_2, SPACE_3, SPACE_5
 from .theme.shadows import SHADOW_XL
 from .theme import colors
 
@@ -21,34 +21,25 @@ class SidebarItem(ft.TextButton):
         super().__init__()
         self.destination = destination
         self.activate_cb = activate_cb
-        self.active = False
-
-        self.icon = ft.Icon(destination.icon, color=colors.TEXT_SECONDARY)
-        self.label = ft.Text(destination.label, color=colors.TEXT_PRIMARY)
+        self.icon = ft.Icon(destination.icon)
+        self.label = ft.Text(destination.label)
         self.label_container = ft.Container(
             content=self.label,
             opacity=1,
             animate=ft.animation.Animation(duration, curve),
         )
-        row = ft.Row(
+        self.content = ft.Row(
             [self.icon, self.label_container],
             spacing=SPACE_2,
             alignment=ft.MainAxisAlignment.START,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         )
-        self.inner_container = ft.Container(
-            content=row,
-            padding=ft.padding.symmetric(horizontal=SPACE_3, vertical=SPACE_3),
-            border_radius=8,
-        )
-        self.content = self.inner_container
         self.style = ft.ButtonStyle(
-            padding=0,
-            bgcolor={ft.MaterialState.HOVERED: ft.colors.with_opacity(0.05, ft.colors.BLACK)},
+            padding=ft.padding.all(SPACE_3),
             shape=ft.RoundedRectangleBorder(radius=8),
+            bgcolor={ft.MaterialState.HOVERED: ft.colors.with_opacity(0.05, ft.colors.BLACK)},
         )
         self.on_click = self.on_pressed
-        self.on_hover = self._on_hover
 
     def on_pressed(self, e):
         self.activate_cb(self.destination.index)
@@ -56,31 +47,23 @@ class SidebarItem(ft.TextButton):
     def set_collapsed(self, collapsed: bool):
         self.label_container.width = 0 if collapsed else None
         self.label_container.opacity = 0 if collapsed else 1
+        self.content.alignment = ft.MainAxisAlignment.CENTER if collapsed else ft.MainAxisAlignment.START
         self.tooltip = self.destination.label if collapsed else None
 
     def set_active(self, active: bool):
-        self.active = active
         self.icon.name = self.destination.selected_icon if active else self.destination.icon
-        self.icon.color = colors.PRIMARY if active else colors.TEXT_SECONDARY
-        self.inner_container.bgcolor = ft.colors.with_opacity(0.08, colors.PRIMARY) if active else None
-        self.inner_container.border = (
-            ft.border.only(left=ft.BorderSide(width=3, color=colors.PRIMARY))
-            if active
-            else None
+        self.style = ft.ButtonStyle(
+            padding=ft.padding.all(SPACE_3),
+            shape=ft.RoundedRectangleBorder(radius=8),
+            bgcolor={
+                ft.MaterialState.DEFAULT: ft.colors.SECONDARY_CONTAINER if active else None,
+                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.05, ft.colors.BLACK),
+            },
         )
-
-    def _on_hover(self, e):
-        hovered = e.data == "true"
-        if hovered and not self.active:
-            self.icon.color = colors.PRIMARY
-        elif not self.active:
-            self.icon.color = colors.TEXT_SECONDARY
-        self.update()
-
 
 
 class Sidebar(ft.Container):
-    def __init__(self, app, open_width: int = 240, closed_width: int = 64, duration: int = 200, curve: str = "ease"):
+    def __init__(self, app, open_width: int = 240, closed_width: int = 64, duration: int = 300, curve: str = "ease"):
         self.app = app
         self.open_width = open_width
         self.closed_width = closed_width
@@ -93,15 +76,9 @@ class Sidebar(ft.Container):
             NavigationDestination("vencimentos", "Vencimentos", ft.icons.ALARM_OUTLINED, ft.icons.ALARM, 2),
         ]
         self.items: list[SidebarItem] = []
-
-        # Header with menu icon and toggle arrow
-        self.menu_icon = ft.Icon("side_navigation", color=colors.TEXT_PRIMARY)
-        self.title = ft.Text("Menu", color=colors.TEXT_PRIMARY)
-        self.title_container = ft.Container(
-            content=self.title,
-            opacity=1,
-            animate=ft.animation.Animation(duration, curve),
-        )
+        controls = []
+        for d in self.destinations:
+            controls.append(self.render_sidebar_item(d.icon, d.label, d.name, d.index == self.app.current_tab))
         self.toggle_btn = ft.IconButton(
             icon=ft.icons.CHEVRON_RIGHT,
             tooltip="Colapsar menu",
@@ -110,31 +87,16 @@ class Sidebar(ft.Container):
             animate_rotation=ft.animation.Animation(duration, curve),
         )
         self.toggle_btn.aria_label = "Colapsar menu"
-        header_row = ft.Row(
-            [self.menu_icon, self.title_container, self.toggle_btn],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        )
-        header = ft.Container(
-            content=header_row,
-            padding=ft.padding.symmetric(horizontal=SPACE_3),
-        )
-
-        # Navigation items
-        controls = []
-        for d in self.destinations:
-            controls.append(self.render_sidebar_item(d.icon, d.label, d.name, d.index == self.app.current_tab))
-
         content = ft.Column(
-            [header, ft.Divider(height=1), *controls],
+            [ft.Row([self.toggle_btn], alignment=ft.MainAxisAlignment.END), *controls],
             spacing=SPACE_3,
             expand=True,
         )
         super().__init__(
             content=content,
             width=open_width,
-            bgcolor=colors.CARD_BG,
-            padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
+            bgcolor=colors.WHITE,
+            padding=ft.padding.all(SPACE_5),
             shadow=SHADOW_XL,
             animate=ft.animation.Animation(duration, curve),
         )
@@ -172,8 +134,6 @@ class Sidebar(ft.Container):
         label = "Colapsar menu" if value else "Expandir menu"
         self.toggle_btn.tooltip = label
         self.toggle_btn.aria_label = label
-        self.title_container.width = None if value else 0
-        self.title_container.opacity = 1 if value else 0
         for item in self.items:
             item.set_collapsed(not value)
         self.app.page.client_storage.set("sidebar_open", json.dumps(value))
