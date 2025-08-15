@@ -62,7 +62,6 @@ class AtaApp:
     
     def build_ui(self):
         """Constrói a interface do usuário usando navegação lateral"""
-        self.sidebar = Sidebar(self)
         self.page.appbar = build_header(
             nova_ata_cb=self.nova_ata_click,
             verificar_alertas_cb=self.verificar_alertas_manual,
@@ -70,8 +69,9 @@ class AtaApp:
             relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
             testar_email_cb=self.testar_email,
             status_cb=self.mostrar_status_sistema,
-            toggle_sidebar_cb=self.sidebar.toggle_sidebar,
         )
+
+        self.sidebar = Sidebar(self)
         self.body_container = ft.Container(
             padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,

@@ -62,7 +62,6 @@ def build_header(
     relatorio_mensal_cb: Callable,
     testar_email_cb: Callable,
     status_cb: Callable,
-    toggle_sidebar_cb: Callable,
 ) -> ft.AppBar:
     """Return AppBar with menu actions and new ata button."""
     actions_row = ft.Row(
@@ -88,19 +87,9 @@ def build_header(
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
-    menu_button = ft.IconButton(
-        icon=ft.icons.SIDE_NAVIGATION,
-        tooltip="Menu",
-        on_click=toggle_sidebar_cb,
-    )
-
     return ft.AppBar(
-        leading=ft.Container(
-            content=menu_button,
-            padding=ft.padding.symmetric(horizontal=12),
-            alignment=ft.alignment.center,
-        ),
-        leading_width=56,
+        leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
+        leading_width=40,
         title=text(
             "Ata de Registro de Preços",
             size=TEXT_XL,
