@@ -164,10 +164,12 @@ class Sidebar(ft.Container):
             icon=ft.icons.MENU,
             icon_size=24,
             tooltip="Colapsar menu" if not self.collapsed else "Expandir menu",
-            aria_label="Colapsar menu" if not self.collapsed else "Expandir menu",
             on_click=self.toggle_sidebar,
             rotate=ft.transform.Rotate(0 if not self.collapsed else math.pi),
             animate_rotation=ft.animation.Animation(duration, curve),
+        )
+        self.toggle_btn.aria_label = (
+            "Colapsar menu" if not self.collapsed else "Expandir menu"
         )
 
         content = ft.Column(
