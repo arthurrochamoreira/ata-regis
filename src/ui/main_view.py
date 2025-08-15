@@ -80,7 +80,7 @@ def build_header(
                 alignment=ft.MainAxisAlignment.CENTER,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            height=appbar_height,
+            toolbar_toolbar_height=appbar_height,
             padding=ft.padding.symmetric(horizontal=SPACE_5),
         ),
         items=[
@@ -123,7 +123,7 @@ def build_header(
                 padding=ft.padding.only(right=SPACE_5),
             )
         ],
-        height=appbar_height,
+        toolbar_height=appbar_height,
     )
 
 
