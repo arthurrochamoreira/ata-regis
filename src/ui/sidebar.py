@@ -1,5 +1,4 @@
 import json
-import math
 import flet as ft
 
 from .theme.spacing import SPACE_2, SPACE_3, SPACE_5
@@ -63,7 +62,7 @@ class SidebarItem(ft.TextButton):
 
 
 class Sidebar(ft.Container):
-    def __init__(self, app, open_width: int = 240, closed_width: int = 64, duration: int = 300, curve: str = "ease"):
+    def __init__(self, app, open_width: int = 260, closed_width: int = 0, duration: int = 300, curve: str = "ease"):
         self.app = app
         self.open_width = open_width
         self.closed_width = closed_width
@@ -79,16 +78,8 @@ class Sidebar(ft.Container):
         controls = []
         for d in self.destinations:
             controls.append(self.render_sidebar_item(d.icon, d.label, d.name, d.index == self.app.current_tab))
-        self.toggle_btn = ft.IconButton(
-            icon=ft.icons.CHEVRON_RIGHT,
-            tooltip="Colapsar menu",
-            on_click=self.toggle_sidebar,
-            rotate=ft.transform.Rotate(0),
-            animate_rotation=ft.animation.Animation(duration, curve),
-        )
-        self.toggle_btn.aria_label = "Colapsar menu"
         content = ft.Column(
-            [ft.Row([self.toggle_btn], alignment=ft.MainAxisAlignment.END), *controls],
+            controls,
             spacing=SPACE_3,
             expand=True,
         )
@@ -130,14 +121,9 @@ class Sidebar(ft.Container):
     def set_sidebar_open(self, value: bool):
         self.sidebar_open = value
         self.width = self.open_width if value else self.closed_width
-        self.toggle_btn.rotate.angle = 0 if value else math.pi
-        label = "Colapsar menu" if value else "Expandir menu"
-        self.toggle_btn.tooltip = label
-        self.toggle_btn.aria_label = label
         for item in self.items:
-            item.set_collapsed(not value)
+            item.visible = value
         self.app.page.client_storage.set("sidebar_open", json.dumps(value))
-        print("sidebar_opened" if value else "sidebar_closed")
         if self.page:
             self.update()
 
