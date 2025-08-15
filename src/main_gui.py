@@ -20,10 +20,9 @@ from ui.main_view import (
     build_stats_panel as ui_build_stats_panel,
     STATUS_INFO,
 )
-from ui.navigation_menu import LeftNavigationMenu
+from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
-from ui.theme.spacing import SPACE_2, SPACE_4, SPACE_5
-from ui.theme.shadows import SHADOW_XL
+from ui.theme.spacing import SPACE_4, SPACE_5
 from ui.responsive import get_breakpoint
 from ui.theme.typography import FONT_SANS
 from ui.theme import colors
@@ -72,50 +71,24 @@ class AtaApp:
             status_cb=self.mostrar_status_sistema,
         )
 
-        self.navigation_menu = LeftNavigationMenu(self)
+        self.sidebar = Sidebar(self)
         self.body_container = ft.Container(
             padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,
         )
         self.update_body()
-
-        self.menu_container = ft.Container(
-            content=self.navigation_menu,
-            width=200,
-            bgcolor=ft.colors.WHITE,
-            padding=ft.padding.only(
-                left=SPACE_5,
-                right=SPACE_5,
-                top=SPACE_5,
-                bottom=SPACE_5,
-            ),
-            shadow=SHADOW_XL,
-        )
-
-        layout = ft.Row(
-            [self.menu_container, self.body_container],
-            expand=True,
-        )
+        layout = ft.Row([
+            self.sidebar,
+            self.body_container,
+        ], expand=True)
 
         self.page.add(layout)
         self.update_responsive_layout(self.page.width)
         self.page.update()
 
     def update_responsive_layout(self, width: int):
-        """Atualiza visibilidade e dimensões da barra lateral conforme ``width``."""
-        self.navigation_menu.update_layout(width)
-
-        if width < 768:
-            self.menu_container.visible = False
-        elif width < 1024:
-            self.menu_container.visible = True
-            self.menu_container.width = 80
-            self.menu_container.padding = ft.padding.all(SPACE_2)
-        else:
-            self.menu_container.visible = True
-            self.menu_container.width = 200
-            self.menu_container.padding = ft.padding.all(SPACE_5)
-
+        """Atualiza layout responsivo da barra lateral."""
+        self.sidebar.update_layout(width)
         self.page.update()
     
     def build_stats_panel(self):
