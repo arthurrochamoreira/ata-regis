@@ -254,7 +254,8 @@ class AtaApp:
         else:
             label = f"{len(self.filtros_status)} Filtros Ativos"
         self.filter_label.value = label
-        self.filter_label.update()
+        if self.filter_label.page:
+            self.filter_label.update()
 
     def apply_filters(self):
         """Aplica busca e filtros e atualiza a tabela"""
