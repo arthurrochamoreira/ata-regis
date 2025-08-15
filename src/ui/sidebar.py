@@ -23,7 +23,7 @@ class SidebarItem(ft.TextButton):
         self.activate_cb = activate_cb
         self.icon = ft.Icon(destination.icon)
         self.label = ft.Text(destination.label)
-        self.label_container = ft.AnimatedContainer(
+        self.label_container = ft.Container(
             content=self.label,
             opacity=1,
             animate=ft.animation.Animation(duration, curve),
@@ -62,7 +62,7 @@ class SidebarItem(ft.TextButton):
         )
 
 
-class Sidebar(ft.AnimatedContainer):
+class Sidebar(ft.Container):
     def __init__(self, app, open_width: int = 240, closed_width: int = 64, duration: int = 300, curve: str = "ease"):
         self.app = app
         self.open_width = open_width
