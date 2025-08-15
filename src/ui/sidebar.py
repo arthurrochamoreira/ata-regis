@@ -138,7 +138,8 @@ class Sidebar(ft.Container):
             item.set_collapsed(not value)
         self.app.page.client_storage.set("sidebar_open", json.dumps(value))
         print("sidebar_opened" if value else "sidebar_closed")
-        self.update()
+        if self.page:
+            self.update()
 
     def restore_state(self):
         stored = self.app.page.client_storage.get("sidebar_open")
