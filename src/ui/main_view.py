@@ -108,43 +108,75 @@ def build_header(
     )
 
 
-def build_filters(filtro_atual: str, filtro_cb: Callable[[str], None]) -> ft.Container:
-    """Return container with filter buttons."""
+def build_filters(
+    filtros_ativos: List[str],
+    filtro_cb: Callable[[List[str]], None],
+) -> ft.Container:
+    """Return container with status filter dropdown supporting multi-select."""
 
-    def button(label: str, value: str, color: str) -> ft.FilledButton:
-        selected = filtro_atual == value
-        style = ft.ButtonStyle(
-            padding=ft.padding.symmetric(horizontal=12, vertical=8),
-            shape=ft.RoundedRectangleBorder(radius=8),
-            overlay_color={
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-                ft.MaterialState.FOCUSED: ft.colors.with_opacity(0.08, ft.colors.BLACK),
-            },
-            bgcolor=color if selected else ft.colors.TRANSPARENT,
-            color=colors.WHITE if selected else colors.TEXT_DARK,
-            side=None if selected else ft.BorderSide(1, colors.GREY_LIGHT),
-        )
-        return ft.FilledButton(
-            text=label,
-            on_click=lambda e: filtro_cb(value),
-            style=style,
-            expand=True,
-        )
+    active = set(filtros_ativos or [])
 
-    buttons: list[ft.FilledButton] = []
+    def toggle_filter(key: str, checked: bool) -> None:
+        """Toggle ``key`` in ``active`` and notify callback."""
+        if key == "todos":
+            new = ["todos"] if checked else ["todos"]
+        else:
+            current = set(active)
+            current.discard("todos")
+            if checked:
+                current.add(key)
+            else:
+                current.discard(key)
+            if not current:
+                current.add("todos")
+            new = list(current)
+        filtro_cb(new)
+
+    # Menu items: "Todas" option followed by specific statuses
+    items: List[ft.PopupMenuItem] = []
+
+    todas_cb = ft.Checkbox(
+        label="Todas as Atas",
+        value="todos" in active,
+        on_change=lambda e: toggle_filter("todos", e.control.value),
+    )
+    items.append(ft.PopupMenuItem(content=todas_cb))
+
     for key in ["vigente", "a_vencer", "vencida"]:
         info = STATUS_INFO[key]
-        buttons.append(button(info["filter"], key, info["button_color"]))
+        cb = ft.Checkbox(
+            label=info["title"],
+            value=key in active and "todos" not in active,
+            on_change=lambda e, k=key: toggle_filter(k, e.control.value),
+        )
+        items.append(ft.PopupMenuItem(content=cb))
 
-    buttons.append(button("Todas", "todos", colors.PRIMARY))
+    # Determine button label based on selection
+    selected = [s for s in active if s != "todos"]
+    if not selected or "todos" in active:
+        button_label = "Todas as Atas"
+    elif len(selected) == 1:
+        button_label = STATUS_INFO[selected[0]]["title"]
+    else:
+        button_label = f"{len(selected)} Filtros Ativos"
 
-    for b in buttons:
-        b.col = {"xs": 6, "md": 3}
-    row = ft.ResponsiveRow(
-        buttons, columns=12, spacing=SPACE_3, run_spacing=SPACE_3
+    button_content = ft.Container(
+        content=ft.Row(
+            [ft.Text(button_label), ft.Icon(ft.icons.ARROW_DROP_DOWN)],
+            spacing=SPACE_1,
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        padding=ft.padding.symmetric(horizontal=12, vertical=8),
+        border=ft.border.all(1, colors.GREY_LIGHT),
+        border_radius=8,
+        bgcolor=colors.WHITE,
     )
+
+    popup = ft.PopupMenuButton(content=button_content, items=items)
+
     return ft.Container(
-        content=row,
+        content=popup,
         padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_5),
         expand=True,
     )
@@ -368,15 +400,13 @@ def build_grouped_data_tables(
     visualizar_cb: Callable[[Ata], None],
     editar_cb: Callable[[Ata], None],
     excluir_cb: Callable[[Ata], None],
-    filtro: str = "todos",
+    filtros: List[str] | None = None,
 ) -> ft.Container:
-    """Return layout with status cards for the given ``atas`` respecting ``filtro``.
+    """Return layout with status cards respecting ``filtros``.
 
-    When ``filtro`` is one of ``vigente``, ``a_vencer`` or ``vencida``, only the
-    corresponding card is returned and it expands to occupy the full available
-    width.  When ``filtro`` is ``todos`` the original layout with three cards is
-    rendered. Cards are always displayed in a single vertical column,
-    independent of screen size.
+    When ``filtros`` contains specific status values, only those cards are
+    returned. If ``filtros`` is ``None`` or contains ``"todos"``, all status
+    cards are displayed. Cards are always arranged vertically.
     """
 
     groups: dict[str, list[Ata]] = {key: [] for key in STATUS_INFO}
@@ -384,7 +414,10 @@ def build_grouped_data_tables(
         groups.setdefault(ata.status, []).append(ata)
 
     # ``todos`` deve exibir todos os tipos de status disponíveis
-    statuses = [filtro] if filtro != "todos" else list(STATUS_INFO.keys())
+    if not filtros or "todos" in filtros:
+        statuses = list(STATUS_INFO.keys())
+    else:
+        statuses = filtros
 
     card_controls: list[ft.Control] = []
     for status in statuses:

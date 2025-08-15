@@ -33,7 +33,7 @@ class AtaApp:
         self.email_service = EmailService()
         self.alert_service = AlertService(self.email_service)
         self.scheduler = TaskScheduler(self.ata_service, self.alert_service)
-        self.filtro_atual = "todos"
+        self.filtros_status: list[str] = ["todos"]
         self.texto_busca = ""
         self.current_tab = 0
         self.breakpoint = get_breakpoint(page.width)
@@ -131,7 +131,7 @@ class AtaApp:
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
-        filtros = build_filters(self.filtro_atual, self.filtrar_atas)
+        filtros = build_filters(self.filtros_status, self.filtrar_atas)
         search_container, self.search_field = build_search(
             self.buscar_atas, self.texto_busca
         )
@@ -154,7 +154,7 @@ class AtaApp:
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
-            filtro=self.filtro_atual,
+            filtros=self.filtros_status,
         )
         return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
 
@@ -188,25 +188,21 @@ class AtaApp:
             self.refresh_ui()
     
     def get_atas_filtradas(self):
-        """Retorna as atas filtradas baseado no filtro atual e busca"""
-        atas = self.ata_service.listar_todas()
-        
-        # Aplica filtro por status
-        if self.filtro_atual != "todos":
-            atas = [ata for ata in atas if ata.status == self.filtro_atual]
-        
-        # Aplica busca por texto
-        if self.texto_busca:
-            atas = self.ata_service.buscar_por_texto(self.texto_busca)
-            # Reaplica filtro de status se necessário
-            if self.filtro_atual != "todos":
-                atas = [ata for ata in atas if ata.status == self.filtro_atual]
-        
+        """Retorna as atas filtradas baseado nos filtros ativos e busca"""
+        atas = (
+            self.ata_service.buscar_por_texto(self.texto_busca)
+            if self.texto_busca
+            else self.ata_service.listar_todas()
+        )
+
+        if "todos" not in self.filtros_status:
+            atas = [ata for ata in atas if ata.status in self.filtros_status]
+
         return atas
-    
-    def filtrar_atas(self, filtro: str):
+
+    def filtrar_atas(self, filtros: list[str]):
         """Filtra as atas por status"""
-        self.filtro_atual = filtro
+        self.filtros_status = filtros
         self.refresh_ui()
     
     def buscar_atas(self, e):
@@ -218,7 +214,7 @@ class AtaApp:
             self.visualizar_ata,
             self.editar_ata,
             self.excluir_ata,
-            filtro=self.filtro_atual,
+            filtros=self.filtros_status,
         )
         self.grouped_tables.content = new_table.content
         self.search_field.value = self.texto_busca
