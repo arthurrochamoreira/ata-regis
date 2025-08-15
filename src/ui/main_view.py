@@ -1,5 +1,5 @@
 import flet as ft
-from typing import Callable, List
+from typing import Callable, List, Dict, Tuple
 
 from .theme.spacing import (
     SPACE_1,
@@ -110,59 +110,41 @@ def build_header(
 
 def build_filters(
     filtros_ativos: List[str],
-    filtro_cb: Callable[[List[str]], None],
-) -> ft.Container:
-    """Return container with status filter dropdown supporting multi-select."""
+    toggle_cb: Callable[[str, bool], None],
+) -> Tuple[ft.Container, ft.Text, Dict[str, ft.Checkbox]]:
+    """Return filter dropdown and references for external state handling.
+
+    ``toggle_cb`` is called whenever a checkbox changes and receives the key
+    and the new ``bool`` value. The function returns a tuple containing the
+    filter container, the label ``ft.Text`` to be updated externally and a
+    dictionary mapping filter keys to their respective ``ft.Checkbox``
+    controls.
+    """
 
     active = set(filtros_ativos or [])
 
-    def toggle_filter(key: str, checked: bool) -> None:
-        """Toggle ``key`` in ``active`` and notify callback."""
-        if key == "todos":
-            new = ["todos"] if checked else ["todos"]
-        else:
-            current = set(active)
-            current.discard("todos")
-            if checked:
-                current.add(key)
-            else:
-                current.discard(key)
-            if not current:
-                current.add("todos")
-            new = list(current)
-        filtro_cb(new)
+    label_ref = ft.Text("Filtro")
+    checkboxes: Dict[str, ft.Checkbox] = {}
 
-    # Menu items: "Todas" option followed by specific statuses
     items: List[ft.PopupMenuItem] = []
 
-    todas_cb = ft.Checkbox(
-        label="Todas as Atas",
-        value="todos" in active,
-        on_change=lambda e: toggle_filter("todos", e.control.value),
-    )
-    items.append(ft.PopupMenuItem(content=todas_cb))
-
-    for key in ["vigente", "a_vencer", "vencida"]:
-        info = STATUS_INFO[key]
+    def add_checkbox(key: str, text_label: str) -> None:
         cb = ft.Checkbox(
-            label=info["title"],
-            value=key in active and "todos" not in active,
-            on_change=lambda e, k=key: toggle_filter(k, e.control.value),
+            label=text_label,
+            value=key in active,
+            on_change=lambda e, k=key: toggle_cb(k, e.control.value),
         )
+        checkboxes[key] = cb
         items.append(ft.PopupMenuItem(content=cb))
 
-    # Determine button label based on selection
-    selected = [s for s in active if s != "todos"]
-    if not selected or "todos" in active:
-        button_label = "Todas as Atas"
-    elif len(selected) == 1:
-        button_label = STATUS_INFO[selected[0]]["title"]
-    else:
-        button_label = f"{len(selected)} Filtros Ativos"
+    add_checkbox("todos", "Todas as Atas")
+    for key in ["vigente", "a_vencer", "vencida"]:
+        info = STATUS_INFO[key]
+        add_checkbox(key, info["title"])
 
     button_content = ft.Container(
         content=ft.Row(
-            [ft.Text(button_label), ft.Icon(ft.icons.ARROW_DROP_DOWN)],
+            [label_ref, ft.Icon(ft.icons.ARROW_DROP_DOWN)],
             spacing=SPACE_1,
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -175,11 +157,13 @@ def build_filters(
 
     popup = ft.PopupMenuButton(content=button_content, items=items)
 
-    return ft.Container(
+    container = ft.Container(
         content=popup,
         padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_5),
         expand=True,
     )
+
+    return container, label_ref, checkboxes
 
 
 def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:

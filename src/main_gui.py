@@ -1,6 +1,7 @@
 import flet as ft
 import sys
 import os
+import json
 
 # Adiciona o diretório src ao path para importações
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -17,6 +18,7 @@ from ui.main_view import (
     build_grouped_data_tables,
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
+    STATUS_INFO,
 )
 from ui.navigation_menu import LeftNavigationMenu
 from ui import build_ata_detail_view
@@ -33,7 +35,10 @@ class AtaApp:
         self.email_service = EmailService()
         self.alert_service = AlertService(self.email_service)
         self.scheduler = TaskScheduler(self.ata_service, self.alert_service)
-        self.filtros_status: list[str] = ["todos"]
+        saved_filters = self.page.client_storage.get("filtros_status")
+        self.filtros_status: set[str] = set(json.loads(saved_filters)) if saved_filters else set()
+        self.filter_checkboxes: dict[str, ft.Checkbox] = {}
+        self.filter_label: ft.Text | None = None
         self.texto_busca = ""
         self.current_tab = 0
         self.breakpoint = get_breakpoint(page.width)
@@ -131,7 +136,9 @@ class AtaApp:
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
-        filtros = build_filters(self.filtros_status, self.filtrar_atas)
+        filtros, self.filter_label, self.filter_checkboxes = build_filters(
+            list(self.filtros_status), self.toggle_filter
+        )
         search_container, self.search_field = build_search(
             self.buscar_atas, self.texto_busca
         )
@@ -149,13 +156,9 @@ class AtaApp:
             ),
             margin=ft.margin.only(bottom=0),
         )
-        self.grouped_tables = build_grouped_data_tables(
-            self.get_atas_filtradas(),
-            self.visualizar_ata,
-            self.editar_ata,
-            self.excluir_ata,
-            filtros=self.filtros_status,
-        )
+        self.grouped_tables = ft.Container()
+        self.update_filters_label()
+        self.apply_filters()
         return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
 
     def build_vencimentos_view(self):
@@ -189,36 +192,88 @@ class AtaApp:
     
     def get_atas_filtradas(self):
         """Retorna as atas filtradas baseado nos filtros ativos e busca"""
-        atas = (
-            self.ata_service.buscar_por_texto(self.texto_busca)
-            if self.texto_busca
-            else self.ata_service.listar_todas()
-        )
+        atas = self.ata_service.listar_todas()
 
-        if "todos" not in self.filtros_status:
+        if self.filtros_status and "todos" not in self.filtros_status:
             atas = [ata for ata in atas if ata.status in self.filtros_status]
+
+        if self.texto_busca:
+            texto = self.texto_busca.lower()
+            atas = [
+                ata
+                for ata in atas
+                if (
+                    texto in ata.numero_ata.lower()
+                    or texto in ata.objeto.lower()
+                    or texto in ata.fornecedor.lower()
+                    or texto in ata.documento_sei.lower()
+                )
+            ]
 
         return atas
 
-    def filtrar_atas(self, filtros: list[str]):
-        """Filtra as atas por status"""
-        self.filtros_status = filtros
-        self.refresh_ui()
+    def toggle_filter(self, filtro: str, checked: bool):
+        """Alterna filtros e atualiza interface"""
+        if filtro == "todos":
+            if checked:
+                self.filtros_status = {"todos"}
+                for k, cb in self.filter_checkboxes.items():
+                    if k != "todos":
+                        cb.value = False
+                        cb.update()
+            else:
+                self.filtros_status.discard("todos")
+        else:
+            if checked:
+                self.filtros_status.add(filtro)
+                if "todos" in self.filtros_status:
+                    self.filtros_status.discard("todos")
+                    cb = self.filter_checkboxes.get("todos")
+                    if cb:
+                        cb.value = False
+                        cb.update()
+            else:
+                self.filtros_status.discard(filtro)
+
+        self.page.client_storage.set(
+            "filtros_status", json.dumps(list(self.filtros_status))
+        )
+        self.update_filters_label()
+        self.apply_filters()
+
+    def update_filters_label(self):
+        if not self.filter_label:
+            return
+        if not self.filtros_status:
+            label = "Filtro"
+        elif self.filtros_status == {"todos"}:
+            label = "Todas as Atas"
+        elif len(self.filtros_status) == 1:
+            key = next(iter(self.filtros_status))
+            label = STATUS_INFO[key]["filter"]
+        else:
+            label = f"{len(self.filtros_status)} Filtros Ativos"
+        self.filter_label.value = label
+        self.filter_label.update()
+
+    def apply_filters(self):
+        """Aplica busca e filtros e atualiza a tabela"""
+        atas = self.get_atas_filtradas()
+        new_table = build_grouped_data_tables(
+            atas,
+            self.visualizar_ata,
+            self.editar_ata,
+            self.excluir_ata,
+            filtros=list(self.filtros_status) if self.filtros_status else None,
+        )
+        self.grouped_tables.content = new_table.content
+        self.page.update()
     
     def buscar_atas(self, e):
         """Busca atas por texto"""
         self.texto_busca = e.control.value.strip()
-        # Atualiza apenas a tabela mantendo o texto digitado
-        new_table = build_grouped_data_tables(
-            self.get_atas_filtradas(),
-            self.visualizar_ata,
-            self.editar_ata,
-            self.excluir_ata,
-            filtros=self.filtros_status,
-        )
-        self.grouped_tables.content = new_table.content
+        self.apply_filters()
         self.search_field.value = self.texto_busca
-        self.page.update()
     
     def refresh_ui(self):
         """Atualiza a interface"""
