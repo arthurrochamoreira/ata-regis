@@ -80,7 +80,7 @@ class Sidebar(ft.Container):
         for d in self.destinations:
             controls.append(self.render_sidebar_item(d.icon, d.label, d.name, d.index == self.app.current_tab))
         self.toggle_btn = ft.IconButton(
-            icon="side_navigation",
+            icon=ft.icons.MENU_OUTLINED,
             tooltip="Colapsar menu",
             on_click=self.toggle_sidebar,
             rotate=ft.transform.Rotate(0),
