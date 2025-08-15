@@ -89,7 +89,7 @@ def build_header(
     )
 
     menu_button = ft.IconButton(
-        icon=ft.icons.MENU,
+        icon=ft.icons.SIDE_NAVIGATION,
         tooltip="Menu",
         on_click=toggle_sidebar_cb,
     )
