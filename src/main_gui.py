@@ -80,7 +80,7 @@ class AtaApp:
         layout = ft.Row([
             self.sidebar,
             self.body_container,
-        ], expand=True)
+        ], spacing=SPACE_5, expand=True)
 
         self.page.add(layout)
         self.update_responsive_layout(self.page.width)
@@ -89,6 +89,15 @@ class AtaApp:
     def update_responsive_layout(self, width: int):
         """Atualiza layout responsivo da barra lateral."""
         self.sidebar.update_layout(width)
+        self.page.update()
+
+    def toggle_theme(self, e):
+        """Alterna entre temas claro e escuro."""
+        self.page.theme_mode = (
+            ft.ThemeMode.DARK
+            if self.page.theme_mode == ft.ThemeMode.LIGHT
+            else ft.ThemeMode.LIGHT
+        )
         self.page.update()
     
     def build_stats_panel(self):
@@ -142,13 +151,18 @@ class AtaApp:
         )
         return ft.Column([self.atas_vencimento_container], spacing=0, expand=True)
 
+    def build_config_view(self):
+        return ft.Column([ft.Text("Configurações")], spacing=0, expand=True)
+
     def update_body(self):
         if self.current_tab == 0:
             content = self.build_dashboard_view()
         elif self.current_tab == 1:
             content = self.build_atas_view()
-        else:
+        elif self.current_tab == 2:
             content = self.build_vencimentos_view()
+        else:
+            content = self.build_config_view()
         self.body_container.content = content
         self.page.update()
 
