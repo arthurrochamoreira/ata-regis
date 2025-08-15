@@ -71,7 +71,34 @@ class AtaApp:
             status_cb=self.mostrar_status_sistema,
         )
 
-        self.sidebar = Sidebar(self)
+        sidebar_items = [
+            {
+                "id": "dashboard",
+                "label": "Dashboard",
+                "icon": ft.icons.INSIGHTS_OUTLINED,
+                "on_click": lambda e: self.navigate_to(0),
+                "selected": self.current_tab == 0,
+            },
+            {
+                "id": "atas",
+                "label": "Atas",
+                "icon": ft.icons.LIST_OUTLINED,
+                "on_click": lambda e: self.navigate_to(1),
+                "selected": self.current_tab == 1,
+            },
+            {
+                "id": "vencimentos",
+                "label": "Vencimentos",
+                "icon": ft.icons.ALARM_OUTLINED,
+                "on_click": lambda e: self.navigate_to(2),
+                "selected": self.current_tab == 2,
+            },
+        ]
+        self.sidebar = Sidebar(
+            page=self.page,
+            items=sidebar_items,
+            on_toggle=lambda c: self.page.update(),
+        )
         self.body_container = ft.Container(
             padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
             expand=True,
