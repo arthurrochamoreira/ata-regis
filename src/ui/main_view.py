@@ -80,7 +80,9 @@ def build_header(
                 alignment=ft.MainAxisAlignment.CENTER,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            toolbar_toolbar_height=appbar_height,
+            # ``PopupMenuButton`` doesn't support ``toolbar_height`` like ``AppBar``,
+            # so we explicitly set the container height to match the AppBar.
+            height=appbar_height,
             padding=ft.padding.symmetric(horizontal=SPACE_5),
         ),
         items=[
