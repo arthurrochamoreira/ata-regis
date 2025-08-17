@@ -3,6 +3,7 @@ import math
 from typing import Callable, List, Optional
 
 import flet as ft
+from flet import border as fborder
 
 from .theme import colors
 from .theme.spacing import SPACE_1, SPACE_2, SPACE_3, SPACE_5
@@ -13,6 +14,9 @@ from .theme.sizes import (
     ICON_MD,
 )
 from .theme.shadows import SHADOW_XL
+
+# Largura da barra indicadora do item ativo (border-left)
+INDICATOR_W = 4
 
 
 class SidebarItem(ft.Container):
@@ -33,11 +37,25 @@ class SidebarItem(ft.Container):
         self._external_click = data.get("on_click")
         self._on_select = on_select
 
-        icon_expanded = ft.Icon(data["icon"], size=ICON_MD)
-        label = ft.Text(data["label"])
-        row_controls: List[ft.Control] = [icon_expanded, label]
+        # --- COLUNA FIXA DO ÍCONE (EXPANDIDO) ---
+        self._icon_expanded = ft.Icon(
+            data["icon"], size=ICON_MD, color=colors.TEXT_PRIMARY
+        )
+        self._icon_slot = ft.Container(
+            content=self._icon_expanded,
+            width=WIDTH_SIDEBAR_COLLAPSED,   # mesma largura do colapsado
+            height=ITEM_TOUCH,
+            alignment=ft.alignment.center,
+            padding=0,
+        )
+
+        # Label (texto)
+        self._label = ft.Text(self._data["label"], color=colors.TEXT_PRIMARY)
+
+        # Badge opcional
+        row_controls: List[ft.Control] = [self._icon_slot, self._label]
         self.badge: Optional[ft.Control] = None
-        badge_val = data.get("badge")
+        badge_val = self._data.get("badge")
         if badge_val is not None:
             self.badge = ft.Container(
                 content=ft.Text(str(badge_val)),
@@ -49,10 +67,11 @@ class SidebarItem(ft.Container):
             )
             row_controls.append(self.badge)
 
+        # Botão (expandido)
         self._row_btn = ft.TextButton(
             content=ft.Row(
                 row_controls,
-                spacing=SPACE_3,
+                spacing=SPACE_3,  # respiro entre a coluna do ícone e o texto
                 alignment=ft.MainAxisAlignment.START,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
@@ -60,40 +79,55 @@ class SidebarItem(ft.Container):
             height=ITEM_TOUCH,
             on_click=self._handle_click,
             style=ft.ButtonStyle(
-                padding=ft.padding.symmetric(horizontal=SPACE_3),
-                shape=ft.RoundedRectangleBorder(radius=8),
-                bgcolor={
-                    ft.MaterialState.HOVERED: ft.colors.with_opacity(
-                        0.08, colors.TEXT_PRIMARY
-                    )
-                },
+                padding=ft.padding.only(left=0, right=SPACE_3),  # sem padding à esquerda
+                shape=ft.RoundedRectangleBorder(radius=0),       # sem cantos arredondados
+                bgcolor={ft.MaterialState.HOVERED: colors.GREY_LIGHT},
             ),
         )
-        self._row_btn.aria_label = data["label"]
+        self._row_btn.aria_label = self._data["label"]
 
+        # Botão (colapsado)
         self._icon_btn = ft.IconButton(
-            icon=data["icon"],
+            icon=self._data["icon"],
             icon_size=ICON_MD,
-            width=WIDTH_SIDEBAR_COLLAPSED,
-            height=ITEM_TOUCH,
-            tooltip=data["label"] if collapsed else None,
+            icon_color=colors.TEXT_PRIMARY,
+            width=WIDTH_SIDEBAR_COLLAPSED,   # <- toda a faixa colapsada
+            height=ITEM_TOUCH,               # <- mesma altura "touch"
+            tooltip=self._data["label"] if collapsed else None,
             on_click=self._handle_click,
             style=ft.ButtonStyle(
                 padding=0,
-                shape=ft.RoundedRectangleBorder(radius=8),
-                bgcolor={
-                    ft.MaterialState.HOVERED: ft.colors.with_opacity(
-                        0.08, colors.TEXT_PRIMARY
-                    )
-                },
+                shape=ft.RoundedRectangleBorder(radius=0),       # sem cantos arredondados
+                bgcolor={ft.MaterialState.HOVERED: colors.GREY_LIGHT},
             ),
         )
-        self._icon_btn.aria_label = data["label"]
+        self._icon_btn.aria_label = self._data["label"]
 
-        self.width = WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN
+        # Wrapper (colapsado) — mesma área dos demais
+        self._icon_wrapper = ft.Container(
+            content=self._icon_btn,
+            width=WIDTH_SIDEBAR_COLLAPSED,
+            height=ITEM_TOUCH,
+            alignment=ft.alignment.center,
+            padding=0,
+        )
+
+        # Caixa do item: recebe a BARRA (border-left) quando selecionado.
+        # Border não consome largura → não cria "calha" e não desloca conteúdo.
+        self._item_box = ft.Container(
+            content=self._icon_wrapper if collapsed else self._row_btn,
+            width=WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN,
+            height=ITEM_TOUCH,
+            alignment=ft.alignment.center,
+            padding=0,
+            border=fborder.only(left=fborder.BorderSide(INDICATOR_W, ft.colors.TRANSPARENT)),
+            bgcolor=None,
+        )
+
+        self.width = self._item_box.width
         self.height = ITEM_TOUCH
         self.alignment = ft.alignment.center
-        self.content = self._icon_btn if collapsed else self._row_btn
+        self.content = self._item_box
 
         self.set_selected(selected)
 
@@ -104,36 +138,32 @@ class SidebarItem(ft.Container):
 
     def set_collapsed(self, collapsed: bool) -> None:
         """Update layout when sidebar collapses or expands."""
-        self.content = self._icon_btn if collapsed else self._row_btn
-        self.width = WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN
+        self._item_box.content = self._icon_wrapper if collapsed else self._row_btn
+        self._item_box.width = WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN
+        self.width = self._item_box.width
         self._icon_btn.tooltip = self._data["label"] if collapsed else None
         if self.badge:
             self.badge.visible = not collapsed
         self.update()
 
     def set_selected(self, selected: bool) -> None:
-        """Apply visual state for the active item."""
-        bg = ft.colors.SECONDARY_CONTAINER if selected else None
-        self._row_btn.style = ft.ButtonStyle(
-            padding=ft.padding.symmetric(horizontal=SPACE_3),
-            shape=ft.RoundedRectangleBorder(radius=8),
-            bgcolor={
-                ft.MaterialState.DEFAULT: bg,
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(
-                    0.08, colors.TEXT_PRIMARY
-                ),
-            },
+        """Visual do item ativo com barra (border-left) e cores do theme.colors."""
+        bar_color = colors.INDIGO
+        bg_selected = colors.INDIGO_BG
+
+        # Barra indicadora (não desloca conteúdo)
+        self._item_box.border = fborder.only(
+            left=fborder.BorderSide(INDICATOR_W, bar_color if selected else ft.colors.TRANSPARENT)
         )
-        self._icon_btn.style = ft.ButtonStyle(
-            padding=0,
-            shape=ft.RoundedRectangleBorder(radius=8),
-            bgcolor={
-                ft.MaterialState.DEFAULT: bg,
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(
-                    0.08, colors.TEXT_PRIMARY
-                ),
-            },
-        )
+        # Fundo suave colado na lateral
+        self._item_box.bgcolor = bg_selected if selected else None
+
+        # Texto e ícone destacados
+        self._label.weight = ft.FontWeight.W_600 if selected else ft.FontWeight.NORMAL
+        self._label.color = bar_color if selected else colors.TEXT_PRIMARY
+        self._icon_expanded.color = bar_color if selected else colors.TEXT_PRIMARY
+        self._icon_btn.icon_color = bar_color if selected else colors.TEXT_PRIMARY
+
         if self.page:
             self.update()
 
@@ -177,6 +207,7 @@ class Sidebar(ft.Container):
             )
             self._items.append(item)
 
+        # Toggle (mesma coluna visual dos ícones colapsados)
         self.toggle_btn = ft.IconButton(
             icon=ft.icons.MENU,
             icon_size=ICON_MD,
@@ -185,13 +216,27 @@ class Sidebar(ft.Container):
             rotate=ft.transform.Rotate(0 if not self.collapsed else math.pi),
             animate_rotation=ft.animation.Animation(duration, curve),
             padding=0,
+            style=ft.ButtonStyle(
+                padding=0,
+                shape=ft.RoundedRectangleBorder(radius=8),  # sem cantos arredondados
+                bgcolor={ft.MaterialState.HOVERED: colors.GREY_LIGHT},
+            ),
         )
         self.toggle_btn.aria_label = (
             "Colapsar menu" if not self.collapsed else "Expandir menu"
         )
 
+        # Caixa do toggle: largura fixa do colapsado para alinhar ícone
+        self.toggle_box = ft.Container(
+            content=self.toggle_btn,
+            width=self.closed_width,        # mantém ícone alinhado à coluna dos itens
+            height=ITEM_TOUCH,
+            alignment=ft.alignment.center,
+            padding=0,
+        )
+
         content = ft.Column(
-            [ft.Row([self.toggle_btn], alignment=ft.MainAxisAlignment.END), *self._items],
+            [self.toggle_box, *self._items],
             spacing=SPACE_2,
             expand=True,
         )
@@ -220,8 +265,11 @@ class Sidebar(ft.Container):
         label = "Colapsar menu" if not value else "Expandir menu"
         self.toggle_btn.tooltip = label
         self.toggle_btn.aria_label = label
+
+        # Atualiza itens
         for item in self._items:
             item.set_collapsed(value)
+
         self.page.client_storage.set("sidebar_collapsed", json.dumps(value))
         if self.on_toggle:
             self.on_toggle(value)
