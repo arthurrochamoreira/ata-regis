@@ -78,7 +78,6 @@ class SidebarItem(ft.Container):
             height=ITEM_TOUCH,
             tooltip=data["label"] if collapsed else None,
             on_click=self._handle_click,
-            content_padding=0,
             style=ft.ButtonStyle(
                 padding=0,
                 shape=ft.RoundedRectangleBorder(radius=8),
@@ -184,7 +183,7 @@ class Sidebar(ft.Container):
             on_click=self.toggle_sidebar,
             rotate=ft.transform.Rotate(0 if not self.collapsed else math.pi),
             animate_rotation=ft.animation.Animation(duration, curve),
-            content_padding=0,
+            padding=0,
         )
         self.toggle_btn.aria_label = (
             "Colapsar menu" if not self.collapsed else "Expandir menu"
