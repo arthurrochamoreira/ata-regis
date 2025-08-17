@@ -6,27 +6,17 @@ import flet as ft
 
 from .theme import colors
 from .theme.spacing import SPACE_1, SPACE_2, SPACE_3, SPACE_5
+from .theme.sizes import (
+    WIDTH_SIDEBAR_OPEN,
+    WIDTH_SIDEBAR_COLLAPSED,
+    ITEM_TOUCH,
+    ICON_MD,
+)
 from .theme.shadows import SHADOW_XL
 
 
-class SidebarItem(ft.TextButton):
-    """Single navigation item used inside :class:`Sidebar`.
-
-    Parameters
-    ----------
-    data: dict
-        Mapping with keys ``id``, ``label``, ``icon`` and optional ``badge``.
-    collapsed: bool
-        Whether the parent sidebar is currently collapsed.
-    selected: bool
-        Whether this item represents the current active route.
-    on_select: Callable[[str], None]
-        Callback fired when the item is activated.
-    duration: int
-        Animation duration in milliseconds.
-    curve: str
-        Animation curve name.
-    """
+class SidebarItem(ft.Container):
+    """Single navigation item used inside :class:`Sidebar`."""
 
     def __init__(
         self,
@@ -38,23 +28,14 @@ class SidebarItem(ft.TextButton):
         duration: int,
         curve: str,
     ) -> None:
-        super().__init__()
+        super().__init__(padding=0)
         self._data = data
         self._external_click = data.get("on_click")
         self._on_select = on_select
-        self._duration = duration
-        self._curve = curve
 
-        self.icon = ft.Icon(data["icon"], size=24)
-        self.label = ft.Text(data["label"])
-        self.label_container = ft.Container(
-            content=self.label,
-            opacity=1,
-            animate=ft.animation.Animation(duration, curve),
-            expand=True,
-        )
-
-        controls = [self.icon, self.label_container]
+        icon_expanded = ft.Icon(data["icon"], size=ICON_MD)
+        label = ft.Text(data["label"])
+        row_controls: List[ft.Control] = [icon_expanded, label]
         self.badge: Optional[ft.Control] = None
         badge_val = data.get("badge")
         if badge_val is not None:
@@ -66,27 +47,55 @@ class SidebarItem(ft.TextButton):
                 alignment=ft.alignment.center,
                 visible=not collapsed,
             )
-            controls.append(self.badge)
+            row_controls.append(self.badge)
 
-        self.content = ft.Row(
-            controls,
-            spacing=SPACE_3,
-            alignment=ft.MainAxisAlignment.START,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        self._row_btn = ft.TextButton(
+            content=ft.Row(
+                row_controls,
+                spacing=SPACE_3,
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            width=WIDTH_SIDEBAR_OPEN,
+            height=ITEM_TOUCH,
+            on_click=self._handle_click,
+            style=ft.ButtonStyle(
+                padding=ft.padding.symmetric(horizontal=SPACE_3),
+                shape=ft.RoundedRectangleBorder(radius=8),
+                bgcolor={
+                    ft.MaterialState.HOVERED: ft.colors.with_opacity(
+                        0.08, colors.TEXT_PRIMARY
+                    )
+                },
+            ),
         )
+        self._row_btn.aria_label = data["label"]
 
-        self.height = 48
-        self.style = ft.ButtonStyle(
-            padding=ft.padding.symmetric(horizontal=SPACE_3),
-            shape=ft.RoundedRectangleBorder(radius=8),
-            bgcolor={
-                ft.MaterialState.HOVERED: ft.colors.with_opacity(0.08, colors.TEXT_PRIMARY)
-            },
+        self._icon_btn = ft.IconButton(
+            icon=data["icon"],
+            icon_size=ICON_MD,
+            width=WIDTH_SIDEBAR_COLLAPSED,
+            height=ITEM_TOUCH,
+            tooltip=data["label"] if collapsed else None,
+            on_click=self._handle_click,
+            content_padding=0,
+            style=ft.ButtonStyle(
+                padding=0,
+                shape=ft.RoundedRectangleBorder(radius=8),
+                bgcolor={
+                    ft.MaterialState.HOVERED: ft.colors.with_opacity(
+                        0.08, colors.TEXT_PRIMARY
+                    )
+                },
+            ),
         )
-        self.aria_label = data["label"]
-        self.on_click = self._handle_click
+        self._icon_btn.aria_label = data["label"]
 
-        self.set_collapsed(collapsed)
+        self.width = WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN
+        self.height = ITEM_TOUCH
+        self.alignment = ft.alignment.center
+        self.content = self._icon_btn if collapsed else self._row_btn
+
         self.set_selected(selected)
 
     def _handle_click(self, e: ft.ControlEvent) -> None:
@@ -96,29 +105,37 @@ class SidebarItem(ft.TextButton):
 
     def set_collapsed(self, collapsed: bool) -> None:
         """Update layout when sidebar collapses or expands."""
-        self.label_container.width = 0 if collapsed else None
-        self.label_container.opacity = 0 if collapsed else 1
-        self.content.alignment = (
-            ft.MainAxisAlignment.CENTER if collapsed else ft.MainAxisAlignment.START
-        )
-        self.tooltip = self.label.value if collapsed else None
+        self.content = self._icon_btn if collapsed else self._row_btn
+        self.width = WIDTH_SIDEBAR_COLLAPSED if collapsed else WIDTH_SIDEBAR_OPEN
+        self._icon_btn.tooltip = self._data["label"] if collapsed else None
         if self.badge:
             self.badge.visible = not collapsed
+        self.update()
 
     def set_selected(self, selected: bool) -> None:
         """Apply visual state for the active item."""
-        self.style = ft.ButtonStyle(
+        bg = ft.colors.SECONDARY_CONTAINER if selected else None
+        self._row_btn.style = ft.ButtonStyle(
             padding=ft.padding.symmetric(horizontal=SPACE_3),
             shape=ft.RoundedRectangleBorder(radius=8),
             bgcolor={
-                ft.MaterialState.DEFAULT: ft.colors.SECONDARY_CONTAINER
-                if selected
-                else None,
+                ft.MaterialState.DEFAULT: bg,
                 ft.MaterialState.HOVERED: ft.colors.with_opacity(
                     0.08, colors.TEXT_PRIMARY
                 ),
             },
         )
+        self._icon_btn.style = ft.ButtonStyle(
+            padding=0,
+            shape=ft.RoundedRectangleBorder(radius=8),
+            bgcolor={
+                ft.MaterialState.DEFAULT: bg,
+                ft.MaterialState.HOVERED: ft.colors.with_opacity(
+                    0.08, colors.TEXT_PRIMARY
+                ),
+            },
+        )
+        self.update()
 
 
 class Sidebar(ft.Container):
@@ -131,15 +148,15 @@ class Sidebar(ft.Container):
         *,
         collapsed: Optional[bool] = None,
         on_toggle: Optional[Callable[[bool], None]] = None,
-        open_width: int = 240,
-        closed_width: int = 64,
+        open_width: int = WIDTH_SIDEBAR_OPEN,
+        closed_width: int = WIDTH_SIDEBAR_COLLAPSED,
         duration: int = 180,
         curve: str = "ease",
     ) -> None:
         self.page = page
         self.on_toggle = on_toggle
-        self.open_width = max(open_width, 240)
-        self.closed_width = min(closed_width, 64)
+        self.open_width = max(open_width, WIDTH_SIDEBAR_OPEN)
+        self.closed_width = min(closed_width, WIDTH_SIDEBAR_COLLAPSED)
         self.duration = duration
         self.curve = curve
 
@@ -162,11 +179,12 @@ class Sidebar(ft.Container):
 
         self.toggle_btn = ft.IconButton(
             icon=ft.icons.MENU,
-            icon_size=24,
+            icon_size=ICON_MD,
             tooltip="Colapsar menu" if not self.collapsed else "Expandir menu",
             on_click=self.toggle_sidebar,
             rotate=ft.transform.Rotate(0 if not self.collapsed else math.pi),
             animate_rotation=ft.animation.Animation(duration, curve),
+            content_padding=0,
         )
         self.toggle_btn.aria_label = (
             "Colapsar menu" if not self.collapsed else "Expandir menu"
@@ -174,7 +192,7 @@ class Sidebar(ft.Container):
 
         content = ft.Column(
             [ft.Row([self.toggle_btn], alignment=ft.MainAxisAlignment.END), *self._items],
-            spacing=SPACE_3,
+            spacing=SPACE_2,
             expand=True,
         )
 
@@ -182,7 +200,7 @@ class Sidebar(ft.Container):
             content=content,
             width=self.open_width if not self.collapsed else self.closed_width,
             bgcolor=colors.WHITE,
-            padding=ft.padding.all(SPACE_5),
+            padding=ft.padding.symmetric(vertical=SPACE_5),
             shadow=SHADOW_XL,
             animate=ft.animation.Animation(duration, curve),
         )
