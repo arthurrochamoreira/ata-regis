@@ -134,7 +134,8 @@ class SidebarItem(ft.Container):
                 ),
             },
         )
-        self.update()
+        if self.page:
+            self.update()
 
 
 class Sidebar(ft.Container):
