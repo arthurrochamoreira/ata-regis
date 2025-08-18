@@ -23,7 +23,6 @@ def PrimaryButton(
         icon=icon,
         on_click=on_click,
         style=style.primary(size),
-        icon_size=sizing.ICON_SIZE[size] if icon else None,
         **kwargs,
     )
 
@@ -42,7 +41,6 @@ def SecondaryButton(
         icon=icon,
         on_click=on_click,
         style=style.secondary(size),
-        icon_size=sizing.ICON_SIZE[size] if icon else None,
         **kwargs,
     )
 
