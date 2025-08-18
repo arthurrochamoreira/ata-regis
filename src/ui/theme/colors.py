@@ -6,6 +6,10 @@ from types import SimpleNamespace
 # ---------------------------------------------------------------------------
 # Alterar valores aqui caso a paleta base do projeto mude no futuro.
 WHITE = ft.colors.WHITE
+BLACK = ft.colors.BLACK
+TRANSPARENT = ft.colors.TRANSPARENT
+INVERSE_PRIMARY = ft.colors.INVERSE_PRIMARY
+SURFACE_VARIANT = ft.colors.SURFACE_VARIANT
 PAGE_BG = "#F3F4F6"
 CARD_BG = "#F8FAFC"
 
@@ -53,6 +57,13 @@ RED_BG = "#FEE2E2"
 RED_DARK = "#991B1B"
 BLUE_HOVER = "#2563EB"
 RESUMO_BG = "#EEF2FF"
+GREEN_50 = ft.colors.GREEN_50
+ORANGE_50 = ft.colors.ORANGE_50
+RED_50 = ft.colors.RED_50
+BLUE_50 = ft.colors.BLUE_50
+GREEN_200 = ft.colors.GREEN_200
+ORANGE_200 = ft.colors.ORANGE_200
+RED_200 = ft.colors.RED_200
 
 # Semantic aliases
 PRIMARY = ft.colors.BLUE

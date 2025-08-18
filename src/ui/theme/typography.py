@@ -20,7 +20,10 @@ SMALL = {"size": 12, "weight": ft.FontWeight.NORMAL, "line_height": 1.5}
 
 # Legacy size tokens preserved for compatibility
 TEXT_XL = 20  # text-xl
+TEXT_LG = 18  # text-lg
+TEXT_BASE = 16  # base text
 TEXT_SM = 14  # text-sm
+TEXT_XS = 11  # text-xs
 
 # Font weight tokens
 FONT_BOLD = ft.FontWeight.BOLD

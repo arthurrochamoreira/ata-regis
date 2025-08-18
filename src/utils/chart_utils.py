@@ -3,15 +3,16 @@ from typing import List, Dict, Any, Tuple
 from datetime import date, datetime, timedelta
 
 from models.ata import Ata
-from ui.theme.spacing import (
-    SPACE_1,
-    SPACE_2,
-    SPACE_3,
-    SPACE_4,
-    SPACE_5,
-    SPACE_6,
-)
-from ui.theme import colors as theme_colors
+from ui.theme.tokens import TOKENS as T
+theme_colors = T.colors
+SPACE_1 = T.spacing.SPACE_1
+SPACE_2 = T.spacing.SPACE_2
+SPACE_3 = T.spacing.SPACE_3
+SPACE_4 = T.spacing.SPACE_4
+SPACE_5 = T.spacing.SPACE_5
+SPACE_6 = T.spacing.SPACE_6
+RADIUS_XS = T.radius.RADIUS_XS
+RADIUS_MD = T.radius.RADIUS_MD
 
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""
@@ -31,9 +32,9 @@ class ChartUtils:
         
         # Cores para cada status
         colors = {
-            "vigente": ft.colors.GREEN,
-            "a_vencer": ft.colors.ORANGE,
-            "vencida": ft.colors.RED
+            "vigente": T.colors.GREEN,
+            "a_vencer": T.colors.ORANGE,
+            "vencida": T.colors.RED,
         }
         
         # Cria seções do gráfico
@@ -73,9 +74,9 @@ class ChartUtils:
         
         # Ícones e cores para cada status
         status_info = {
-            "vigente": {"icon": "✅", "color": ft.colors.GREEN, "label": "Vigentes"},
-            "a_vencer": {"icon": "⚠️", "color": ft.colors.ORANGE, "label": "A Vencer"},
-            "vencida": {"icon": "❌", "color": ft.colors.RED, "label": "Vencidas"}
+            "vigente": {"icon": "✅", "color": T.colors.GREEN, "label": "Vigentes"},
+            "a_vencer": {"icon": "⚠️", "color": T.colors.ORANGE, "label": "A Vencer"},
+            "vencida": {"icon": "❌", "color": T.colors.RED, "label": "Vencidas"},
         }
         
         legend_items = []
@@ -85,10 +86,10 @@ class ChartUtils:
             
             item = ft.Row([
                 ft.Container(
-                    width=16,
-                    height=16,
+                    width=SPACE_4,
+                    height=SPACE_4,
                     bgcolor=info["color"],
-                    border_radius=2
+                    border_radius=RADIUS_XS,
                 ),
                 ft.Text(f"{info['icon']} {info['label']}: {count} ({percentage:.1f}%)")
             ], spacing=SPACE_2)
@@ -127,11 +128,11 @@ class ChartUtils:
             
             # Cor da barra baseada no status predominante
             if data["vencida"] > 0:
-                bar_color = ft.colors.RED_200
+                bar_color = T.colors.RED_200
             elif data["a_vencer"] > 0:
-                bar_color = ft.colors.ORANGE_200
+                bar_color = T.colors.ORANGE_200
             else:
-                bar_color = ft.colors.GREEN_200
+                bar_color = T.colors.GREEN_200
             
             bar = ft.Container(
                 content=ft.Column([
@@ -139,7 +140,7 @@ class ChartUtils:
                         width=30,
                         height=bar_height,
                         bgcolor=bar_color,
-                        border_radius=2,
+                        border_radius=RADIUS_XS,
                         tooltip=f"{month}: {total} atas"
                     ),
                     ft.Text(month, size=10, text_align=ft.TextAlign.CENTER)
@@ -154,8 +155,8 @@ class ChartUtils:
                 ft.Row(bars, alignment=ft.MainAxisAlignment.SPACE_AROUND)
             ], spacing=SPACE_4),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8
+            border=ft.border.all(1, T.colors.OUTLINE),
+            border_radius=RADIUS_MD
         )
     
     @staticmethod
@@ -178,9 +179,9 @@ class ChartUtils:
         # Cria barras horizontais
         bars = []
         colors = {
-            "vigente": ft.colors.GREEN,
-            "a_vencer": ft.colors.ORANGE,
-            "vencida": ft.colors.RED
+            "vigente": T.colors.GREEN,
+            "a_vencer": T.colors.ORANGE,
+            "vencida": T.colors.RED,
         }
         
         labels = {
@@ -204,7 +205,7 @@ class ChartUtils:
                             width=bar_width,
                             height=20,
                             bgcolor=colors[status],
-                            border_radius=2
+                            border_radius=RADIUS_XS
                         ),
                         ft.Text(f"{percentage:.1f}% ({value_formatted})", size=12)
                     ], spacing=SPACE_2, alignment=ft.MainAxisAlignment.START),
@@ -223,8 +224,8 @@ class ChartUtils:
                 ft.Column(bars, spacing=0)
             ], spacing=SPACE_4),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8
+            border=ft.border.all(1, T.colors.OUTLINE),
+            border_radius=RADIUS_MD
         )
     
     @staticmethod
@@ -241,8 +242,8 @@ class ChartUtils:
                 ], spacing=SPACE_2),
                 padding=ft.padding.all(SPACE_4),
                 border=ft.border.all(1, theme_colors.TEXT_SUCCESS),
-                border_radius=8,
-                bgcolor=ft.colors.GREEN_50,
+                border_radius=RADIUS_MD,
+                bgcolor=T.colors.GREEN_50,
             )
         
         # Classifica por urgência
@@ -253,17 +254,17 @@ class ChartUtils:
         # Determina cor e ícone baseado na urgência
         if urgente > 0:
             color = theme_colors.TEXT_ERROR
-            bgcolor = ft.colors.RED_50
+            bgcolor = T.colors.RED_50
             icon = ft.icons.ERROR
             message = f"🚨 {urgente} ata(s) vencendo em 7 dias ou menos!"
         elif atencao > 0:
             color = theme_colors.TEXT_WARNING
-            bgcolor = ft.colors.ORANGE_50
+            bgcolor = T.colors.ORANGE_50
             icon = ft.icons.WARNING
             message = f"⚠️ {atencao} ata(s) vencendo em 30 dias ou menos!"
         else:
             color = theme_colors.TEXT_INFO
-            bgcolor = ft.colors.BLUE_50
+            bgcolor = T.colors.BLUE_50
             icon = ft.icons.INFO
             message = f"ℹ️ {alerta} ata(s) vencendo em 90 dias ou menos"
         
@@ -277,7 +278,7 @@ class ChartUtils:
             ], spacing=SPACE_2),
             padding=ft.padding.all(SPACE_4),
             border=ft.border.all(1, color),
-            border_radius=8,
+            border_radius=RADIUS_MD,
             bgcolor=bgcolor
         )
     
@@ -312,9 +313,9 @@ class ChartUtils:
                 spacing=SPACE_1,
             ),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            bgcolor=ft.colors.SURFACE_VARIANT,
+            border=ft.border.all(1, T.colors.OUTLINE),
+            border_radius=RADIUS_MD,
+            bgcolor=T.colors.SURFACE_VARIANT,
             width=160,
         )
         cards.append(card_total)
@@ -344,9 +345,9 @@ class ChartUtils:
                 spacing=SPACE_1,
             ),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.OUTLINE),
-            border_radius=8,
-            bgcolor=ft.colors.SURFACE_VARIANT,
+            border=ft.border.all(1, T.colors.OUTLINE),
+            border_radius=RADIUS_MD,
+            bgcolor=T.colors.SURFACE_VARIANT,
             width=160,
         )
         cards.append(card_value)
@@ -381,9 +382,9 @@ class ChartUtils:
                 spacing=SPACE_1,
             ),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.GREEN),
-            border_radius=8,
-            bgcolor=ft.colors.GREEN_50,
+            border=ft.border.all(1, T.colors.GREEN),
+            border_radius=RADIUS_MD,
+            bgcolor=T.colors.GREEN_50,
             width=160,
         )
         cards.append(card_vigentes)
@@ -418,9 +419,9 @@ class ChartUtils:
                 spacing=SPACE_1,
             ),
             padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, ft.colors.ORANGE),
-            border_radius=8,
-            bgcolor=ft.colors.ORANGE_50,
+            border=ft.border.all(1, T.colors.ORANGE),
+            border_radius=RADIUS_MD,
+            bgcolor=T.colors.ORANGE_50,
             width=160,
         )
         cards.append(card_vencer)
