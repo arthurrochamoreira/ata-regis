@@ -13,13 +13,11 @@ from utils.scheduler import TaskScheduler
 from forms.ata_form import AtaForm
 from ui.main_view import (
     build_header,
-    build_filters,
-    build_search,
     build_grouped_data_tables,
     build_atas_vencimento,
     build_stats_panel as ui_build_stats_panel,
-    STATUS_INFO,
 )
+from ui.atas_filter_bar import AtasFilterBar
 from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
 from theme.tokens import TOKENS as T
@@ -35,9 +33,8 @@ class AtaApp:
         self.scheduler = TaskScheduler(self.ata_service, self.alert_service)
         saved_filters = self.page.client_storage.get("filtros_status")
         self.filtros_status: set[str] = set(json.loads(saved_filters)) if saved_filters else set()
-        self.filter_checkboxes: dict[str, ft.Checkbox] = {}
-        self.filter_label: ft.Text | None = None
         self.texto_busca = ""
+        self.sort_key = "mais_recente"
         self.current_tab = 0
         self.breakpoint = get_breakpoint(page.width)
         self.setup_page()
@@ -137,30 +134,17 @@ class AtaApp:
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
-        filtros, self.filter_label, self.filter_checkboxes = build_filters(
-            list(self.filtros_status), self.toggle_filter
-        )
-        search_container, self.search_field = build_search(
-            self.buscar_atas, self.texto_busca
-        )
-        filtros.margin = ft.margin.only(bottom=0)
-        search_container.margin = ft.margin.only(bottom=0)
-        filtros.col = {"xs": 12, "md": 4, "lg": 4}
-        search_container.col = {"xs": 12, "md": 8, "lg": 8}
-        filtros_search_row = ft.Container(
-            content=ft.ResponsiveRow(
-                [filtros, search_container],
-                columns=12,
-                spacing=T.spacing.SPACE_4,
-                run_spacing=T.spacing.SPACE_4,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            margin=ft.margin.only(bottom=0),
+        self.filter_bar = AtasFilterBar(
+            on_search_change=self.on_search_change,
+            on_filters_change=self.on_filters_change,
+            on_sort_change=self.on_sort_change,
+            search=self.texto_busca,
+            filters=list(self.filtros_status),
+            sort=self.sort_key,
         )
         self.grouped_tables = ft.Container()
-        self.update_filters_label()
         self.apply_filters()
-        return ft.Column([filtros_search_row, self.grouped_tables], spacing=0, expand=True)
+        return ft.Column([self.filter_bar, self.grouped_tables], spacing=0, expand=True)
 
     def build_vencimentos_view(self):
         self.atas_vencimento_container = build_atas_vencimento(
@@ -235,54 +219,26 @@ class AtaApp:
 
         return atas
 
-    def toggle_filter(self, filtro: str, checked: bool):
-        """Alterna filtros e atualiza interface"""
-        if filtro == "todos":
-            if checked:
-                self.filtros_status = {"todos"}
-                for k, cb in self.filter_checkboxes.items():
-                    if k != "todos":
-                        cb.value = False
-                        cb.update()
-            else:
-                self.filtros_status.discard("todos")
-        else:
-            if checked:
-                self.filtros_status.add(filtro)
-                if "todos" in self.filtros_status:
-                    self.filtros_status.discard("todos")
-                    cb = self.filter_checkboxes.get("todos")
-                    if cb:
-                        cb.value = False
-                        cb.update()
-            else:
-                self.filtros_status.discard(filtro)
-
-        self.page.client_storage.set(
-            "filtros_status", json.dumps(list(self.filtros_status))
-        )
-        self.update_filters_label()
+    def on_filters_change(self, ativos: list[str]):
+        """Atualiza filtros selecionados."""
+        self.filtros_status = set(ativos)
+        self.page.client_storage.set("filtros_status", json.dumps(list(self.filtros_status)))
         self.apply_filters()
 
-    def update_filters_label(self):
-        if not self.filter_label:
-            return
-        if not self.filtros_status:
-            label = "Filtro"
-        elif self.filtros_status == {"todos"}:
-            label = "Todas as Atas"
-        elif len(self.filtros_status) == 1:
-            key = next(iter(self.filtros_status))
-            label = STATUS_INFO[key]["filter"]
-        else:
-            label = f"{len(self.filtros_status)} Filtros Ativos"
-        self.filter_label.value = label
-        if self.filter_label.page:
-            self.filter_label.update()
+    def on_search_change(self, query: str):
+        """Atualiza texto de busca."""
+        self.texto_busca = query.strip()
+        self.apply_filters()
+
+    def on_sort_change(self, key: str):
+        """Atualiza critério de ordenação."""
+        self.sort_key = key
+        self.apply_filters()
 
     def apply_filters(self):
-        """Aplica busca e filtros e atualiza a tabela"""
+        """Aplica busca, filtros e ordenação e atualiza a tabela"""
         atas = self.get_atas_filtradas()
+        atas = self.sort_atas(atas)
         new_table = build_grouped_data_tables(
             atas,
             self.visualizar_ata,
@@ -292,12 +248,17 @@ class AtaApp:
         )
         self.grouped_tables.content = new_table.content
         self.page.update()
-    
-    def buscar_atas(self, e):
-        """Busca atas por texto"""
-        self.texto_busca = e.control.value.strip()
-        self.apply_filters()
-        self.search_field.value = self.texto_busca
+
+    def sort_atas(self, atas):
+        if self.sort_key == "mais_recente":
+            return sorted(atas, key=lambda x: x.data_vigencia, reverse=True)
+        if self.sort_key == "mais_antiga":
+            return sorted(atas, key=lambda x: x.data_vigencia)
+        if self.sort_key == "valor_maior":
+            return sorted(atas, key=lambda x: x.valor_total, reverse=True)
+        if self.sort_key == "valor_menor":
+            return sorted(atas, key=lambda x: x.valor_total)
+        return atas
     
     def refresh_ui(self):
         """Atualiza a interface"""
