@@ -310,4 +310,8 @@ class AtasFilterBar(ft.UserControl):
                 bgcolor={ft.MaterialState.DEFAULT: C.PRIMARY if selected else C.SURFACE},
                 color={ft.MaterialState.DEFAULT: ft.colors.WHITE if selected else C.TEXT_PRIMARY},
             )
-            btn.update()
+            # Buttons might be styled before being added to the page.
+            # ``Control.update`` requires the control to be attached to a page,
+            # so we only call ``update`` when the button is already mounted.
+            if btn.page:
+                btn.update()
