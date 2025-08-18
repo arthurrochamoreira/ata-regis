@@ -1,6 +1,10 @@
 import flet as ft
+from types import SimpleNamespace
 
-# Base colors
+# ---------------------------------------------------------------------------
+# Base palette
+# ---------------------------------------------------------------------------
+# Alterar valores aqui caso a paleta base do projeto mude no futuro.
 WHITE = ft.colors.WHITE
 PAGE_BG = "#F3F4F6"
 CARD_BG = "#F8FAFC"
@@ -56,3 +60,22 @@ DANGER = ft.colors.RED
 SUCCESS = ft.colors.GREEN
 WARNING = ft.colors.ORANGE
 OUTLINE = ft.colors.OUTLINE
+
+
+# ---------------------------------------------------------------------------
+# Semantic color mapping
+# ---------------------------------------------------------------------------
+# Use ``color.<token>`` instead de valores hexadecimais no código.
+# Para alterar o tema, mapeie esses tokens para cores diferentes.
+color = SimpleNamespace(
+    primary=PRIMARY_BG,
+    surface=CARD_BG,
+    background=PAGE_BG,
+    text=TEXT_PRIMARY,
+    muted=TEXT_SECONDARY,
+    border=SECONDARY_BORDER,
+    error=RED,
+    focus_ring=FOCUSED_BORDER,
+)
+
+__all__ = [name for name in globals().keys() if name.isupper()] + ["color"]
