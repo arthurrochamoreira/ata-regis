@@ -17,13 +17,9 @@ from ui.main_view import (
     build_search,
     build_grouped_data_tables,
     build_atas_vencimento,
+    build_stats_panel as ui_build_stats_panel,
+    STATUS_INFO,
 )
-from ui.dashboard_tokens import STATUS_INFO
-from components.dashboard_filter_bar import make_filter_bar
-from components.dashboard_metric_row import make_metric_row
-from components.dashboard_donut_panel import make_donut_panel
-from components.dashboard_monthly_bar_panel import make_monthly_bar_panel
-from components.dashboard_alert_banner import make_alert_banner
 from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
 from theme.tokens import TOKENS as T
@@ -137,64 +133,7 @@ class AtaApp:
         )
 
     def build_dashboard_view(self):
-        stats = self.ata_service.get_estatisticas()
-        atas = self.ata_service.listar_todas()
-        atas_vencimento = self.ata_service.get_atas_vencimento_proximo()
-
-        total_value = sum(ata.valor_total for ata in atas)
-        total_atas = sum(stats.values())
-        vigentes = stats.get("vigente", 0)
-        a_vencer = stats.get("a_vencer", 0)
-
-        alert_banner = make_alert_banner(count=len(atas_vencimento))
-
-        metrics_dict = {
-            "total_atas": total_atas,
-            "valor_total": total_value,
-            "vigente": vigentes,
-            "a_vencer": a_vencer,
-        }
-        metric_row = make_metric_row(
-            STATUS_INFO=STATUS_INFO,
-            values=metrics_dict,
-            on_click=lambda s: None,
-        )
-
-        donut_data = {
-            "vigente": vigentes,
-            "a_vencer": a_vencer,
-            "vencida": stats.get("vencida", 0),
-        }
-        donut_panel = make_donut_panel(data=donut_data)
-
-        from datetime import date
-        current_year = date.today().year
-        monthly_counts: dict[int, int] = {i: 0 for i in range(1, 13)}
-        for ata in atas:
-            if ata.data_vigencia.year == current_year:
-                monthly_counts[ata.data_vigencia.month] += 1
-
-        monthly_bar = make_monthly_bar_panel(data=monthly_counts)
-
-        charts_row = ft.ResponsiveRow(
-            [donut_panel, monthly_bar],
-            columns=12,
-            spacing=T.spacing.SPACE_4,
-            run_spacing=T.spacing.SPACE_4,
-            expand=True,
-        )
-
-        self.stats_container = ft.Container(
-            content=ft.Column(
-                [alert_banner, metric_row, charts_row],
-                spacing=T.spacing.SPACE_5,
-                expand=True,
-            ),
-            padding=ft.padding.symmetric(horizontal=T.spacing.SPACE_5),
-            margin=ft.margin.only(bottom=T.spacing.SPACE_5),
-            expand=True,
-        )
-
+        self.stats_container = ui_build_stats_panel(self.ata_service)
         return ft.Column([self.stats_container], spacing=0, expand=True)
 
     def build_atas_view(self):
