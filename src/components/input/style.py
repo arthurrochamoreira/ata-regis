@@ -1,34 +1,16 @@
 """Shared styles for input fields."""
 
 from theme.tokens import TOKENS as T
-import flet as ft
+from theme import colors as C
 
-C, S, R, SH, M, TY = (
-    T.colors,
-    T.spacing,
-    T.radius,
-    T.shadows,
-    T.motion,
-    T.typography,
-)
+R = T.radius
 
 
-def field_style(*, error: bool = False) -> dict:
-    """Return base keyword arguments for text-based inputs."""
-    border = C.ERROR_TEXT if error else C.BORDER
+def field_style() -> dict:
+    """Return default style keyword arguments for inputs."""
     return {
-        "bgcolor": C.SURFACE,
-        "border_color": border,
-        "border_width": 1,
-        "border_radius": R.RADIUS_MD,
-        "focused_border_color": C.FOCUS_RING_STRONG,
+        "border_color": C.BORDER,
+        "focused_border_color": C.PRIMARY,
         "focused_border_width": 2,
-        "content_padding": ft.padding.symmetric(
-            horizontal=S.SPACE_3, vertical=S.SPACE_2
-        ),
+        "border_radius": R.RADIUS_SM,
     }
-
-
-# Example usage:
-# from components.input import style
-# base = style.field_style()

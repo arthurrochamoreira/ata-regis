@@ -1,8 +1,6 @@
-"""Public API for shared UI components."""
-
 from .button import PrimaryButton, SecondaryButton, IconAction
-from .input import TextInput
-from .table import Table
+from .input import TextInput, SelectInput
+from .table import Table, TableHeader, TableRow, TableCell
 from .badge import StatusBadge
 
 __all__ = [
@@ -10,6 +8,10 @@ __all__ = [
     "SecondaryButton",
     "IconAction",
     "TextInput",
+    "SelectInput",
     "Table",
+    "TableHeader",
+    "TableRow",
+    "TableCell",
     "StatusBadge",
 ]

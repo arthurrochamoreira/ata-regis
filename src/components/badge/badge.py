@@ -1,53 +1,28 @@
 """Status badge component."""
 
-from __future__ import annotations
-
 from typing import Literal
-
 import flet as ft
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 
-C, S, R, SH, M, TY = (
-    T.colors,
-    T.spacing,
-    T.radius,
-    T.shadows,
-    T.motion,
-    T.typography,
-)
+S, R = T.spacing, T.radius
 
-_VARIANTS: dict[str, tuple[str, str]] = {
+_VARIANTS = {
     "success": (C.SUCCESS_TEXT, C.SUCCESS_BG),
     "warning": (C.WARNING_TEXT, C.WARNING_BG),
     "error": (C.ERROR_TEXT, C.ERROR_BG),
 }
 
 
-def StatusBadge(variant: Literal["success", "warning", "error"], text: str) -> ft.Container:
+def StatusBadge(label: str, variant: Literal["success", "warning", "error"] = "success") -> ft.Container:
     """Badge with colored dot indicating status."""
-
-    fg, bg = _VARIANTS[variant]
-    dot = ft.Container(
-        width=S.SPACE_2,
-        height=S.SPACE_2,
-        bgcolor=fg,
-        border_radius=R.RADIUS_FULL,
-    )
-    label = ft.Text(
-        text,
-        size=TY.SMALL["size"],
-        color=fg,
-        weight=ft.FontWeight.W_500,
-    )
-    content = ft.Row([dot, label], spacing=S.SPACE_2, alignment=ft.MainAxisAlignment.CENTER)
+    dot_color, bg = _VARIANTS[variant]
+    dot = ft.Container(width=8, height=8, bgcolor=dot_color, border_radius=R.RADIUS_FULL)
+    content = ft.Row([dot, ft.Text(label, color=C.TEXT_PRIMARY)], spacing=S.SPACE_2)
     return ft.Container(
         content=content,
+        padding=ft.padding.symmetric(vertical=S.SPACE_1, horizontal=S.SPACE_2),
         bgcolor=bg,
-        padding=ft.padding.symmetric(horizontal=S.SPACE_2, vertical=S.SPACE_1),
         border_radius=R.RADIUS_FULL,
     )
-
-
-# Example usage:
-# badge = StatusBadge("success", "Ativo")
