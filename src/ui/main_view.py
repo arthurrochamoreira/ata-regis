@@ -57,46 +57,12 @@ STATUS_INFO = {
 
 def build_header(
     nova_ata_cb: Callable,
-    verificar_alertas_cb: Callable,
-    relatorio_semanal_cb: Callable,
-    relatorio_mensal_cb: Callable,
-    testar_email_cb: Callable,
-    status_cb: Callable,
 ) -> ft.AppBar:
-    """Return AppBar with menu actions and new ata button."""
+    """Return AppBar with only the new ata button."""
     appbar_height = 56
-
-    menu_button = ft.PopupMenuButton(
-        tooltip="Ferramentas",
-        content=ft.Container(
-            content=ft.Row(
-                [
-                    ft.IconButton(
-                        icon=ft.icons.SETTINGS,
-                        icon_size=24,
-                        tooltip="Ferramentas",
-                    )
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            # ``PopupMenuButton`` doesn't support ``toolbar_height`` like ``AppBar``,
-            # so we explicitly set the container height to match the AppBar.
-            height=appbar_height,
-            padding=ft.padding.symmetric(horizontal=SPACE_5),
-        ),
-        items=[
-            ft.PopupMenuItem(text="🔍 Verificar Alertas", on_click=verificar_alertas_cb),
-            ft.PopupMenuItem(text="📊 Relatório Semanal", on_click=relatorio_semanal_cb),
-            ft.PopupMenuItem(text="📈 Relatório Mensal", on_click=relatorio_mensal_cb),
-            ft.PopupMenuItem(text="📧 Testar Email", on_click=testar_email_cb),
-            ft.PopupMenuItem(text="ℹ️ Status Sistema", on_click=status_cb),
-        ],
-    )
 
     actions_row = ft.Row(
         [
-            menu_button,
             primary_button(
                 "Nova Ata",
                 icon=ft.icons.ADD,
