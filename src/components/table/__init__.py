@@ -1,3 +1,5 @@
-from .table import Table, TableHeader, TableRow, TableCell
+"""Table component public API."""
 
-__all__ = ["Table", "TableHeader", "TableRow", "TableCell"]
+from .table import Table
+
+__all__ = ["Table"]

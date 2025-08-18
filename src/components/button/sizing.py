@@ -3,8 +3,7 @@
 from theme.tokens import TOKENS as T
 import flet as ft
 
-S = T.spacing
-Z = T.sizes
+S, TY = T.spacing, T.typography
 
 PADDING = {
     "sm": ft.padding.symmetric(horizontal=S.SPACE_3, vertical=S.SPACE_2),
@@ -13,7 +12,17 @@ PADDING = {
 }
 
 ICON_SIZE = {
-    "sm": Z.ICON_SM,
-    "md": Z.ICON_MD,
-    "lg": Z.ICON_LG,
+    "sm": T.sizes.ICON_SM,
+    "md": T.sizes.ICON_MD,
+    "lg": T.sizes.ICON_LG,
 }
+
+TEXT_SIZE = {
+    "sm": TY.TEXT_SM,
+    "md": TY.TEXT_BASE,
+    "lg": TY.TEXT_LG,
+}
+
+# Example usage:
+# from components.button import sizing
+# btn_padding = sizing.PADDING["md"]

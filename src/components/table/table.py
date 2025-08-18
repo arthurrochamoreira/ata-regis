@@ -1,36 +1,62 @@
-"""Table components built on top of flet.DataTable."""
+"""Table component built with flet.DataTable."""
 
-from typing import List
+from __future__ import annotations
+
+from typing import List, Optional, Callable
+
 import flet as ft
 
 from theme.tokens import TOKENS as T
-from theme import colors as C
+from ..button import IconAction  # noqa: F401 imported for usage examples
 
-S = T.spacing
-
-
-def TableHeader(labels: List[str]) -> List[ft.DataColumn]:
-    """Create data table header columns."""
-    return [ft.DataColumn(ft.Text(lbl, color=C.TEXT_SECONDARY)) for lbl in labels]
-
-
-def TableRow(cells: List[ft.Control]) -> ft.DataRow:
-    """Create a table row from controls."""
-    return ft.DataRow([ft.DataCell(cell) for cell in cells])
+C, S, R, SH, M, TY = (
+    T.colors,
+    T.spacing,
+    T.radius,
+    T.shadows,
+    T.motion,
+    T.typography,
+)
 
 
-def TableCell(content: ft.Control) -> ft.DataCell:
-    """Wrap a control into a data cell."""
-    return ft.DataCell(content)
+def _header_cells(labels: List[str]) -> List[ft.DataColumn]:
+    style = ft.TextStyle(
+        size=TY.SMALL["size"],
+        weight=ft.FontWeight.W_500,
+        color=C.NEUTRAL_700,
+        font_family=TY.FONT_FAMILY,
+    )
+    return [ft.DataColumn(ft.Text(lbl.upper(), style=style)) for lbl in labels]
 
 
-def Table(columns: List[str], rows: List[List[ft.Control]]) -> ft.DataTable:
-    """Convenience wrapper to create a table."""
+def _row(cells: List[ft.Control], index: int, on_row_hover: Optional[Callable[[int], None]]) -> ft.DataRow:
+    row = ft.DataRow(
+        [ft.DataCell(c) for c in cells],
+        color={"": C.SURFACE, "hovered": C.NEUTRAL_50},
+    )
+    if on_row_hover:
+        row.on_hover = lambda e: on_row_hover(index)
+    return row
+
+
+def Table(
+    headers: List[str],
+    rows: List[List[ft.Control]],
+    *,
+    dense: bool = False,
+    on_row_hover: Optional[Callable[[int], None]] = None,
+) -> ft.DataTable:
+    """Create a styled data table."""
+
+    table_rows = [_row(r, i, on_row_hover) for i, r in enumerate(rows)]
     return ft.DataTable(
-        columns=TableHeader(columns),
-        rows=[TableRow(r) for r in rows],
-        heading_row_color=C.BG_APP,
-        horizontal_lines=ft.border.BorderSide(1, C.BORDER),
-        data_row_height=56,
+        columns=_header_cells(headers),
+        rows=table_rows,
+        heading_row_color=C.NEUTRAL_50,
+        horizontal_lines=ft.border.BorderSide(1, C.BORDER_SUBTLE),
         divider_thickness=0,
     )
+
+
+# Example usage:
+# table = Table(["Nome", "Ações"], [[ft.Text("Item"), IconAction(ft.icons.EDIT)]])

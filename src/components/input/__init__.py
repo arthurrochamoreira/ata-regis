@@ -1,3 +1,5 @@
-from .fields import TextInput, SelectInput
+"""Input components public API."""
 
-__all__ = ["TextInput", "SelectInput"]
+from .fields import TextInput
+
+__all__ = ["TextInput"]
