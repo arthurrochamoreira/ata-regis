@@ -64,11 +64,6 @@ class AtaApp:
         """Constrói a interface do usuário usando navegação lateral"""
         self.page.appbar = build_header(
             nova_ata_cb=self.nova_ata_click,
-            verificar_alertas_cb=self.verificar_alertas_manual,
-            relatorio_semanal_cb=lambda e: self.gerar_relatorio_manual("semanal"),
-            relatorio_mensal_cb=lambda e: self.gerar_relatorio_manual("mensal"),
-            testar_email_cb=self.testar_email,
-            status_cb=self.mostrar_status_sistema,
         )
 
         sidebar_items = [
@@ -92,6 +87,13 @@ class AtaApp:
                 "icon": ft.icons.ALARM_OUTLINED,
                 "on_click": lambda e: self.navigate_to(2),
                 "selected": self.current_tab == 2,
+            },
+            {
+                "id": "config",
+                "label": "Configurações",
+                "icon": ft.icons.SETTINGS_OUTLINED,
+                "on_click": lambda e: self.navigate_to(3),
+                "selected": self.current_tab == 3,
             },
         ]
         self.sidebar = Sidebar(
@@ -169,13 +171,35 @@ class AtaApp:
         )
         return ft.Column([self.atas_vencimento_container], spacing=0, expand=True)
 
+    def build_config_view(self):
+        """Retorna painel de configurações com ações utilitárias"""
+        return ft.Column(
+            [
+                ft.ListTile(title=ft.Text("Verificar Alertas"), on_click=self.verificar_alertas_manual),
+                ft.ListTile(
+                    title=ft.Text("Relatório Semanal"),
+                    on_click=lambda e: self.gerar_relatorio_manual("semanal"),
+                ),
+                ft.ListTile(
+                    title=ft.Text("Relatório Mensal"),
+                    on_click=lambda e: self.gerar_relatorio_manual("mensal"),
+                ),
+                ft.ListTile(title=ft.Text("Testar Email"), on_click=self.testar_email),
+                ft.ListTile(title=ft.Text("Status Sistema"), on_click=self.mostrar_status_sistema),
+            ],
+            spacing=SPACE_4,
+            expand=True,
+        )
+
     def update_body(self):
         if self.current_tab == 0:
             content = self.build_dashboard_view()
         elif self.current_tab == 1:
             content = self.build_atas_view()
-        else:
+        elif self.current_tab == 2:
             content = self.build_vencimentos_view()
+        else:
+            content = self.build_config_view()
         self.body_container.content = content
         self.page.update()
 
