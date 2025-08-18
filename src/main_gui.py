@@ -24,7 +24,8 @@ from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
 from ui.theme.spacing import SPACE_4, SPACE_5
 from ui.responsive import get_breakpoint
-from ui.theme.apply import apply_theme
+from ui.theme.typography import FONT_SANS
+from ui.theme import colors
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -54,7 +55,9 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        apply_theme(self.page)
+        self.page.bgcolor = colors.PAGE_BG
+        self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
+        self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
