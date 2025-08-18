@@ -60,6 +60,8 @@ class AtasFilterBar(ft.UserControl):
                     self.state["filters"][f] = True
         self.state["filters"]["todas"] = recalc_todas(self.state["filters"])
         self._search_task: Optional[asyncio.Task] = None
+        self.filter_label_text: Optional[ft.Text] = None
+        self.sort_label_text: Optional[ft.Text] = None
 
     # ------------------------------------------------------------------
     # Build helpers
@@ -171,9 +173,14 @@ class AtasFilterBar(ft.UserControl):
             shadow=SH.SHADOW_MD,
         )
 
+        self.filter_label_text = ft.Text(self._filter_label())
+        content = ft.Row(
+            [ft.Icon(ft.icons.TUNE), self.filter_label_text],
+            spacing=S.SPACE_2,
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
         return ft.PopupMenuButton(
-            icon=ft.icons.TUNE,
-            text=self._filter_label(),
+            content=content,
             items=[ft.PopupMenuItem(content=container)],
             style=button_style.secondary("md"),
         )
@@ -185,9 +192,14 @@ class AtasFilterBar(ft.UserControl):
             "valor_maior": "Maior valor",
             "valor_menor": "Menor valor",
         }
+        self.sort_label_text = ft.Text(self._sort_label())
+        content = ft.Row(
+            [ft.Icon(ft.icons.SORT), self.sort_label_text],
+            spacing=S.SPACE_2,
+            alignment=ft.MainAxisAlignment.CENTER,
+        )
         return ft.PopupMenuButton(
-            icon=ft.icons.SORT,
-            text=self._sort_label(),
+            content=content,
             items=self._build_sort_menu_items(),
             style=button_style.secondary("md"),
         )
@@ -244,7 +256,9 @@ class AtasFilterBar(ft.UserControl):
         return f"Filtrar ({n})" if n else "Filtrar"
 
     def _update_filter_label(self) -> None:
-        self.filter_button.text = self._filter_label()
+        if self.filter_label_text:
+            self.filter_label_text.value = self._filter_label()
+            self.filter_label_text.update()
         self.filter_button.update()
 
     def _on_filter_clear(self, e: ft.ControlEvent) -> None:
@@ -258,7 +272,9 @@ class AtasFilterBar(ft.UserControl):
     def _on_filter_apply(self, e: ft.ControlEvent) -> None:
         active = specific_active(self.state["filters"])
         self.filter_button.open = False
-        self.filter_button.text = self._filter_label()
+        if self.filter_label_text:
+            self.filter_label_text.value = self._filter_label()
+            self.filter_label_text.update()
         self.filter_button.update()
         if self.on_filters_change_cb:
             self.on_filters_change_cb(active)
@@ -266,7 +282,9 @@ class AtasFilterBar(ft.UserControl):
     def _on_sort_select(self, key: str) -> None:
         self.state["sort"] = key
         self.sort_button.items = self._build_sort_menu_items()
-        self.sort_button.text = self._sort_label()
+        if self.sort_label_text:
+            self.sort_label_text.value = self._sort_label()
+            self.sort_label_text.update()
         self.sort_button.open = False
         self.sort_button.update()
         if self.on_sort_change_cb:
