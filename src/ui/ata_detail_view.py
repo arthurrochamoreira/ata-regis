@@ -2,17 +2,8 @@ import flet as ft
 from datetime import timedelta
 from typing import Callable
 
-from .theme.spacing import (
-    SPACE_1,
-    SPACE_2,
-    SPACE_3,
-    SPACE_4,
-    SPACE_5,
-    SPACE_6,
-)
-from .theme.shadows import SHADOW_LG
+from ui.theme.tokens import TOKENS as T
 from .tokens import build_section, primary_button, secondary_button
-from .theme import colors
 
 from models.ata import Ata
 from utils.validators import Formatters
@@ -28,8 +19,8 @@ def build_ata_detail_view(
     def info_row(label: str, value: str) -> ft.Row:
         return ft.Row(
             [
-                ft.Text(label, weight=ft.FontWeight.W_500, color=colors.TEXT_SECONDARY, width=128),
-                ft.Text(value, color=colors.TEXT_PRIMARY, expand=True),
+                ft.Text(label, weight=ft.FontWeight.W_500, color=T.colors.TEXT_SECONDARY, width=128),
+                ft.Text(value, color=T.colors.TEXT_PRIMARY, expand=True),
             ]
         )
 
@@ -51,23 +42,23 @@ def build_ata_detail_view(
             ),
         ],
         columns=12,
-        spacing=SPACE_3,
-        run_spacing=SPACE_3,
+        spacing=T.spacing.SPACE_3,
+        run_spacing=T.spacing.SPACE_3,
         alignment=ft.MainAxisAlignment.END,
     )
 
     header = ft.ResponsiveRow(
         [
             ft.Column(
-                spacing=SPACE_1,
+                spacing=T.spacing.SPACE_1,
                 controls=[
                     ft.Text(
                         "Ata de Registro de Preços",
                         size=30,
                         weight=ft.FontWeight.BOLD,
-                        color=colors.TEXT_DARK,
+                        color=T.colors.TEXT_DARK,
                     ),
-                    ft.Text(f"Nº {ata.numero_ata}", size=16, color=colors.TEXT_SECONDARY),
+                    ft.Text(f"Nº {ata.numero_ata}", size=16, color=T.colors.TEXT_SECONDARY),
                 ],
                 col={"xs": 12, "md": 6},
             ),
@@ -87,11 +78,11 @@ def build_ata_detail_view(
                 "Linha do Tempo da Vigência",
                 size=18,
                 weight=ft.FontWeight.W_600,
-                color=colors.TEXT_MUTED,
+                color=T.colors.TEXT_MUTED,
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CHECK_CIRCLE, color=colors.GREEN),
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=T.colors.GREEN),
                     ft.Column(
                         [
                             ft.Text("Início da vigência"),
@@ -105,7 +96,7 @@ def build_ata_detail_view(
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CALENDAR_MONTH, color=colors.RED),
+                    ft.Icon(ft.icons.CALENDAR_MONTH, color=T.colors.RED),
                     ft.Column(
                         [
                             ft.Text("Fim da vigência"),
@@ -126,17 +117,17 @@ def build_ata_detail_view(
         [
             ft.Column(
                 [info_row("Documento SEI:", ata.documento_sei), info_row("Objeto:", ata.objeto)],
-                spacing=SPACE_4,
+                spacing=T.spacing.SPACE_4,
             ),
             timeline,
         ],
-        spacing=SPACE_5,
+        spacing=T.spacing.SPACE_5,
     )
     dados_gerais = build_section(
         "Dados Gerais",
         ft.icons.DESCRIPTION_OUTLINED,
-        colors.INDIGO,
-        colors.INDIGO_BG,
+        T.colors.INDIGO,
+        T.colors.INDIGO_BG,
         dados_gerais_body,
     )
 
@@ -230,7 +221,7 @@ def build_ata_detail_view(
         rows=item_rows,
         heading_row_height=32,
         data_row_min_height=32,
-        column_spacing=SPACE_3,
+        column_spacing=T.spacing.SPACE_3,
     )
 
     resumo_financeiro = ft.Container(
@@ -244,26 +235,26 @@ def build_ata_detail_view(
                 ),
             ],
         ),
-        bgcolor=colors.RESUMO_BG,
-        padding=SPACE_4,
+        bgcolor=T.colors.RESUMO_BG,
+        padding=T.spacing.SPACE_4,
         border_radius=8,
     )
 
-    itens_body = ft.Column([itens_table, resumo_financeiro], spacing=SPACE_5)
+    itens_body = ft.Column([itens_table, resumo_financeiro], spacing=T.spacing.SPACE_5)
     itens_section = build_section(
         "Itens da Ata",
         ft.icons.LIST_ALT_OUTLINED,
-        colors.INDIGO,
-        colors.INDIGO_BG,
+        T.colors.INDIGO,
+        T.colors.INDIGO_BG,
         itens_body,
     )
 
-    fornecedor_body = ft.Column([ft.Text(ata.fornecedor, size=18)], spacing=SPACE_4)
+    fornecedor_body = ft.Column([ft.Text(ata.fornecedor, size=18)], spacing=T.spacing.SPACE_4)
     fornecedor_section = build_section(
         "Fornecedor",
         ft.icons.BUSINESS_OUTLINED,
-        colors.ORANGE,
-        colors.ORANGE_BG,
+        T.colors.ORANGE,
+        T.colors.ORANGE_BG,
         fornecedor_body,
     )
 
@@ -272,60 +263,60 @@ def build_ata_detail_view(
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.PHONE_OUTLINED, color=colors.TEXT_SECONDARY),
+                    ft.Icon(ft.icons.PHONE_OUTLINED, color=T.colors.TEXT_SECONDARY),
                     ft.Text(tel),
                 ],
-                spacing=SPACE_2,
+                spacing=T.spacing.SPACE_2,
             )
         )
     if ata.telefones_fornecedor:
-        contatos_list.append(ft.Divider(height=1, color=colors.GREY_DIVIDER))
+        contatos_list.append(ft.Divider(height=1, color=T.colors.GREY_DIVIDER))
     for email in ata.emails_fornecedor:
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.EMAIL_OUTLINED, color=colors.TEXT_SECONDARY),
+                    ft.Icon(ft.icons.EMAIL_OUTLINED, color=T.colors.TEXT_SECONDARY),
                     ft.Text(email),
                 ],
-                spacing=SPACE_2,
+                spacing=T.spacing.SPACE_2,
             )
         )
 
-    contatos_body = ft.Column(contatos_list, spacing=SPACE_3)
+    contatos_body = ft.Column(contatos_list, spacing=T.spacing.SPACE_3)
     contatos_section = build_section(
         "Contatos",
         ft.icons.HEADSET_MIC_OUTLINED,
-        colors.TEAL,
-        colors.TEAL_BG,
+        T.colors.TEAL,
+        T.colors.TEAL_BG,
         contatos_body,
     )
 
     layout = ft.Row(
         [
-            ft.Column([dados_gerais, itens_section], spacing=SPACE_5, expand=2),
-            ft.Column([fornecedor_section, contatos_section], spacing=SPACE_5, expand=1),
+            ft.Column([dados_gerais, itens_section], spacing=T.spacing.SPACE_5, expand=2),
+            ft.Column([fornecedor_section, contatos_section], spacing=T.spacing.SPACE_5, expand=1),
         ],
-        spacing=SPACE_6,
+        spacing=T.spacing.SPACE_6,
         vertical_alignment=ft.CrossAxisAlignment.START,
     )
 
     card = ft.Container(
         content=ft.Column(
             [header, layout],
-            spacing=SPACE_6,
+            spacing=T.spacing.SPACE_6,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        bgcolor=colors.WHITE,
+        bgcolor=T.colors.WHITE,
         padding=ft.padding.only(
-            left=SPACE_5,
-            right=SPACE_5,
-            top=SPACE_4,
-            bottom=SPACE_4,
+            left=T.spacing.SPACE_5,
+            right=T.spacing.SPACE_5,
+            top=T.spacing.SPACE_4,
+            bottom=T.spacing.SPACE_4,
         ),
         border_radius=8,
         alignment=ft.alignment.center,
-        shadow=SHADOW_LG,
+        shadow=T.shadows.SHADOW_LG,
         expand=True,
         width=1152,
     )
