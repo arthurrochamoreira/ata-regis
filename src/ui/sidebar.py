@@ -8,8 +8,9 @@ from typing import Callable, List, Optional, Any
 import flet as ft
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 
-C, S, R, SH, M = T.colors, T.spacing, T.radius, T.shadows, T.motion
+S, R, SH, M = T.spacing, T.radius, T.shadows, T.motion
 
 # === Constantes de layout/estilo ===
 
@@ -75,7 +76,7 @@ class SidebarItem(ft.Container):
         self._data: SidebarItemData = _as_item_data(raw_data)
         self._on_select: SelectCallback = on_select
         self._external_click: Optional[ClickCallback] = self._data.on_click
-        self._hover_bg = C.GREY_LIGHT
+        self._hover_bg = C.BG_APP
 
         # --- ÍCONES (instâncias separadas para evitar múltiplos pais) ---
         self._icon_expanded = ft.Icon(self._data.icon, size=T.sizes.ICON_MD, color=C.TEXT_PRIMARY)
@@ -103,10 +104,10 @@ class SidebarItem(ft.Container):
         self._badge: Optional[ft.Control] = None
         if self._data.badge is not None:
             self._badge = ft.Container(
-                content=ft.Text(str(self._data.badge)),
+                content=ft.Text(str(self._data.badge), color="#FFFFFF"),
                 padding=ft.padding.symmetric(horizontal=S.SPACE_2, vertical=S.SPACE_1),
                 border_radius=R.RADIUS_MD,
-                bgcolor=C.INDIGO_BG,
+                bgcolor=C.PRIMARY,
                 alignment=ft.alignment.center,
                 visible=not collapsed,
             )
@@ -160,7 +161,7 @@ class SidebarItem(ft.Container):
         self._indicator = ft.Container(
             width=T.sizes.INDICATOR_W,
             height=T.sizes.ITEM_TOUCH,
-            bgcolor=C.TRANSPARENT,
+            bgcolor=None,
         )
         # Ancoragem absoluta no Stack
         self._indicator.left = 0
@@ -208,11 +209,11 @@ class SidebarItem(ft.Container):
 
     def set_selected(self, selected: bool) -> None:
         """Atualiza o visual de item ativo (indicador e cores)."""
-        active_color = C.INDIGO
-        active_bg = C.INDIGO_BG
+        active_color = C.PRIMARY
+        active_bg = C.BG_APP
 
         # Indicador overlay e fundo suave
-        self._indicator.bgcolor = active_color if selected else C.TRANSPARENT
+        self._indicator.bgcolor = active_color if selected else None
         self._content_box.bgcolor = active_bg if selected else None
 
         # Texto e ícones
@@ -281,7 +282,7 @@ class Sidebar(ft.Container):
             height=T.sizes.ITEM_TOUCH,
             tooltip=self._toggle_tooltip(self.collapsed),
             on_click=self.toggle_sidebar,
-            style=_hover_style(C.GREY_LIGHT),
+            style=_hover_style(C.BG_APP),
         )
         self.toggle_btn.aria_label = self._toggle_tooltip(self.collapsed)
 
@@ -301,7 +302,7 @@ class Sidebar(ft.Container):
         super().__init__(
             content=content,
             width=self.open_width if not self.collapsed else self.closed_width,
-            bgcolor=C.WHITE,
+            bgcolor=C.SURFACE,
             padding=ft.padding.symmetric(vertical=S.SPACE_5),
             shadow=SH.SHADOW_XL,
             animate=ft.animation.Animation(duration, curve),

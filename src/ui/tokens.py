@@ -6,7 +6,9 @@ from components import PrimaryButton, SecondaryButton
 import flet as ft
 import warnings
 
-C, S, SH, TY = T.colors, T.spacing, T.shadows, T.typography
+from theme import colors as C
+
+S, SH, TY = T.spacing, T.shadows, T.typography
 
 
 def primary_button(*args, **kwargs):
@@ -53,7 +55,7 @@ def build_section(
 
     return ft.Container(
         content=ft.Column([header, body], spacing=S.SPACE_5),
-        bgcolor=C.CARD_BG,
+        bgcolor=C.SURFACE,
         padding=S.SPACE_4,
         border_radius=8,
     )
@@ -79,9 +81,9 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     return ft.Container(
         content=ft.Column([header, content], spacing=S.SPACE_4),
         padding=S.SPACE_4,
-        border=ft.border.all(1, C.GREY_LIGHT),
+        border=ft.border.all(1, C.BORDER),
         border_radius=8,
-        bgcolor=C.WHITE,
+        bgcolor=C.SURFACE,
         shadow=SH.SHADOW_MD,
     )
 

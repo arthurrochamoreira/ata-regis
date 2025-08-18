@@ -1,4 +1,5 @@
 import flet as ft
+from . import colors as C
 
 # Standard shadows
 # Use SHADOW_SM for cards, SHADOW_MD for navegação/surfaces,
@@ -6,13 +7,13 @@ import flet as ft
 SHADOW_SM = ft.BoxShadow(
     blur_radius=6,
     offset=ft.Offset(0, 4),
-    color=ft.colors.BLACK12,
+    color=ft.colors.with_opacity(0.12, C.TEXT_PRIMARY),
 )
 
 SHADOW_MD = ft.BoxShadow(
     blur_radius=15,
     offset=ft.Offset(0, 10),
-    color=ft.colors.BLACK12,
+    color=ft.colors.with_opacity(0.12, C.TEXT_PRIMARY),
 )
 
 # Backwards compatibility alias
@@ -21,7 +22,7 @@ SHADOW_LG = SHADOW_MD
 SHADOW_XL = ft.BoxShadow(
     blur_radius=25,
     offset=ft.Offset(0, 20),
-    color=ft.colors.BLACK12,
+    color=ft.colors.with_opacity(0.12, C.TEXT_PRIMARY),
 )
 
 __all__ = ["SHADOW_SM", "SHADOW_MD", "SHADOW_XL", "SHADOW_LG"]

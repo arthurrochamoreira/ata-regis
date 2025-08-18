@@ -4,13 +4,14 @@ from typing import Literal
 import flet as ft
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 
-C, S, R = T.colors, T.spacing, T.radius
+S, R = T.spacing, T.radius
 
 _VARIANTS = {
-    "success": (C.GREEN, C.GREEN_BG),
-    "warning": (C.YELLOW, C.YELLOW_BG),
-    "error": (C.RED, C.RED_BG),
+    "success": (C.SUCCESS_TEXT, C.SUCCESS_BG),
+    "warning": (C.WARNING_TEXT, C.WARNING_BG),
+    "error": (C.ERROR_TEXT, C.ERROR_BG),
 }
 
 
