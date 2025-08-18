@@ -14,25 +14,25 @@ SECONDARY_BUTTON_STYLE = ft.ButtonStyle(
     shape=ft.RoundedRectangleBorder(radius=R.RADIUS_XL),
     padding=ft.padding.symmetric(horizontal=S.SPACE_4, vertical=S.SPACE_2),
     bgcolor={
-        ft.ControlState.DEFAULT: C.SURFACE,
-        ft.ControlState.HOVERED: C.BG_APP,
-        ft.ControlState.PRESSED: C.SURFACE,
-        ft.ControlState.FOCUSED: C.SURFACE,
+        ft.MaterialState.DEFAULT: C.SURFACE,
+        ft.MaterialState.HOVERED: C.BG_APP,
+        ft.MaterialState.PRESSED: C.SURFACE,
+        ft.MaterialState.FOCUSED: C.SURFACE,
     },
     side={
-        ft.ControlState.DEFAULT: ft.BorderSide(1, C.BORDER),
-        ft.ControlState.HOVERED: ft.BorderSide(1, C.PRIMARY),
-        ft.ControlState.FOCUSED: ft.BorderSide(2, C.FOCUS_RING),
+        ft.MaterialState.DEFAULT: ft.BorderSide(1, C.BORDER),
+        ft.MaterialState.HOVERED: ft.BorderSide(1, C.PRIMARY),
+        ft.MaterialState.FOCUSED: ft.BorderSide(2, C.FOCUS_RING),
     },
     color={
-        ft.ControlState.DEFAULT: C.TEXT_PRIMARY,
-        ft.ControlState.HOVERED: C.TEXT_PRIMARY,
-        ft.ControlState.DISABLED: C.TEXT_SECONDARY,
+        ft.MaterialState.DEFAULT: C.TEXT_PRIMARY,
+        ft.MaterialState.HOVERED: C.TEXT_PRIMARY,
+        ft.MaterialState.DISABLED: C.TEXT_SECONDARY,
     },
 )
 
 
-def FilterTriggerButton(active_count: int, on_click):
+def FilterTriggerButton(active_count: int, on_click: Optional[Callable] = None) -> ft.OutlinedButton:
     label = f"Filtrar ({active_count})" if active_count else "Filtrar"
     return ft.OutlinedButton(
         height=40,
@@ -46,7 +46,7 @@ def FilterTriggerButton(active_count: int, on_click):
     )
 
 
-def SortTriggerButton(current_label: str | None, on_click):
+def SortTriggerButton(current_label: str | None, on_click: Optional[Callable] = None) -> ft.OutlinedButton:
     text = f"Ordenar: {current_label}" if current_label else "Ordenar"
     return ft.OutlinedButton(
         height=40,
@@ -222,15 +222,12 @@ class AtasFilterBar(ft.UserControl):
             shadow=SH.SHADOW_MD,
         )
 
-        popup = ft.PopupMenuButton(items=[ft.PopupMenuItem(content=container)])
-
-        def open_menu(e: ft.ControlEvent) -> None:
-            popup.open = True
-            popup.update()
-
-        trigger = FilterTriggerButton(count_specific(self.state["filters"]), open_menu)
+        trigger = FilterTriggerButton(count_specific(self.state["filters"]))
         self.filter_label_text = trigger.content.controls[1]
-        popup.content = trigger
+        popup = ft.PopupMenuButton(
+            content=trigger,
+            items=[ft.PopupMenuItem(content=container)],
+        )
         return popup
 
     def _build_sort_menu_button(self) -> ft.PopupMenuButton:
@@ -240,16 +237,13 @@ class AtasFilterBar(ft.UserControl):
             "valor_maior": "Maior valor",
             "valor_menor": "Menor valor",
         }
-        popup = ft.PopupMenuButton(items=self._build_sort_menu_items())
-
-        def open_menu(e: ft.ControlEvent) -> None:
-            popup.open = True
-            popup.update()
-
         current_label = self.sort_options.get(self.state["sort"])
-        trigger = SortTriggerButton(current_label, open_menu)
+        trigger = SortTriggerButton(current_label)
         self.sort_label_text = trigger.content.controls[1]
-        popup.content = trigger
+        popup = ft.PopupMenuButton(
+            content=trigger,
+            items=self._build_sort_menu_items(),
+        )
         return popup
 
     def _build_sort_menu_items(self) -> List[ft.PopupMenuItem]:
@@ -324,7 +318,6 @@ class AtasFilterBar(ft.UserControl):
 
     def _on_filter_apply(self, e: ft.ControlEvent) -> None:
         active = specific_active(self.state["filters"])
-        self.filter_button.open = False
         if self.filter_label_text:
             self.filter_label_text.value = self._filter_label()
             self.filter_label_text.update()
@@ -338,7 +331,6 @@ class AtasFilterBar(ft.UserControl):
         if self.sort_label_text:
             self.sort_label_text.value = self._sort_label()
             self.sort_label_text.update()
-        self.sort_button.open = False
         self.sort_button.update()
         if self.on_sort_change_cb:
             self.on_sort_change_cb(key)
