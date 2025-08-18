@@ -7,7 +7,7 @@ from typing import Callable, List, Optional, Any
 
 import flet as ft
 
-from ui.theme.tokens import TOKENS as T
+from theme.tokens import TOKENS as T
 
 C, S, R, SH, M = T.colors, T.spacing, T.radius, T.shadows, T.motion
 

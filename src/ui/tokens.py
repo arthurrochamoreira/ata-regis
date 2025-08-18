@@ -1,61 +1,25 @@
-from ui.theme.tokens import TOKENS as T
-from ui.theme.typography import text
+"""Legacy helpers and section builders."""
+
+from theme.tokens import TOKENS as T
+from theme.typography import text
+from components import PrimaryButton, SecondaryButton
+import flet as ft
+import warnings
 
 C, S, SH, TY = T.colors, T.spacing, T.shadows, T.typography
 
-import flet as ft
-from typing import Callable, Optional
+
+def primary_button(*args, **kwargs):
+    """Deprecated: use :func:`components.PrimaryButton`."""
+    warnings.warn("primary_button is deprecated; use components.PrimaryButton", DeprecationWarning, stacklevel=2)
+    return PrimaryButton(*args, **kwargs)
 
 
-def primary_button(
-    text: str,
-    *,
-    icon: Optional[str] = None,
-    on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
-    **kwargs,
-) -> ft.ElevatedButton:
-    """Return a standard primary button used across the app.
+def secondary_button(*args, **kwargs):
+    """Deprecated: use :func:`components.SecondaryButton`."""
+    warnings.warn("secondary_button is deprecated; use components.SecondaryButton", DeprecationWarning, stacklevel=2)
+    return SecondaryButton(*args, **kwargs)
 
-    Additional ``kwargs`` are forwarded to :class:`flet.ElevatedButton` so
-    callers can specify properties like ``expand`` or ``col`` to make buttons
-    responsive inside ``ResponsiveRow`` containers.
-    """
-
-    return ft.ElevatedButton(
-        text=text,
-        icon=icon,
-        on_click=on_click,
-        bgcolor=C.PRIMARY_BG,
-        color=C.PRIMARY_TEXT,
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
-        **kwargs,
-    )
-
-
-def secondary_button(
-    text: str,
-    *,
-    icon: Optional[str] = None,
-    on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
-    **kwargs,
-) -> ft.OutlinedButton:
-    """Return a standard secondary button used across the app.
-
-    ``kwargs`` are passed to the underlying button allowing controls to specify
-    responsive parameters like ``expand`` or ``col``.
-    """
-
-    return ft.OutlinedButton(
-        text=text,
-        icon=icon,
-        on_click=on_click,
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=9999),
-            color=C.SECONDARY_TEXT,
-            side=ft.BorderSide(1, C.SECONDARY_BORDER),
-        ),
-        **kwargs,
-    )
 
 def build_section(
     title: str,
@@ -94,7 +58,9 @@ def build_section(
         border_radius=8,
     )
 
+
 def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
+    """Return a card with icon and content."""
     header = ft.Row(
         [
             icon,
@@ -118,3 +84,10 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
         bgcolor=C.WHITE,
         shadow=SH.SHADOW_MD,
     )
+
+__all__ = [
+    "primary_button",
+    "secondary_button",
+    "build_section",
+    "build_card",
+]
