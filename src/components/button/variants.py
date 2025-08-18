@@ -6,8 +6,6 @@ import flet as ft
 from theme.tokens import TOKENS as T
 from . import style, sizing
 
-C = T.colors
-
 
 def PrimaryButton(
     text: str,

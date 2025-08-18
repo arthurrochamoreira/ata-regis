@@ -3,6 +3,7 @@ from datetime import timedelta
 from typing import Callable
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 from components import PrimaryButton, SecondaryButton
 from .tokens import build_section
 
@@ -20,8 +21,8 @@ def build_ata_detail_view(
     def info_row(label: str, value: str) -> ft.Row:
         return ft.Row(
             [
-                ft.Text(label, weight=ft.FontWeight.W_500, color=T.colors.TEXT_SECONDARY, width=128),
-                ft.Text(value, color=T.colors.TEXT_PRIMARY, expand=True),
+                ft.Text(label, weight=ft.FontWeight.W_500, color=C.TEXT_SECONDARY, width=128),
+                ft.Text(value, color=C.TEXT_PRIMARY, expand=True),
             ]
         )
 
@@ -57,9 +58,9 @@ def build_ata_detail_view(
                         "Ata de Registro de Preços",
                         size=30,
                         weight=ft.FontWeight.BOLD,
-                        color=T.colors.TEXT_DARK,
+                        color=C.TEXT_PRIMARY,
                     ),
-                    ft.Text(f"Nº {ata.numero_ata}", size=16, color=T.colors.TEXT_SECONDARY),
+                    ft.Text(f"Nº {ata.numero_ata}", size=16, color=C.TEXT_SECONDARY),
                 ],
                 col={"xs": 12, "md": 6},
             ),
@@ -79,11 +80,11 @@ def build_ata_detail_view(
                 "Linha do Tempo da Vigência",
                 size=18,
                 weight=ft.FontWeight.W_600,
-                color=T.colors.TEXT_MUTED,
+                color=C.TEXT_SECONDARY,
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CHECK_CIRCLE, color=T.colors.GREEN),
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=C.SUCCESS_TEXT),
                     ft.Column(
                         [
                             ft.Text("Início da vigência"),
@@ -97,7 +98,7 @@ def build_ata_detail_view(
             ),
             ft.Row(
                 [
-                    ft.Icon(ft.icons.CALENDAR_MONTH, color=T.colors.RED),
+                    ft.Icon(ft.icons.CALENDAR_MONTH, color=C.ERROR_TEXT),
                     ft.Column(
                         [
                             ft.Text("Fim da vigência"),
@@ -127,8 +128,8 @@ def build_ata_detail_view(
     dados_gerais = build_section(
         "Dados Gerais",
         ft.icons.DESCRIPTION_OUTLINED,
-        T.colors.INDIGO,
-        T.colors.INDIGO_BG,
+        C.PRIMARY,
+        C.BG_APP,
         dados_gerais_body,
     )
 
@@ -236,7 +237,7 @@ def build_ata_detail_view(
                 ),
             ],
         ),
-        bgcolor=T.colors.RESUMO_BG,
+        bgcolor=C.BG_APP,
         padding=T.spacing.SPACE_4,
         border_radius=8,
     )
@@ -245,8 +246,8 @@ def build_ata_detail_view(
     itens_section = build_section(
         "Itens da Ata",
         ft.icons.LIST_ALT_OUTLINED,
-        T.colors.INDIGO,
-        T.colors.INDIGO_BG,
+        C.PRIMARY,
+        C.BG_APP,
         itens_body,
     )
 
@@ -254,8 +255,8 @@ def build_ata_detail_view(
     fornecedor_section = build_section(
         "Fornecedor",
         ft.icons.BUSINESS_OUTLINED,
-        T.colors.ORANGE,
-        T.colors.ORANGE_BG,
+        C.WARNING_TEXT,
+        C.WARNING_BG,
         fornecedor_body,
     )
 
@@ -264,19 +265,19 @@ def build_ata_detail_view(
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.PHONE_OUTLINED, color=T.colors.TEXT_SECONDARY),
+                    ft.Icon(ft.icons.PHONE_OUTLINED, color=C.TEXT_SECONDARY),
                     ft.Text(tel),
                 ],
                 spacing=T.spacing.SPACE_2,
             )
         )
     if ata.telefones_fornecedor:
-        contatos_list.append(ft.Divider(height=1, color=T.colors.GREY_DIVIDER))
+        contatos_list.append(ft.Divider(height=1, color=C.BORDER))
     for email in ata.emails_fornecedor:
         contatos_list.append(
             ft.Row(
                 [
-                    ft.Icon(ft.icons.EMAIL_OUTLINED, color=T.colors.TEXT_SECONDARY),
+                    ft.Icon(ft.icons.EMAIL_OUTLINED, color=C.TEXT_SECONDARY),
                     ft.Text(email),
                 ],
                 spacing=T.spacing.SPACE_2,
@@ -287,8 +288,8 @@ def build_ata_detail_view(
     contatos_section = build_section(
         "Contatos",
         ft.icons.HEADSET_MIC_OUTLINED,
-        T.colors.TEAL,
-        T.colors.TEAL_BG,
+        C.PRIMARY,
+        C.BG_APP,
         contatos_body,
     )
 
@@ -308,7 +309,7 @@ def build_ata_detail_view(
             scroll=ft.ScrollMode.AUTO,
             expand=True,
         ),
-        bgcolor=T.colors.WHITE,
+        bgcolor=C.SURFACE,
         padding=ft.padding.only(
             left=T.spacing.SPACE_5,
             right=T.spacing.SPACE_5,

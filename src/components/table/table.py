@@ -4,8 +4,9 @@ from typing import List
 import flet as ft
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 
-C, S = T.colors, T.spacing
+S = T.spacing
 
 
 def TableHeader(labels: List[str]) -> List[ft.DataColumn]:
@@ -28,8 +29,8 @@ def Table(columns: List[str], rows: List[List[ft.Control]]) -> ft.DataTable:
     return ft.DataTable(
         columns=TableHeader(columns),
         rows=[TableRow(r) for r in rows],
-        heading_row_color=C.HEADER_BG,
-        horizontal_lines=ft.border.BorderSide(1, C.GREY_LIGHT),
+        heading_row_color=C.BG_APP,
+        horizontal_lines=ft.border.BorderSide(1, C.BORDER),
         data_row_height=56,
         divider_thickness=0,
     )

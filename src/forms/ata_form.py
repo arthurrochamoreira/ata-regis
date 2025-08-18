@@ -3,8 +3,9 @@ from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
 from theme.tokens import TOKENS as T
+from theme import colors as C
 
-C, S, R, SH = T.colors, T.spacing, T.radius, T.shadows
+S, R, SH = T.spacing, T.radius, T.shadows
 from components import PrimaryButton, SecondaryButton, TextInput, IconAction
 from ui.tokens import build_section
 from models.ata import Ata, Item
@@ -118,8 +119,8 @@ class AtaForm:
         dados_gerais = build_section(
             "Dados Gerais",
             ft.icons.DESCRIPTION_OUTLINED,
-            C.INDIGO,
-            C.INDIGO_BG,
+            C.PRIMARY,
+            C.BG_APP,
             dados_gerais_body,
         )
         
@@ -127,14 +128,14 @@ class AtaForm:
             icon=ft.icons.ADD,
             tooltip="Adicionar telefone",
             on_click=lambda e: self.add_telefone(),
-            hover_color=T.colors.BLUE_HOVER,
+            hover_color=C.PRIMARY_HOVER,
             size="sm",
         )
         telefones_section = build_section(
             "Telefones",
             ft.icons.PHONE_OUTLINED,
             C.TEXT_SECONDARY,
-            C.GREY_LIGHT,
+            C.BG_APP,
             ft.Column([
                 ft.Row([
                     telefones_header_btn
@@ -147,14 +148,14 @@ class AtaForm:
             icon=ft.icons.ADD,
             tooltip="Adicionar e-mail",
             on_click=lambda e: self.add_email(),
-            hover_color=T.colors.BLUE_HOVER,
+            hover_color=C.PRIMARY_HOVER,
             size="sm",
         )
         emails_section = build_section(
             "E-mails",
             ft.icons.EMAIL_OUTLINED,
             C.TEXT_SECONDARY,
-            C.GREY_LIGHT,
+            C.BG_APP,
             ft.Column([
                 ft.Row([
                     emails_header_btn
@@ -167,14 +168,14 @@ class AtaForm:
             icon=ft.icons.ADD,
             tooltip="Adicionar item",
             on_click=lambda e: self.add_item(),
-            hover_color=T.colors.BLUE_HOVER,
+            hover_color=C.PRIMARY_HOVER,
             size="sm",
         )
         itens_section = build_section(
             "Itens",
             ft.icons.LIST_ALT_OUTLINED,
-            C.INDIGO,
-            C.INDIGO_BG,
+            C.PRIMARY,
+            C.BG_APP,
             ft.Column([
                 ft.Row([
                     itens_header_btn
@@ -214,7 +215,7 @@ class AtaForm:
                             "Ata de Registro de Preços",
                             size=30,
                             weight=ft.FontWeight.BOLD,
-                            color=C.TEXT_DARK,
+                            color=C.TEXT_PRIMARY,
                         ),
                         ft.Text(titulo, size=16, color=C.TEXT_SECONDARY),
                     ],
@@ -232,7 +233,7 @@ class AtaForm:
 
         card = ft.Container(
             content=ft.Column([header, content], spacing=S.SPACE_6, expand=True),
-            bgcolor=C.WHITE,
+            bgcolor=C.SURFACE,
             padding=ft.padding.only(
                 left=S.SPACE_5,
                 right=S.SPACE_5,
@@ -291,7 +292,7 @@ class AtaForm:
             icon=ft.icons.DELETE,
             tooltip="Remover telefone",
             on_click=None,
-            hover_color=T.colors.RED,
+            hover_color=C.ERROR_TEXT,
             size="sm",
             col={"xs": 2, "md": 1},
         )
@@ -329,7 +330,7 @@ class AtaForm:
             icon=ft.icons.DELETE,
             tooltip="Remover e-mail",
             on_click=None,
-            hover_color=T.colors.RED,
+            hover_color=C.ERROR_TEXT,
             size="sm",
             col={"xs": 2, "md": 1},
         )
@@ -385,7 +386,7 @@ class AtaForm:
             icon=ft.icons.DELETE,
             tooltip="Remover item",
             on_click=None,
-            hover_color=T.colors.RED,
+            hover_color=C.ERROR_TEXT,
             size="sm",
             col={"xs": 12, "md": 2},
         )

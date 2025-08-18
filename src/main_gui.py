@@ -23,6 +23,7 @@ from ui.main_view import (
 from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
 from theme.tokens import TOKENS as T
+from theme import colors as C
 from ui.responsive import get_breakpoint
 
 class AtaApp:
@@ -53,7 +54,7 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = T.colors.PAGE_BG
+        self.page.bgcolor = C.BG_APP
         self.page.fonts = {T.typography.FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
         self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=T.typography.FONT_SANS)
         self.page.on_resize = self.on_page_resize
