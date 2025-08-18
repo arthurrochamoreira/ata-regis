@@ -8,22 +8,14 @@ SURFACE = "#FFFFFF"      # Cartões, modais, tabelas, inputs
 # Texto
 TEXT_PRIMARY = "#1F2937"
 TEXT_SECONDARY = "#6B7280"
-TEXT_MUTED = TEXT_SECONDARY
-
-# Neutros
-NEUTRAL_50 = "#F9FAFB"
-NEUTRAL_600 = "#4B5563"
-NEUTRAL_700 = "#374151"
 
 # Bordas/Divisórias
 BORDER = "#D1D5DB"
-BORDER_SUBTLE = "#E5E7EB"
 
 # Estados de interação (derivados da primária)
 PRIMARY_HOVER = "#1D4ED8"   # blue-700
 PRIMARY_ACTIVE = "#1E40AF"  # blue-800
 FOCUS_RING = "#93C5FD"      # blue-300 (se houver anel de foco)
-FOCUS_RING_STRONG = "#3B82F6"  # blue-500
 
 # Status
 SUCCESS_BG = "#DCFCE7"    # green-100
@@ -42,15 +34,10 @@ color = SimpleNamespace(
     surface=SURFACE,
     background=BG_APP,
     text=TEXT_PRIMARY,
-    muted=TEXT_MUTED,
+    muted=TEXT_SECONDARY,
     border=BORDER,
-    border_subtle=BORDER_SUBTLE,
     error=ERROR_TEXT,
     focus_ring=FOCUS_RING,
-    focus_ring_strong=FOCUS_RING_STRONG,
-    neutral_50=NEUTRAL_50,
-    neutral_600=NEUTRAL_600,
-    neutral_700=NEUTRAL_700,
 )
 
 __all__ = [name for name in globals().keys() if name.isupper()] + ["color"]
