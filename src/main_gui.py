@@ -246,15 +246,8 @@ class AtaApp:
             self.excluir_ata,
             filtros=list(self.filtros_status) if self.filtros_status else None,
         )
-        # Replace the entire table control so filter and sort changes are
-        # immediately reflected. Updating only the inner content would not
-        # trigger a visual refresh in Flet.
-        self.grouped_tables.content = new_table
-        # Only try to update the control if it has been added to the page.
-        # During initial build the container isn't attached yet, and calling
-        # update would raise "Control must be added to the page first".
-        if self.grouped_tables.page:
-            self.grouped_tables.update()
+        self.grouped_tables.content = new_table.content
+        self.page.update()
 
     def sort_atas(self, atas):
         if self.sort_key == "mais_recente":
