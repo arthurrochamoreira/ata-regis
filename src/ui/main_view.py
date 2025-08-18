@@ -4,14 +4,21 @@ from typing import Callable, List, Dict, Tuple
 
 from theme.tokens import TOKENS as T
 from theme import colors as C
-from components import PrimaryButton, IconAction, TextInput
+from components import (
+    PrimaryButton,
+    IconAction,
+    TextInput,
+    AlertBanner,
+    MetricCard,
+    DonutStatus,
+    MonthlyBarChart,
+)
 from .tokens import build_card
 from theme.typography import text, text_style
 from utils.color_utils import get_status_colors
 
 from models.ata import Ata
 from utils.validators import Formatters
-from utils.chart_utils import ChartUtils
 
 
 STATUS_INFO = {
@@ -508,41 +515,78 @@ def build_stats_panel(ata_service) -> ft.Container:
     stats = ata_service.get_estatisticas()
     atas = ata_service.listar_todas()
     atas_vencimento = ata_service.get_atas_vencimento_proximo()
-    total_value = sum(ata.valor_total for ata in atas)
-    summary_cards = ChartUtils.create_summary_cards(stats, total_value)
-    pie_chart = ChartUtils.create_status_pie_chart(stats)
-    legend = ChartUtils.create_status_legend(stats)
-    urgency_indicator = ChartUtils.create_urgency_indicator(atas_vencimento)
-    value_chart = ChartUtils.create_value_chart(atas)
-    monthly_chart = ChartUtils.create_monthly_chart(atas)
 
-    chart_left = ft.Container(
-        content=ft.Column(
-            [
-                ft.Text(
-                    "📊 Situação das Atas",
-                    size=T.typography.TEXT_LG,
-                    weight=ft.FontWeight.BOLD,
-                ),
-                ft.Row(
-                    [pie_chart, legend],
-                    spacing=T.spacing.SPACE_6,
-                    alignment=ft.MainAxisAlignment.START,
-                ),
-                value_chart,
-            ],
-            spacing=T.spacing.SPACE_4,
-        ),
-        padding=ft.padding.all(T.spacing.SPACE_4),
-        border=ft.border.all(1, C.BORDER),
-        border_radius=T.radius.RADIUS_MD,
-        expand=True,
+    total_value = sum(ata.valor_total for ata in atas)
+    total_atas = sum(stats.values())
+    vigentes = stats.get("vigente", 0)
+    a_vencer = stats.get("a_vencer", 0)
+
+    banner = AlertBanner(
+        icon=ft.icons.WARNING_AMBER_ROUNDED,
+        title="Atenção",
+        subtitle=f"Você possui {len(atas_vencimento)} ata(s) vencendo em 90 dias ou menos.",
     )
-    chart_left.col = {"xs": 12, "lg": 8}
-    chart_right = ft.Container(content=monthly_chart, width=360)
-    chart_right.col = {"xs": 12, "lg": 4}
-    charts_section = ft.ResponsiveRow(
-        [chart_left, chart_right],
+
+    cards = [
+        MetricCard(
+            ft.icons.DESCRIPTION_OUTLINED,
+            "Total de Atas",
+            str(total_atas),
+            "cadastradas",
+        ),
+        MetricCard(
+            ft.icons.MONETIZATION_ON_OUTLINED,
+            "Valor Total",
+            f"R$ {total_value:,.0f}".replace(",", "X").replace(".", ",").replace("X", "."),
+            "em atas",
+        ),
+        MetricCard(
+            ft.icons.CHECK_CIRCLE_OUTLINED,
+            "Vigentes",
+            str(vigentes),
+            f"{(vigentes / total_atas * 100) if total_atas else 0:.0f}%",
+        ),
+        MetricCard(
+            ft.icons.SCHEDULE_OUTLINED,
+            "A Vencer",
+            str(a_vencer),
+            f"{(a_vencer / total_atas * 100) if total_atas else 0:.0f}%",
+        ),
+    ]
+    for card in cards:
+        card.col = {"xs": 6, "md": 3}
+
+    # Donut data and chart
+    donut = DonutStatus(
+        {
+            "vigente": vigentes,
+            "a_vencer": a_vencer,
+            "vencida": stats.get("vencida", 0),
+        }
+    )
+    donut.col = {"xs": 12, "md": 6}
+
+    # Monthly bar chart data
+    from datetime import date
+
+    current_year = date.today().year
+    monthly_counts: dict[int, int] = {i: 0 for i in range(1, 13)}
+    for ata in atas:
+        if ata.data_vigencia.year == current_year:
+            monthly_counts[ata.data_vigencia.month] += 1
+
+    bars = MonthlyBarChart(monthly_counts)
+    bars.col = {"xs": 12, "md": 6}
+
+    cards_row = ft.ResponsiveRow(
+        cards,
+        columns=12,
+        spacing=T.spacing.SPACE_4,
+        run_spacing=T.spacing.SPACE_4,
+    )
+
+    charts_row = ft.ResponsiveRow(
+        [donut, bars],
         columns=12,
         spacing=T.spacing.SPACE_4,
         run_spacing=T.spacing.SPACE_4,
@@ -550,7 +594,7 @@ def build_stats_panel(ata_service) -> ft.Container:
 
     return ft.Container(
         content=ft.Column(
-            [urgency_indicator, summary_cards, charts_section], spacing=T.spacing.SPACE_4
+            [banner, cards_row, charts_row], spacing=T.spacing.SPACE_5
         ),
         padding=ft.padding.symmetric(horizontal=T.spacing.SPACE_5),
         margin=ft.margin.only(bottom=T.spacing.SPACE_5),
