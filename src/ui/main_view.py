@@ -1,14 +1,21 @@
 import flet as ft
 from typing import Callable, List, Dict, Tuple
 
-from .theme.spacing import (
-    SPACE_1,
-    SPACE_2,
-    SPACE_3,
-    SPACE_4,
-    SPACE_5,
-    SPACE_6,
-)
+from .theme.tokens import TOKENS as T
+colors = T.colors
+SPACE_1 = T.spacing.SPACE_1
+SPACE_2 = T.spacing.SPACE_2
+SPACE_3 = T.spacing.SPACE_3
+SPACE_4 = T.spacing.SPACE_4
+SPACE_5 = T.spacing.SPACE_5
+SPACE_6 = T.spacing.SPACE_6
+ICON_SM = T.sizes.ICON_SM
+ICON_BUTTON = T.sizes.ICON_BUTTON
+SEARCH_FIELD_H = T.sizes.SEARCH_FIELD_H
+APPBAR_LEADING_W = T.sizes.APPBAR_LEADING_W
+APPBAR_HEIGHT = T.sizes.APPBAR_HEIGHT
+RADIUS_MD = T.radius.RADIUS_MD
+RADIUS_FULL = T.radius.RADIUS_FULL
 from .tokens import build_card, primary_button
 from .theme.typography import (
     text,
@@ -16,10 +23,12 @@ from .theme.typography import (
     FONT_BOLD,
     TEXT_SM,
     TEXT_XL,
+    TEXT_LG,
+    TEXT_BASE,
+    TEXT_XS,
     LEADING_5,
     TRACKING_WIDER,
 )
-from .theme import colors
 from utils.color_utils import get_status_colors
 
 from models.ata import Ata
@@ -59,7 +68,7 @@ def build_header(
     nova_ata_cb: Callable,
 ) -> ft.AppBar:
     """Return AppBar with only the new ata button."""
-    appbar_height = 56
+    appbar_height = APPBAR_HEIGHT
 
     actions_row = ft.Row(
         [
@@ -75,7 +84,7 @@ def build_header(
 
     return ft.AppBar(
         leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
-        leading_width=40,
+        leading_width=APPBAR_LEADING_W,
         title=text(
             "Ata de Registro de Preços",
             size=TEXT_XL,
@@ -83,7 +92,7 @@ def build_header(
             line_height=LEADING_5,
             letter_spacing=TRACKING_WIDER,
         ),
-        bgcolor=ft.colors.INVERSE_PRIMARY,
+        bgcolor=colors.INVERSE_PRIMARY,
         actions=[
             ft.Container(
                 content=actions_row,
@@ -136,9 +145,11 @@ def build_filters(
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-        padding=ft.padding.symmetric(horizontal=12, vertical=8),
+        padding=ft.padding.symmetric(
+            horizontal=SPACE_3, vertical=SPACE_2
+        ),
         border=ft.border.all(1, colors.GREY_LIGHT),
-        border_radius=8,
+        border_radius=RADIUS_MD,
         bgcolor=colors.WHITE,
     )
 
@@ -161,7 +172,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         on_change=on_change,
         value=value,
         expand=True,
-        height=40,
+        height=SEARCH_FIELD_H,
         text_style=text_style(
             size=TEXT_SM,
             weight=ft.FontWeight.W_500,
@@ -176,11 +187,11 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
             letter_spacing=TRACKING_WIDER,
             color=colors.TEXT_DARK,
         ),
-        border_radius=9999,
+        border_radius=RADIUS_FULL,
         border_color=colors.GREY_LIGHT,
         focused_border_color=colors.FOCUSED_BORDER,
         bgcolor=colors.WHITE,
-        hover_color=ft.colors.with_opacity(0.08, ft.colors.BLACK),
+        hover_color=ft.colors.with_opacity(0.08, colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=SPACE_4, vertical=0),
     )
     return (
@@ -223,7 +234,7 @@ def build_data_table(
         ft.Container(
                 ft.Text(
                     lbl.upper(),
-                    size=11,
+                    size=TEXT_XS,
                     weight=ft.FontWeight.W_600,
                     color=colors.TEXT_SECONDARY,
                     no_wrap=True,
@@ -295,7 +306,7 @@ def build_data_table(
             ),
             padding=ft.padding.symmetric(vertical=SPACE_1, horizontal=SPACE_3),
             bgcolor=badge_bg_color,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             alignment=ft.alignment.center,
         )
 
@@ -308,7 +319,7 @@ def build_data_table(
                     style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: colors.BLUE_HOVER, "": colors.TEXT_SECONDARY}
                     ),
-                    icon_size=20,
+                    icon_size=ICON_SM,
                 ),
                 ft.IconButton(
                     icon=ft.icons.EDIT,
@@ -317,7 +328,7 @@ def build_data_table(
                     style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: colors.YELLOW, "": colors.TEXT_SECONDARY}
                     ),
-                    icon_size=20,
+                    icon_size=ICON_SM,
                 ),
                 ft.IconButton(
                     icon=ft.icons.DELETE,
@@ -326,7 +337,7 @@ def build_data_table(
                     style=ft.ButtonStyle(
                         color={ft.MaterialState.HOVERED: colors.RED, "": colors.TEXT_SECONDARY}
                     ),
-                    icon_size=20,
+                    icon_size=ICON_SM,
                 ),
             ],
             spacing=SPACE_3,
@@ -400,13 +411,13 @@ def build_grouped_data_tables(
             content=ft.Icon(
                 info["icon"],
                 color=info["icon_color"],
-                size=20,
+                size=ICON_SM,
             ),
-            width=28,
-            height=28,
+            width=ICON_BUTTON,
+            height=ICON_BUTTON,
             padding=ft.padding.all(SPACE_1),
             bgcolor=info["icon_bg"],
-            border_radius=8,
+            border_radius=RADIUS_MD,
         )
 
         table = build_data_table(
@@ -484,7 +495,7 @@ def build_atas_vencimento(
             padding=ft.padding.all(SPACE_3),
             margin=ft.margin.only(bottom=SPACE_2),
             border=ft.border.all(1, colors.ORANGE),
-            border_radius=8,
+            border_radius=RADIUS_MD,
             bgcolor=colors.ORANGE_BG,
         )
         items.append(item)
@@ -494,7 +505,7 @@ def build_atas_vencimento(
             [
                 ft.Text(
                     "🔔 Atas Próximas do Vencimento",
-                    size=16,
+                    size=TEXT_BASE,
                     weight=ft.FontWeight.BOLD,
                 ),
                 ft.Column(items, spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -505,7 +516,7 @@ def build_atas_vencimento(
         alignment=ft.alignment.center,
         padding=ft.padding.symmetric(horizontal=SPACE_5, vertical=SPACE_4),
         border=ft.border.all(1, colors.OUTLINE),
-        border_radius=8,
+        border_radius=RADIUS_MD,
     )
 
 
@@ -526,7 +537,7 @@ def build_stats_panel(ata_service) -> ft.Container:
             [
                 ft.Text(
                     "📊 Situação das Atas",
-                    size=18,
+                    size=TEXT_LG,
                     weight=ft.FontWeight.BOLD,
                 ),
                 ft.Row(
@@ -540,7 +551,7 @@ def build_stats_panel(ata_service) -> ft.Container:
         ),
         padding=ft.padding.all(SPACE_4),
         border=ft.border.all(1, colors.OUTLINE),
-        border_radius=8,
+        border_radius=RADIUS_MD,
         expand=True,
     )
     chart_left.col = {"xs": 12, "lg": 8}

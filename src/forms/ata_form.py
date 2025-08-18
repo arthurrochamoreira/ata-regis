@@ -2,17 +2,18 @@ import flet as ft
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
-from ui.theme.spacing import (
-    SPACE_1,
-    SPACE_2,
-    SPACE_3,
-    SPACE_4,
-    SPACE_5,
-    SPACE_6,
-)
-from ui.theme.shadows import SHADOW_LG
+from ui.theme.tokens import TOKENS as T
+colors = T.colors
+SPACE_1 = T.spacing.SPACE_1
+SPACE_2 = T.spacing.SPACE_2
+SPACE_3 = T.spacing.SPACE_3
+SPACE_4 = T.spacing.SPACE_4
+SPACE_5 = T.spacing.SPACE_5
+SPACE_6 = T.spacing.SPACE_6
+RADIUS_FULL = T.radius.RADIUS_FULL
+RADIUS_MD = T.radius.RADIUS_MD
+SHADOW_LG = T.shadows.SHADOW_LG
 from ui.tokens import build_section, primary_button, secondary_button
-from ui.theme import colors
 from models.ata import Ata, Item
 from utils.validators import Validators, Formatters, MaskUtils
 
@@ -55,7 +56,7 @@ class AtaForm:
             hint_text="0000/0000",
             on_change=self.on_numero_ata_change,
             expand=True,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
         )
         
         self.documento_sei_field = ft.TextField(
@@ -63,14 +64,14 @@ class AtaForm:
             hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
             expand=True,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
         )
         
         self.data_vigencia_field = ft.TextField(
             label="Data de Vigência",
             hint_text="DD/MM/AAAA",
             expand=True,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
         )
         
         self.objeto_field = ft.TextField(
@@ -79,14 +80,14 @@ class AtaForm:
             multiline=True,
             max_lines=3,
             expand=True,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
         )
         
         self.fornecedor_field = ft.TextField(
             label="Fornecedor",
             hint_text="Nome da empresa fornecedora",
             expand=True,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
         )
         
         # Containers para listas dinâmicas
@@ -239,7 +240,7 @@ class AtaForm:
                 top=SPACE_4,
                 bottom=SPACE_4,
             ),
-            border_radius=8,
+            border_radius=RADIUS_MD,
             alignment=ft.alignment.center,
             shadow=SHADOW_LG,
             expand=True,
@@ -282,7 +283,7 @@ class AtaForm:
             hint_text="(XX) XXXXX-XXXX",
             value=valor,
             on_change=self.on_telefone_change,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             expand=True,
             col={"xs": 10, "md": 11},
         )
@@ -317,7 +318,7 @@ class AtaForm:
             label=f"E-mail {len(self.emails) + 1}",
             hint_text="email@exemplo.com",
             value=valor,
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             expand=True,
             col={"xs": 10, "md": 11},
         )
@@ -352,7 +353,7 @@ class AtaForm:
             label="Descrição",
             hint_text="Descrição do item",
             value=item.descricao if item else "",
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             expand=True,
             col={"xs": 12, "md": 5},
         )
@@ -361,7 +362,7 @@ class AtaForm:
             label="Quantidade",
             hint_text="0",
             value=str(item.quantidade) if item else "",
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             expand=True,
             col={"xs": 12, "md": 2},
         )
@@ -370,7 +371,7 @@ class AtaForm:
             label="Valor Unitário",
             hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
-            border_radius=9999,
+            border_radius=RADIUS_FULL,
             expand=True,
             col={"xs": 12, "md": 3},
         )

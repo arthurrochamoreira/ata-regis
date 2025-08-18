@@ -7,18 +7,22 @@ from typing import Callable, List, Optional, Any
 
 import flet as ft
 
-from .theme import colors
-from .theme.spacing import SPACE_1, SPACE_2, SPACE_3, SPACE_5
-from .theme.sizes import (
-    WIDTH_SIDEBAR_OPEN,
-    WIDTH_SIDEBAR_COLLAPSED,
-    ITEM_TOUCH,
-    ICON_MD,
-)
+from .theme.tokens import TOKENS as T
+colors = T.colors
+SPACE_1 = T.spacing.SPACE_1
+SPACE_2 = T.spacing.SPACE_2
+SPACE_3 = T.spacing.SPACE_3
+SPACE_5 = T.spacing.SPACE_5
+WIDTH_SIDEBAR_OPEN = T.sizes.WIDTH_SIDEBAR_OPEN
+WIDTH_SIDEBAR_COLLAPSED = T.sizes.WIDTH_SIDEBAR_COLLAPSED
+ITEM_TOUCH = T.sizes.ITEM_TOUCH
+ICON_MD = T.sizes.ICON_MD
+INDICATOR_W = T.sizes.INDICATOR_W
+DURATION_SIDEBAR = T.motion.DURATION_SIDEBAR
+RADIUS_MD = T.radius.RADIUS_MD
 from .theme.shadows import SHADOW_XL
 
 # === Constantes de layout/estilo ===
-INDICATOR_WIDTH = 4                                  # Largura da barra indicadora à esquerda
 ICON_COLUMN_WIDTH = WIDTH_SIDEBAR_COLLAPSED          # Largura da coluna de ícones (menu colapsado)
 
 SelectCallback = Callable[[str], None]
@@ -113,7 +117,7 @@ class SidebarItem(ft.Container):
             self._badge = ft.Container(
                 content=ft.Text(str(self._data.badge)),
                 padding=ft.padding.symmetric(horizontal=SPACE_2, vertical=SPACE_1),
-                border_radius=8,
+                border_radius=RADIUS_MD,
                 bgcolor=colors.INDIGO_BG,
                 alignment=ft.alignment.center,
                 visible=not collapsed,
@@ -166,9 +170,9 @@ class SidebarItem(ft.Container):
 
         # Indicador overlay (sem usar ft.Positioned)
         self._indicator = ft.Container(
-            width=INDICATOR_WIDTH,
+            width=INDICATOR_W,
             height=ITEM_TOUCH,
-            bgcolor=ft.colors.TRANSPARENT,
+            bgcolor=colors.TRANSPARENT,
         )
         # Ancoragem absoluta no Stack
         self._indicator.left = 0
@@ -220,7 +224,7 @@ class SidebarItem(ft.Container):
         active_bg = colors.INDIGO_BG
 
         # Indicador overlay e fundo suave
-        self._indicator.bgcolor = active_color if selected else ft.colors.TRANSPARENT
+        self._indicator.bgcolor = active_color if selected else colors.TRANSPARENT
         self._content_box.bgcolor = active_bg if selected else None
 
         # Texto e ícones
@@ -245,7 +249,7 @@ class Sidebar(ft.Container):
         on_toggle: Optional[Callable[[bool], None]] = None,
         open_width: int = WIDTH_SIDEBAR_OPEN,
         closed_width: int = ICON_COLUMN_WIDTH,  # travado para usar a coluna de ícones
-        duration: int = 180,
+        duration: int = DURATION_SIDEBAR,
         curve: str = "ease",
     ) -> None:
         self.page = page
