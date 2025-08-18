@@ -9,6 +9,7 @@ import flet as ft
 
 from .theme.tokens import TOKENS as T
 colors = T.colors
+C = T.color
 SPACE_1 = T.spacing.SPACE_1
 SPACE_2 = T.spacing.SPACE_2
 SPACE_3 = T.spacing.SPACE_3
@@ -87,11 +88,11 @@ class SidebarItem(ft.Container):
         self._data: SidebarItemData = _as_item_data(raw_data)
         self._on_select: SelectCallback = on_select
         self._external_click: Optional[ClickCallback] = self._data.on_click
-        self._hover_bg = colors.GREY_LIGHT
+        self._hover_bg = C.background
 
         # --- ÍCONES (instâncias separadas para evitar múltiplos pais) ---
-        self._icon_expanded = ft.Icon(self._data.icon, size=ICON_MD, color=colors.TEXT_PRIMARY)
-        self._icon_collapsed = ft.Icon(self._data.icon, size=ICON_MD, color=colors.TEXT_PRIMARY)
+        self._icon_expanded = ft.Icon(self._data.icon, size=ICON_MD, color=C.text)
+        self._icon_collapsed = ft.Icon(self._data.icon, size=ICON_MD, color=C.text)
         self._icons = (self._icon_expanded, self._icon_collapsed)  # para updates em lote
 
         # Slots fixos para ambos os modos
@@ -109,7 +110,7 @@ class SidebarItem(ft.Container):
         )
 
         # Label e (opcional) badge
-        self._label = ft.Text(self._data.label, color=colors.TEXT_PRIMARY)
+        self._label = ft.Text(self._data.label, color=C.text)
         row_controls: List[ft.Control] = [self._icon_slot_expanded, self._label]
 
         self._badge: Optional[ft.Control] = None
@@ -118,7 +119,7 @@ class SidebarItem(ft.Container):
                 content=ft.Text(str(self._data.badge)),
                 padding=ft.padding.symmetric(horizontal=SPACE_2, vertical=SPACE_1),
                 border_radius=RADIUS_MD,
-                bgcolor=colors.INDIGO_BG,
+                bgcolor=ft.colors.with_opacity(0.15, C.primary),
                 alignment=ft.alignment.center,
                 visible=not collapsed,
             )
@@ -220,8 +221,8 @@ class SidebarItem(ft.Container):
 
     def set_selected(self, selected: bool) -> None:
         """Atualiza o visual de item ativo (indicador e cores)."""
-        active_color = colors.INDIGO
-        active_bg = colors.INDIGO_BG
+        active_color = C.primary
+        active_bg = ft.colors.with_opacity(0.15, C.primary)
 
         # Indicador overlay e fundo suave
         self._indicator.bgcolor = active_color if selected else colors.TRANSPARENT
@@ -229,9 +230,9 @@ class SidebarItem(ft.Container):
 
         # Texto e ícones
         self._label.weight = ft.FontWeight.W_600 if selected else ft.FontWeight.NORMAL
-        self._label.color = active_color if selected else colors.TEXT_PRIMARY
+        self._label.color = active_color if selected else C.text
         for icon in self._icons:
-            icon.color = active_color if selected else colors.TEXT_PRIMARY
+            icon.color = active_color if selected else C.text
 
         if self.page:
             self.update()
@@ -278,7 +279,7 @@ class Sidebar(ft.Container):
         ]
 
         # Botão de Toggle (mesmo slot da coluna de ícones)
-        self._menu_icon = ft.Icon(ft.icons.MENU, size=ICON_MD, color=colors.TEXT_PRIMARY)
+        self._menu_icon = ft.Icon(ft.icons.MENU, size=ICON_MD, color=C.text)
         self._menu_icon.rotate = ft.transform.Rotate(0 if not self.collapsed else math.pi)
         self._menu_icon.animate_rotation = ft.animation.Animation(duration, curve)
 
@@ -293,7 +294,7 @@ class Sidebar(ft.Container):
             height=ITEM_TOUCH,
             tooltip=self._toggle_tooltip(self.collapsed),
             on_click=self.toggle_sidebar,
-            style=_hover_style(colors.GREY_LIGHT),
+            style=_hover_style(C.background),
         )
         self.toggle_btn.aria_label = self._toggle_tooltip(self.collapsed)
 
@@ -313,7 +314,7 @@ class Sidebar(ft.Container):
         super().__init__(
             content=content,
             width=self.open_width if not self.collapsed else self.closed_width,
-            bgcolor=colors.WHITE,
+            bgcolor=C.surface,
             padding=ft.padding.symmetric(vertical=SPACE_5),
             shadow=SHADOW_XL,
             animate=ft.animation.Animation(duration, curve),

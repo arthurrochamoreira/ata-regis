@@ -8,7 +8,7 @@ from types import SimpleNamespace
 from . import colors, spacing, typography, sizes, radius, shadows, motion
 
 TOKENS = SimpleNamespace(
-    color=colors.color,
+    color=colors.SEM,
     colors=colors,
     spacing=spacing,
     typography=typography,

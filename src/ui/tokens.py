@@ -9,10 +9,10 @@ from .theme.spacing import (
 from .theme.shadows import SHADOW_MD
 from .theme.typography import (
     text,
-    FONT_BOLD,
-    LEADING_5,
-    TRACKING_WIDER,
-    TEXT_XL,
+    text_style,
+    H2,
+    H3,
+    BUTTON,
 )
 from .theme import colors
 
@@ -38,9 +38,12 @@ def primary_button(
         text=text,
         icon=icon,
         on_click=on_click,
-        bgcolor=colors.PRIMARY_BG,
-        color=colors.PRIMARY_TEXT,
-        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=9999)),
+        bgcolor=colors.SEM.primary,
+        color=colors.SEM.surface,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=9999),
+            text_style=text_style(**BUTTON, color=colors.SEM.surface),
+        ),
         **kwargs,
     )
 
@@ -64,8 +67,9 @@ def secondary_button(
         on_click=on_click,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=9999),
-            color=colors.SECONDARY_TEXT,
-            side=ft.BorderSide(1, colors.SECONDARY_BORDER),
+            text_style=text_style(**BUTTON, color=colors.SEM.text),
+            color=colors.SEM.text,
+            side=ft.BorderSide(1, colors.SEM.border),
         ),
         **kwargs,
     )
@@ -89,11 +93,8 @@ def build_section(
             ),
             text(
                 title,
-                size=TEXT_XL,
-                weight=FONT_BOLD,
-                line_height=LEADING_5,
-                letter_spacing=TRACKING_WIDER,
-                color=colors.TEXT_PRIMARY,
+                **H2,
+                color=colors.SEM.text,
             ),
         ],
         spacing=SPACE_3,
@@ -102,7 +103,7 @@ def build_section(
 
     return ft.Container(
         content=ft.Column([header, body], spacing=SPACE_5),
-        bgcolor=colors.CARD_BG,
+        bgcolor=colors.SEM.surface,
         padding=SPACE_4,
         border_radius=8,
     )
@@ -113,11 +114,8 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
             icon,
             text(
                 title,
-                size=16,
-                weight=ft.FontWeight.W_600,
-                line_height=LEADING_5,
-                letter_spacing=TRACKING_WIDER,
-                color=colors.TEXT_PRIMARY,
+                **H3,
+                color=colors.SEM.text,
             ),
         ],
         spacing=SPACE_2,
@@ -126,8 +124,8 @@ def build_card(title: str, icon: ft.Control, content: ft.Control) -> ft.Control:
     return ft.Container(
         content=ft.Column([header, content], spacing=SPACE_4),
         padding=SPACE_4,
-        border=ft.border.all(1, colors.GREY_LIGHT),
+        border=ft.border.all(1, colors.SEM.border),
         border_radius=8,
-        bgcolor=colors.WHITE,
+        bgcolor=colors.SEM.surface,
         shadow=SHADOW_MD,
     )
