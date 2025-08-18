@@ -8,13 +8,13 @@ from flet import colors as fcolors
 
 from theme.tokens import TOKENS as T
 from theme import colors as C
-# from .badge import StatusBadge  # não necessário no donut novo
 
 S, R, SH, TY = T.spacing, T.radius, T.shadows, T.typography
 
-# --- Donut: controle visual (alvo do mock)
-DONUT_SIZE = 240  # diâmetro do donut
-RING_WIDTH = 16   # espessura da rosca (maior => mais fina)
+# --- Donut: controle visual
+DONUT_SIZE = 240   # diâmetro do donut
+RING_WIDTH = 16    # espessura da rosca (maior => mais grossa)
+SAFE_MARGIN = 6    # margem interna para evitar clipping nas bordas
 # -----------------------------------------------------------------------------
 
 
@@ -109,7 +109,11 @@ def _legend_row(dot_color: str, label: str, value: int, total: int) -> ft.Row:
 
 
 def DonutStatus(data: Dict[str, int]) -> ft.Container:
-    """Donut (rosca fina) centralizado com legenda alinhada em duas colunas."""
+    """Donut (rosca fina) no estilo 1:
+       - TÍTULO à ESQUERDA do card
+       - DONUT centralizado
+       - LEGENDA centralizada com largura = DONUT_SIZE e linhas SPACE_BETWEEN
+    """
     total = sum(data.values())
 
     colors_map = {
@@ -117,14 +121,16 @@ def DonutStatus(data: Dict[str, int]) -> ft.Container:
         "a_vencer": C.WARNING_TEXT,
         "vencida": C.ERROR_TEXT,
     }
+    order = ("vigente", "a_vencer", "vencida")  # ordem fixa para donut + legenda
 
     sections = [
-        ft.PieChartSection(value=v, color=colors_map[k], title="")
-        for k, v in data.items()
-        if v > 0
+        ft.PieChartSection(value=data.get(k, 0), color=colors_map[k], title="")
+        for k in order
+        if data.get(k, 0) > 0
     ]
 
-    center_r = int(DONUT_SIZE / 2 - RING_WIDTH)
+    # raio interno com margem de segurança para evitar clipping nas bordas
+    center_r = int(((DONUT_SIZE - 2 * SAFE_MARGIN) / 2) - RING_WIDTH)
 
     pie = ft.PieChart(
         sections=sections,
@@ -147,8 +153,9 @@ def DonutStatus(data: Dict[str, int]) -> ft.Container:
     chart = ft.Container(
         width=DONUT_SIZE,
         height=DONUT_SIZE,
+        padding=ft.padding.all(SAFE_MARGIN),              # reserva uma borda interna
         alignment=ft.alignment.center,
-        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+        clip_behavior=ft.ClipBehavior.NONE,               # NÃO recorta a borda do donut
         content=ft.Stack([pie, ft.Container(content=center, alignment=ft.alignment.center)]),
     )
 
@@ -165,15 +172,23 @@ def DonutStatus(data: Dict[str, int]) -> ft.Container:
         ),
     )
 
+    # ======== diferença-chave do ESTILO 1 ========
+    # Column do card alinhada à ESQUERDA para o título;
+    # donut e legenda ficam centralizados via Row(expand=True, alignment=CENTER).
     container = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Situação das Atas", size=TY.TEXT_LG, weight=ft.FontWeight.W_600, color=C.TEXT_PRIMARY),
-                chart,
-                legend,
+                ft.Text(  # título alinhado à esquerda do card
+                    "Situação das Atas",
+                    size=TY.TEXT_LG,
+                    weight=ft.FontWeight.W_600,
+                    color=C.TEXT_PRIMARY,
+                ),
+                ft.Row([chart], alignment=ft.MainAxisAlignment.CENTER, expand=True),
+                ft.Row([legend], alignment=ft.MainAxisAlignment.CENTER, expand=True),
             ],
             spacing=S.SPACE_4,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.START,  # <- esquerda
         ),
         padding=ft.padding.all(S.SPACE_5),
         bgcolor=C.SURFACE,
