@@ -14,20 +14,20 @@ SECONDARY_BUTTON_STYLE = ft.ButtonStyle(
     shape=ft.RoundedRectangleBorder(radius=R.RADIUS_XL),
     padding=ft.padding.symmetric(horizontal=S.SPACE_4, vertical=S.SPACE_2),
     bgcolor={
-        ft.MaterialState.DEFAULT: C.SURFACE,
-        ft.MaterialState.HOVERED: C.BG_APP,
-        ft.MaterialState.PRESSED: C.SURFACE,
-        ft.MaterialState.FOCUSED: C.SURFACE,
+        ft.ControlState.DEFAULT: C.SURFACE,
+        ft.ControlState.HOVERED: C.BG_APP,
+        ft.ControlState.PRESSED: C.SURFACE,
+        ft.ControlState.FOCUSED: C.SURFACE,
     },
     side={
-        ft.MaterialState.DEFAULT: ft.BorderSide(1, C.BORDER),
-        ft.MaterialState.HOVERED: ft.BorderSide(1, C.PRIMARY),
-        ft.MaterialState.FOCUSED: ft.BorderSide(2, C.FOCUS_RING),
+        ft.ControlState.DEFAULT: ft.BorderSide(1, C.BORDER),
+        ft.ControlState.HOVERED: ft.BorderSide(1, C.PRIMARY),
+        ft.ControlState.FOCUSED: ft.BorderSide(2, C.FOCUS_RING),
     },
     color={
-        ft.MaterialState.DEFAULT: C.TEXT_PRIMARY,
-        ft.MaterialState.HOVERED: C.TEXT_PRIMARY,
-        ft.MaterialState.DISABLED: C.TEXT_SECONDARY,
+        ft.ControlState.DEFAULT: C.TEXT_PRIMARY,
+        ft.ControlState.HOVERED: C.TEXT_PRIMARY,
+        ft.ControlState.DISABLED: C.TEXT_SECONDARY,
     },
 )
 
