@@ -6,7 +6,6 @@ import flet as ft
 from theme.tokens import TOKENS as T
 from theme import colors as C
 from components import PrimaryButton, SecondaryButton
-from components.button import style as button_style
 
 S, SH = T.spacing, T.shadows
 
@@ -182,7 +181,6 @@ class AtasFilterBar(ft.UserControl):
         return ft.PopupMenuButton(
             content=content,
             items=[ft.PopupMenuItem(content=container)],
-            style=button_style.secondary("md"),
         )
 
     def _build_sort_menu_button(self) -> ft.PopupMenuButton:
@@ -201,7 +199,6 @@ class AtasFilterBar(ft.UserControl):
         return ft.PopupMenuButton(
             content=content,
             items=self._build_sort_menu_items(),
-            style=button_style.secondary("md"),
         )
 
     def _build_sort_menu_items(self) -> List[ft.PopupMenuItem]:
