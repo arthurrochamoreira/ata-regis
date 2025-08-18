@@ -120,7 +120,6 @@ class AtasFilterBar(ft.UserControl):
             shadow=SH.SHADOW_SM,
             padding=S.SPACE_4,
             expand=True,
-            clip_behavior=ft.ClipBehavior.NONE,
         )
 
         # Refs to control visibility of overlay and dropdown menus
@@ -131,48 +130,35 @@ class AtasFilterBar(ft.UserControl):
         overlay = ft.Container(
             ref=self.ref_click_out_overlay,
             expand=True,
-            bgcolor=ft.colors.with_opacity(0.001, ft.colors.BLACK),
+            bgcolor=ft.colors.TRANSPARENT,
             visible=False,
             on_click=lambda e: self._close_menus(),
         )
 
         filter_dropdown = ft.Container(
             ref=self.ref_filter_menu,
-            visible=False,
-            width=300,
-            padding=S.SPACE_3,
-            bgcolor=C.SURFACE,
-            border=ft.border.all(1, C.BORDER),
-            border_radius=T.radius.RADIUS_LG,
-            shadow=ft.BoxShadow(
-                blur_radius=24,
-                color=ft.colors.with_opacity(0.18, ft.colors.BLACK),
-            ),
+            top=70,
+            left=0,
             content=self._build_filter_menu(),
+            visible=False,
         )
         sort_dropdown = ft.Container(
             ref=self.ref_sort_menu,
-            visible=False,
+            top=70,
+            left=160,
             content=self._build_sort_menu(),
+            visible=False,
         )
 
         return ft.Stack(
-            [
-                card,
-                overlay,
-                ft.Container(alignment=ft.alignment.top_right, content=sort_dropdown),
-                ft.Container(alignment=ft.alignment.top_right, content=filter_dropdown),
-            ],
-            clip_behavior=ft.ClipBehavior.NONE,
+            [card, overlay, filter_dropdown, sort_dropdown],
+            expand=True,
         )
-
-    def did_mount(self) -> None:  # pragma: no cover - UI hook
-        self.page.on_scroll = lambda e: self._close_menus()
 
     # ------------------------------------------------------------------
     # UI builders
     # ------------------------------------------------------------------
-    def _build_filter_menu(self) -> ft.Column:
+    def _build_filter_menu(self) -> ft.Container:
         self.cb_todas = ft.Checkbox(
             label="Todas",
             value=self.state["filters"]["todas"],
@@ -203,10 +189,19 @@ class AtasFilterBar(ft.UserControl):
             spacing=S.SPACE_3,
         )
 
-        return ft.Column(
+        content = ft.Column(
             [self.cb_todas, self.cb_vigente, self.cb_a_vencer, self.cb_vencida, footer],
-            spacing=6,
-            tight=True,
+            spacing=S.SPACE_2,
+        )
+
+        return ft.Container(
+            content,
+            width=300,
+            padding=S.SPACE_3,
+            bgcolor=C.SURFACE,
+            border=ft.border.all(1, C.BORDER),
+            border_radius=T.radius.RADIUS_LG,
+            shadow=SH.SHADOW_MD,
         )
 
     def _build_sort_menu(self) -> ft.Container:
@@ -240,23 +235,27 @@ class AtasFilterBar(ft.UserControl):
         """Open/close filter dropdown, hiding others."""
         filter_menu = self.ref_filter_menu.current
         overlay = self.ref_click_out_overlay.current
-        open_filter = not filter_menu.visible
-        self._close_menus()
-        if open_filter:
-            overlay.visible = True
-            filter_menu.visible = True
-        self.page.update()
+        sort_menu = self.ref_sort_menu.current
+        if filter_menu.visible:
+            self._close_menus()
+            return
+        overlay.visible = True
+        filter_menu.visible = True
+        sort_menu.visible = False
+        self.update()
 
     def _toggle_sort_menu(self, e: ft.ControlEvent) -> None:
         """Open/close sort dropdown, hiding filter dropdown."""
         sort_menu = self.ref_sort_menu.current
         overlay = self.ref_click_out_overlay.current
-        open_sort = not sort_menu.visible
-        self._close_menus()
-        if open_sort:
-            overlay.visible = True
-            sort_menu.visible = True
-        self.page.update()
+        filter_menu = self.ref_filter_menu.current
+        if sort_menu.visible:
+            self._close_menus()
+            return
+        overlay.visible = True
+        sort_menu.visible = True
+        filter_menu.visible = False
+        self.update()
 
     def _close_menus(self, e: Optional[ft.ControlEvent] = None) -> None:
         overlay = self.ref_click_out_overlay.current
@@ -265,7 +264,7 @@ class AtasFilterBar(ft.UserControl):
         overlay.visible = False
         filter_menu.visible = False
         sort_menu.visible = False
-        self.page.update()
+        self.update()
 
     def _on_search_change(self, e: ft.ControlEvent) -> None:
         query = e.control.value
