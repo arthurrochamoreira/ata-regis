@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ui.theme import colors
+from theme import colors
 
 # Mapping from status string to (text_color, background_color)
 _STATUS_COLORS: dict[str, Tuple[str, str]] = {

@@ -5,7 +5,7 @@ BREAKPOINT_MD = 1024
 BREAKPOINT_LG = 1280
 
 # maps breakpoints to paddings and font multipliers using design tokens
-from ui.theme.tokens import TOKENS as T
+from theme.tokens import TOKENS as T
 
 PADDINGS = {
     "xs": T.spacing.SPACE_2,

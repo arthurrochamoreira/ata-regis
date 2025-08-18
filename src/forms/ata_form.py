@@ -2,10 +2,11 @@ import flet as ft
 from datetime import date, datetime
 from typing import List, Dict, Any, Optional, Callable
 
-from ui.theme.tokens import TOKENS as T
+from theme.tokens import TOKENS as T
 
 C, S, R, SH = T.colors, T.spacing, T.radius, T.shadows
-from ui.tokens import build_section, primary_button, secondary_button
+from components import PrimaryButton, SecondaryButton, TextInput, IconAction
+from ui.tokens import build_section
 from models.ata import Ata, Item
 from utils.validators import Validators, Formatters, MaskUtils
 
@@ -43,30 +44,30 @@ class AtaForm:
         titulo = "Editar Ata" if self.is_edit_mode else "Nova Ata"
         
         # Campos básicos
-        self.numero_ata_field = ft.TextField(
+        self.numero_ata_field = TextInput(
             label="Número da Ata",
             hint_text="0000/0000",
             on_change=self.on_numero_ata_change,
             expand=True,
             border_radius=R.RADIUS_FULL,
         )
-        
-        self.documento_sei_field = ft.TextField(
+
+        self.documento_sei_field = TextInput(
             label="Documento SEI",
             hint_text="00000.000000/0000-00",
             on_change=self.on_documento_sei_change,
             expand=True,
             border_radius=R.RADIUS_FULL,
         )
-        
-        self.data_vigencia_field = ft.TextField(
+
+        self.data_vigencia_field = TextInput(
             label="Data de Vigência",
             hint_text="DD/MM/AAAA",
             expand=True,
             border_radius=R.RADIUS_FULL,
         )
-        
-        self.objeto_field = ft.TextField(
+
+        self.objeto_field = TextInput(
             label="Objeto",
             hint_text="Descrição do objeto da ata",
             multiline=True,
@@ -74,8 +75,8 @@ class AtaForm:
             expand=True,
             border_radius=R.RADIUS_FULL,
         )
-        
-        self.fornecedor_field = ft.TextField(
+
+        self.fornecedor_field = TextInput(
             label="Fornecedor",
             hint_text="Nome da empresa fornecedora",
             expand=True,
@@ -122,10 +123,12 @@ class AtaForm:
             dados_gerais_body,
         )
         
-        telefones_header_btn = ft.IconButton(
+        telefones_header_btn = IconAction(
             icon=ft.icons.ADD,
             tooltip="Adicionar telefone",
             on_click=lambda e: self.add_telefone(),
+            hover_color=T.colors.BLUE_HOVER,
+            size="sm",
         )
         telefones_section = build_section(
             "Telefones",
@@ -140,10 +143,12 @@ class AtaForm:
             ], spacing=S.SPACE_2),
         )
         
-        emails_header_btn = ft.IconButton(
+        emails_header_btn = IconAction(
             icon=ft.icons.ADD,
             tooltip="Adicionar e-mail",
             on_click=lambda e: self.add_email(),
+            hover_color=T.colors.BLUE_HOVER,
+            size="sm",
         )
         emails_section = build_section(
             "E-mails",
@@ -158,10 +163,12 @@ class AtaForm:
             ], spacing=S.SPACE_2),
         )
         
-        itens_header_btn = ft.IconButton(
+        itens_header_btn = IconAction(
             icon=ft.icons.ADD,
             tooltip="Adicionar item",
             on_click=lambda e: self.add_item(),
+            hover_color=T.colors.BLUE_HOVER,
+            size="sm",
         )
         itens_section = build_section(
             "Itens",
@@ -179,13 +186,13 @@ class AtaForm:
         # Botões responsivos: ocupam toda a largura em telas pequenas
         botoes = ft.ResponsiveRow(
             [
-                secondary_button(
+                SecondaryButton(
                     "Cancelar",
                     on_click=lambda e: self.on_cancel(),
                     expand=True,
                     col={"xs": 12, "md": 6},
                 ),
-                primary_button(
+                PrimaryButton(
                     "Salvar",
                     on_click=self.save_ata,
                     expand=True,
@@ -270,7 +277,7 @@ class AtaForm:
     
     def add_telefone(self, valor: str = ""):
         """Adiciona campo de telefone"""
-        telefone_field = ft.TextField(
+        telefone_field = TextInput(
             label=f"Telefone {len(self.telefones) + 1}",
             hint_text="(XX) XXXXX-XXXX",
             value=valor,
@@ -280,9 +287,12 @@ class AtaForm:
             col={"xs": 10, "md": 11},
         )
 
-        remove_btn = ft.IconButton(
+        remove_btn = IconAction(
             icon=ft.icons.DELETE,
             tooltip="Remover telefone",
+            on_click=None,
+            hover_color=T.colors.RED,
+            size="sm",
             col={"xs": 2, "md": 1},
         )
 
@@ -306,7 +316,7 @@ class AtaForm:
     
     def add_email(self, valor: str = ""):
         """Adiciona campo de e-mail"""
-        email_field = ft.TextField(
+        email_field = TextInput(
             label=f"E-mail {len(self.emails) + 1}",
             hint_text="email@exemplo.com",
             value=valor,
@@ -315,9 +325,12 @@ class AtaForm:
             col={"xs": 10, "md": 11},
         )
 
-        remove_btn = ft.IconButton(
+        remove_btn = IconAction(
             icon=ft.icons.DELETE,
             tooltip="Remover e-mail",
+            on_click=None,
+            hover_color=T.colors.RED,
+            size="sm",
             col={"xs": 2, "md": 1},
         )
 
@@ -341,7 +354,7 @@ class AtaForm:
     
     def add_item(self, item: Optional[Item] = None):
         """Adiciona campos de item"""
-        descricao_field = ft.TextField(
+        descricao_field = TextInput(
             label="Descrição",
             hint_text="Descrição do item",
             value=item.descricao if item else "",
@@ -350,7 +363,7 @@ class AtaForm:
             col={"xs": 12, "md": 5},
         )
 
-        quantidade_field = ft.TextField(
+        quantidade_field = TextInput(
             label="Quantidade",
             hint_text="0",
             value=str(item.quantidade) if item else "",
@@ -359,7 +372,7 @@ class AtaForm:
             col={"xs": 12, "md": 2},
         )
 
-        valor_field = ft.TextField(
+        valor_field = TextInput(
             label="Valor Unitário",
             hint_text="0,00",
             value=f"{item.valor:.2f}".replace(".", ",") if item else "",
@@ -368,9 +381,12 @@ class AtaForm:
             col={"xs": 12, "md": 3},
         )
 
-        remove_btn = ft.IconButton(
+        remove_btn = IconAction(
             icon=ft.icons.DELETE,
             tooltip="Remover item",
+            on_click=None,
+            hover_color=T.colors.RED,
+            size="sm",
             col={"xs": 12, "md": 2},
         )
 

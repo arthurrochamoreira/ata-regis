@@ -22,7 +22,7 @@ from ui.main_view import (
 )
 from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
-from ui.theme.tokens import TOKENS as T
+from theme.tokens import TOKENS as T
 from ui.responsive import get_breakpoint
 
 class AtaApp:

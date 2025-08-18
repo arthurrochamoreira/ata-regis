@@ -2,8 +2,9 @@ import flet as ft
 from datetime import timedelta
 from typing import Callable
 
-from ui.theme.tokens import TOKENS as T
-from .tokens import build_section, primary_button, secondary_button
+from theme.tokens import TOKENS as T
+from components import PrimaryButton, SecondaryButton
+from .tokens import build_section
 
 from models.ata import Ata
 from utils.validators import Formatters
@@ -26,14 +27,14 @@ def build_ata_detail_view(
 
     header_buttons = ft.ResponsiveRow(
         [
-            secondary_button(
+            SecondaryButton(
                 "Voltar",
                 icon=ft.icons.ARROW_BACK_ROUNDED,
                 on_click=on_back,
                 expand=True,
                 col={"xs": 12, "md": 6},
             ),
-            primary_button(
+            PrimaryButton(
                 "Editar",
                 icon=ft.icons.EDIT_OUTLINED,
                 on_click=on_edit,

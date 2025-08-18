@@ -1,9 +1,11 @@
 import flet as ft
+from flet import colors as fcolors
 from typing import Callable, List, Dict, Tuple
 
-from ui.theme.tokens import TOKENS as T
-from .tokens import build_card, primary_button
-from ui.theme.typography import text, text_style
+from theme.tokens import TOKENS as T
+from components import PrimaryButton, IconAction, TextInput
+from .tokens import build_card
+from theme.typography import text, text_style
 from utils.color_utils import get_status_colors
 
 from models.ata import Ata
@@ -47,7 +49,7 @@ def build_header(
 
     actions_row = ft.Row(
         [
-            primary_button(
+            PrimaryButton(
                 "Nova Ata",
                 icon=ft.icons.ADD,
                 on_click=nova_ata_cb,
@@ -141,7 +143,7 @@ def build_filters(
 
 def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft.TextField]:
     """Return a search container and field pre-populated with ``value``."""
-    search_field = ft.TextField(
+    search_field = TextInput(
         hint_text="Buscar atas...",
         prefix_icon=ft.icons.SEARCH,
         on_change=on_change,
@@ -166,7 +168,7 @@ def build_search(on_change: Callable, value: str = "") -> tuple[ft.Container, ft
         border_color=T.colors.GREY_LIGHT,
         focused_border_color=T.colors.FOCUSED_BORDER,
         bgcolor=T.colors.WHITE,
-        hover_color=ft.colors.with_opacity(0.08, T.colors.BLACK),
+        hover_color=fcolors.with_opacity(0.08, T.colors.BLACK),
         content_padding=ft.padding.symmetric(horizontal=T.spacing.SPACE_4, vertical=0),
     )
     return (
@@ -287,32 +289,26 @@ def build_data_table(
 
         actions = ft.Row(
             [
-                ft.IconButton(
+                IconAction(
                     icon=ft.icons.VISIBILITY,
                     tooltip="Visualizar",
                     on_click=lambda e, ata=ata: visualizar_cb(ata),
-                    style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: T.colors.BLUE_HOVER, "": T.colors.TEXT_SECONDARY}
-                    ),
-                    icon_size=T.sizes.ICON_SM,
+                    hover_color=T.colors.BLUE_HOVER,
+                    size="sm",
                 ),
-                ft.IconButton(
+                IconAction(
                     icon=ft.icons.EDIT,
                     tooltip="Editar",
                     on_click=lambda e, ata=ata: editar_cb(ata),
-                    style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: T.colors.YELLOW, "": T.colors.TEXT_SECONDARY}
-                    ),
-                    icon_size=T.sizes.ICON_SM,
+                    hover_color=T.colors.YELLOW,
+                    size="sm",
                 ),
-                ft.IconButton(
+                IconAction(
                     icon=ft.icons.DELETE,
                     tooltip="Excluir",
                     on_click=lambda e, ata=ata: excluir_cb(ata),
-                    style=ft.ButtonStyle(
-                        color={ft.MaterialState.HOVERED: T.colors.RED, "": T.colors.TEXT_SECONDARY}
-                    ),
-                    icon_size=T.sizes.ICON_SM,
+                    hover_color=T.colors.RED,
+                    size="sm",
                 ),
             ],
             spacing=T.spacing.SPACE_3,
@@ -463,8 +459,20 @@ def build_atas_vencimento(
                     ),
                 ], spacing=T.spacing.SPACE_1),
                 ft.Row([
-                    ft.IconButton(icon=ft.icons.VISIBILITY, tooltip="Visualizar", on_click=lambda e, ata=ata: visualizar_cb(ata)),
-                    ft.IconButton(icon=ft.icons.EMAIL, tooltip="Enviar Alerta", on_click=lambda e, ata=ata: alerta_cb(ata)),
+                    IconAction(
+                        icon=ft.icons.VISIBILITY,
+                        tooltip="Visualizar",
+                        on_click=lambda e, ata=ata: visualizar_cb(ata),
+                        hover_color=T.colors.BLUE_HOVER,
+                        size="sm",
+                    ),
+                    IconAction(
+                        icon=ft.icons.EMAIL,
+                        tooltip="Enviar Alerta",
+                        on_click=lambda e, ata=ata: alerta_cb(ata),
+                        hover_color=T.colors.ORANGE,
+                        size="sm",
+                    ),
                 ]),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             padding=ft.padding.all(T.spacing.SPACE_3),

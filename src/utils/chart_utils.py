@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Tuple
 from datetime import date, datetime, timedelta
 
 from models.ata import Ata
-from ui.theme.tokens import TOKENS as T
+from theme.tokens import TOKENS as T
 
 C, S, R = T.colors, T.spacing, T.radius
 
