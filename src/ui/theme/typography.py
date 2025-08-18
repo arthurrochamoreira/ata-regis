@@ -1,9 +1,24 @@
 import flet as ft
 
-# Default sans-serif font family used across the application
-FONT_SANS = "Inter"
+# Default font family used across the application
+FONT_FAMILY = "Inter"
+# Backwards compatibility
+FONT_SANS = FONT_FAMILY
 
-# Text size tokens (TailwindCSS equivalents)
+# ---------------------------------------------------------------------------
+# Typography scale
+# ---------------------------------------------------------------------------
+# Diretrizes de uso:
+# - H1/H2/H3: títulos e seções
+# - BODY: texto corrido
+# - SMALL: legendas e observações
+H1 = {"size": 30, "weight": ft.FontWeight.W_600, "line_height": 1.25}
+H2 = {"size": 24, "weight": ft.FontWeight.W_600, "line_height": 1.25}
+H3 = {"size": 20, "weight": ft.FontWeight.W_600, "line_height": 1.25}
+BODY = {"size": 14, "weight": ft.FontWeight.NORMAL, "line_height": 1.5}
+SMALL = {"size": 12, "weight": ft.FontWeight.NORMAL, "line_height": 1.5}
+
+# Legacy size tokens preserved for compatibility
 TEXT_XL = 20  # text-xl
 TEXT_SM = 14  # text-sm
 
@@ -29,7 +44,7 @@ def text(
     return ft.Text(
         value,
         style=ft.TextStyle(
-            font_family=FONT_SANS,
+            font_family=FONT_FAMILY,
             size=size,
             weight=weight,
             height=line_height,
@@ -49,7 +64,7 @@ def text_style(
 ) -> ft.TextStyle:
     """Return a TextStyle with default font family and given parameters."""
     return ft.TextStyle(
-        font_family=FONT_SANS,
+        font_family=FONT_FAMILY,
         size=size,
         weight=weight,
         height=line_height,
