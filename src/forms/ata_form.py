@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional, Callable
 
 from ui.theme.tokens import TOKENS as T
 colors = T.colors
+C = T.color
 SPACE_1 = T.spacing.SPACE_1
 SPACE_2 = T.spacing.SPACE_2
 SPACE_3 = T.spacing.SPACE_3
@@ -125,8 +126,8 @@ class AtaForm:
         dados_gerais = build_section(
             "Dados Gerais",
             ft.icons.DESCRIPTION_OUTLINED,
-            colors.INDIGO,
-            colors.INDIGO_BG,
+            C.primary,
+            ft.colors.with_opacity(0.15, C.primary),
             dados_gerais_body,
         )
         
@@ -138,8 +139,8 @@ class AtaForm:
         telefones_section = build_section(
             "Telefones",
             ft.icons.PHONE_OUTLINED,
-            colors.TEXT_SECONDARY,
-            colors.GREY_LIGHT,
+            C.muted,
+            C.background,
             ft.Column([
                 ft.Row([
                     telefones_header_btn
@@ -156,8 +157,8 @@ class AtaForm:
         emails_section = build_section(
             "E-mails",
             ft.icons.EMAIL_OUTLINED,
-            colors.TEXT_SECONDARY,
-            colors.GREY_LIGHT,
+            C.muted,
+            C.background,
             ft.Column([
                 ft.Row([
                     emails_header_btn
@@ -174,8 +175,8 @@ class AtaForm:
         itens_section = build_section(
             "Itens",
             ft.icons.LIST_ALT_OUTLINED,
-            colors.INDIGO,
-            colors.INDIGO_BG,
+            C.primary,
+            ft.colors.with_opacity(0.15, C.primary),
             ft.Column([
                 ft.Row([
                     itens_header_btn
@@ -215,9 +216,9 @@ class AtaForm:
                             "Ata de Registro de Preços",
                             size=30,
                             weight=ft.FontWeight.BOLD,
-                            color=colors.TEXT_DARK,
+                            color=C.text,
                         ),
-                        ft.Text(titulo, size=16, color=colors.TEXT_SECONDARY),
+                        ft.Text(titulo, size=16, color=C.muted),
                     ],
                 )
             ],
@@ -233,7 +234,7 @@ class AtaForm:
 
         card = ft.Container(
             content=ft.Column([header, content], spacing=SPACE_6, expand=True),
-            bgcolor=colors.WHITE,
+            bgcolor=C.surface,
             padding=ft.padding.only(
                 left=SPACE_5,
                 right=SPACE_5,
