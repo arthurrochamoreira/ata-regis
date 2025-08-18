@@ -246,8 +246,13 @@ class AtaApp:
             self.excluir_ata,
             filtros=list(self.filtros_status) if self.filtros_status else None,
         )
-        self.grouped_tables.content = new_table.content
-        self.page.update()
+        # Replace entire grouped tables container so that any filter or
+        # sorting change is immediately reflected on screen. Assigning the
+        # inner content only wouldn't trigger a proper refresh of the
+        # control and the user wouldn't see any update when clicking the
+        # "Filtrar" or "Ordenar" buttons.
+        self.grouped_tables.content = new_table
+        self.grouped_tables.update()
 
     def sort_atas(self, atas):
         if self.sort_key == "mais_recente":
