@@ -436,7 +436,7 @@ def build_stats_panel(ata_service) -> ft.Container:
     bars = MonthlyBarChart(monthly_counts)
     bars.col = {"xs": 12, "md": 6}
 
-    cards_row = ft.ResponsiveRow(cards, columns=12, spacing=T.spacing.SPACE_4, run_spacing=T.spacing.SPACE_4, expand=True)
+    cards_row = ft.ResponsiveRow(cards, columns=12, spacing=T.spacing.SPACE_4, run_spacing=T.spacing.SPACE_4)
     charts_row = ft.ResponsiveRow([donut, bars], columns=12, spacing=T.spacing.SPACE_4, run_spacing=T.spacing.SPACE_4, expand=True)
 
     return ft.Container(
