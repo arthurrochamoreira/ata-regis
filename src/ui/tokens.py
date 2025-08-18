@@ -1,15 +1,12 @@
 from .theme.spacing import (
-    SPACE_1,
     SPACE_2,
     SPACE_3,
     SPACE_4,
     SPACE_5,
-    SPACE_6,
 )
 from .theme.shadows import SHADOW_MD
 from .theme.typography import (
     text,
-    text_style,
     H2,
     H3,
     BUTTON,
@@ -21,7 +18,7 @@ from typing import Callable, Optional
 
 
 def primary_button(
-    text: str,
+    label: str,
     *,
     icon: Optional[str] = None,
     on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
@@ -34,22 +31,31 @@ def primary_button(
     responsive inside ``ResponsiveRow`` containers.
     """
 
+    label_control = text(label, **BUTTON, color=colors.SEM.surface)
+
+    if icon:
+        content = ft.Row(
+            [ft.Icon(icon, color=colors.SEM.surface), label_control],
+            spacing=SPACE_2,
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+    else:
+        content = label_control
+
     return ft.ElevatedButton(
-        text=text,
-        icon=icon,
+        content=content,
         on_click=on_click,
         bgcolor=colors.SEM.primary,
-        color=colors.SEM.surface,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=9999),
-            text_style=text_style(**BUTTON, color=colors.SEM.surface),
         ),
         **kwargs,
     )
 
 
 def secondary_button(
-    text: str,
+    label: str,
     *,
     icon: Optional[str] = None,
     on_click: Optional[Callable[[ft.ControlEvent], None]] = None,
@@ -61,14 +67,23 @@ def secondary_button(
     responsive parameters like ``expand`` or ``col``.
     """
 
+    label_control = text(label, **BUTTON, color=colors.SEM.text)
+
+    if icon:
+        content = ft.Row(
+            [ft.Icon(icon, color=colors.SEM.text), label_control],
+            spacing=SPACE_2,
+            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+    else:
+        content = label_control
+
     return ft.OutlinedButton(
-        text=text,
-        icon=icon,
+        content=content,
         on_click=on_click,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=9999),
-            text_style=text_style(**BUTTON, color=colors.SEM.text),
-            color=colors.SEM.text,
             side=ft.BorderSide(1, colors.SEM.border),
         ),
         **kwargs,
