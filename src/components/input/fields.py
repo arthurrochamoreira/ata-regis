@@ -17,10 +17,13 @@ def TextInput(
 ) -> ft.TextField:
     """Text input field with shared styling."""
     merged_kwargs = {**style.field_style(), **kwargs}
+    merged_kwargs.setdefault(
+        "content_padding",
+        ft.padding.symmetric(horizontal=S.SPACE_3, vertical=S.SPACE_2),
+    )
     return ft.TextField(
         label=label,
         on_change=on_change,
-        content_padding=ft.padding.symmetric(horizontal=S.SPACE_3, vertical=S.SPACE_2),
         **merged_kwargs,
     )
 
@@ -34,10 +37,13 @@ def SelectInput(
 ) -> ft.Dropdown:
     """Dropdown select input."""
     merged_kwargs = {**style.field_style(), **kwargs}
+    merged_kwargs.setdefault(
+        "content_padding",
+        ft.padding.symmetric(horizontal=S.SPACE_3, vertical=S.SPACE_2),
+    )
     return ft.Dropdown(
         options=options,
         on_change=on_change,
         label=label,
-        content_padding=ft.padding.symmetric(horizontal=S.SPACE_3, vertical=S.SPACE_2),
         **merged_kwargs,
     )
