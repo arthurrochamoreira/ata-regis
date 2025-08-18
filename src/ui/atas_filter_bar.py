@@ -307,7 +307,7 @@ class AtasFilterBar(ft.UserControl):
         for key, btn in self.sort_buttons.items():
             selected = self.state["sort"] == key
             btn.style = ft.ButtonStyle(
-                bgcolor={ft.ControlState.DEFAULT: C.PRIMARY if selected else C.SURFACE},
-                color={ft.ControlState.DEFAULT: ft.colors.WHITE if selected else C.TEXT_PRIMARY},
+                bgcolor={ft.MaterialState.DEFAULT: C.PRIMARY if selected else C.SURFACE},
+                color={ft.MaterialState.DEFAULT: ft.colors.WHITE if selected else C.TEXT_PRIMARY},
             )
             btn.update()
