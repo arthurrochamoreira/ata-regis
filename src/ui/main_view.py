@@ -20,7 +20,33 @@ from utils.color_utils import get_status_colors
 from models.ata import Ata
 from utils.validators import Formatters
 
-from ui.dashboard_tokens import STATUS_INFO
+
+STATUS_INFO = {
+    "vigente": {
+        "title": "Atas Vigentes",
+        "filter": "Vigentes",
+        "icon": ft.icons.CHECK_CIRCLE,
+        "icon_color": C.SUCCESS_TEXT,
+        "icon_bg": C.SUCCESS_BG,
+        "button_color": C.SUCCESS_TEXT,
+    },
+    "a_vencer": {
+        "title": "Atas a Vencer",
+        "filter": "A Vencer",
+        "icon": ft.icons.WARNING_AMBER_ROUNDED,
+        "icon_color": C.WARNING_TEXT,
+        "icon_bg": C.WARNING_BG,
+        "button_color": C.WARNING_TEXT,
+    },
+    "vencida": {
+        "title": "Atas Vencidas",
+        "filter": "Vencidas",
+        "icon": ft.icons.CANCEL,
+        "icon_color": C.ERROR_TEXT,
+        "icon_bg": C.ERROR_BG,
+        "button_color": C.ERROR_TEXT,
+    },
+}
 
 
 def build_header(nova_ata_cb: Callable) -> ft.AppBar:
