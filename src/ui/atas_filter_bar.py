@@ -122,22 +122,24 @@ class AtasFilterBar(ft.UserControl):
         )
 
         # Overlay for outside clicks
-        self.overlay = ft.Positioned(
+        self.overlay = ft.Container(
             left=0,
             right=0,
             top=0,
             bottom=0,
-            content=ft.Container(on_click=lambda e: self._close_menus()),
+            content=ft.Container(
+                expand=True, on_click=lambda e: self._close_menus()
+            ),
             visible=False,
         )
 
-        self.filter_dropdown = ft.Positioned(
+        self.filter_dropdown = ft.Container(
             top=70,
             left=0,
             content=self._build_filter_menu(),
             visible=False,
         )
-        self.sort_dropdown = ft.Positioned(
+        self.sort_dropdown = ft.Container(
             top=70,
             left=160,
             content=self._build_sort_menu(),
