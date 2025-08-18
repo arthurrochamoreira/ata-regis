@@ -7,7 +7,57 @@ from theme.tokens import TOKENS as T
 from theme import colors as C
 from components import PrimaryButton, SecondaryButton
 
-S, SH = T.spacing, T.shadows
+S, SH, R = T.spacing, T.shadows, T.radius
+
+# Secondary button style shared by filter and sort triggers
+SECONDARY_BUTTON_STYLE = ft.ButtonStyle(
+    shape=ft.RoundedRectangleBorder(radius=R.RADIUS_XL),
+    padding=ft.padding.symmetric(horizontal=S.SPACE_4, vertical=S.SPACE_2),
+    bgcolor={
+        ft.ControlState.DEFAULT: C.SURFACE,
+        ft.ControlState.HOVERED: C.BG_APP,
+        ft.ControlState.PRESSED: C.SURFACE,
+        ft.ControlState.FOCUSED: C.SURFACE,
+    },
+    side={
+        ft.ControlState.DEFAULT: ft.BorderSide(1, C.BORDER),
+        ft.ControlState.HOVERED: ft.BorderSide(1, C.PRIMARY),
+        ft.ControlState.FOCUSED: ft.BorderSide(2, C.FOCUS_RING),
+    },
+    color={
+        ft.ControlState.DEFAULT: C.TEXT_PRIMARY,
+        ft.ControlState.HOVERED: C.TEXT_PRIMARY,
+        ft.ControlState.DISABLED: C.TEXT_SECONDARY,
+    },
+)
+
+
+def FilterTriggerButton(active_count: int, on_click):
+    label = f"Filtrar ({active_count})" if active_count else "Filtrar"
+    return ft.OutlinedButton(
+        height=40,
+        style=SECONDARY_BUTTON_STYLE,
+        content=ft.Row(
+            [ft.Icon(ft.icons.FILTER_ALT, size=18), ft.Text(label, weight=ft.FontWeight.W_500)],
+            spacing=S.SPACE_2,
+            tight=True,
+        ),
+        on_click=on_click,
+    )
+
+
+def SortTriggerButton(current_label: str | None, on_click):
+    text = f"Ordenar: {current_label}" if current_label else "Ordenar"
+    return ft.OutlinedButton(
+        height=40,
+        style=SECONDARY_BUTTON_STYLE,
+        content=ft.Row(
+            [ft.Icon(ft.icons.SORT, size=18), ft.Text(text, weight=ft.FontWeight.W_500)],
+            spacing=S.SPACE_2,
+            tight=True,
+        ),
+        on_click=on_click,
+    )
 
 
 def recalc_todas(filters: Dict[str, bool]) -> bool:
@@ -172,16 +222,16 @@ class AtasFilterBar(ft.UserControl):
             shadow=SH.SHADOW_MD,
         )
 
-        self.filter_label_text = ft.Text(self._filter_label())
-        content = ft.Row(
-            [ft.Icon(ft.icons.TUNE), self.filter_label_text],
-            spacing=S.SPACE_2,
-            alignment=ft.MainAxisAlignment.CENTER,
-        )
-        return ft.PopupMenuButton(
-            content=content,
-            items=[ft.PopupMenuItem(content=container)],
-        )
+        popup = ft.PopupMenuButton(items=[ft.PopupMenuItem(content=container)])
+
+        def open_menu(e: ft.ControlEvent) -> None:
+            popup.open = True
+            popup.update()
+
+        trigger = FilterTriggerButton(count_specific(self.state["filters"]), open_menu)
+        self.filter_label_text = trigger.content.controls[1]
+        popup.content = trigger
+        return popup
 
     def _build_sort_menu_button(self) -> ft.PopupMenuButton:
         self.sort_options = {
@@ -190,16 +240,17 @@ class AtasFilterBar(ft.UserControl):
             "valor_maior": "Maior valor",
             "valor_menor": "Menor valor",
         }
-        self.sort_label_text = ft.Text(self._sort_label())
-        content = ft.Row(
-            [ft.Icon(ft.icons.SORT), self.sort_label_text],
-            spacing=S.SPACE_2,
-            alignment=ft.MainAxisAlignment.CENTER,
-        )
-        return ft.PopupMenuButton(
-            content=content,
-            items=self._build_sort_menu_items(),
-        )
+        popup = ft.PopupMenuButton(items=self._build_sort_menu_items())
+
+        def open_menu(e: ft.ControlEvent) -> None:
+            popup.open = True
+            popup.update()
+
+        current_label = self.sort_options.get(self.state["sort"])
+        trigger = SortTriggerButton(current_label, open_menu)
+        self.sort_label_text = trigger.content.controls[1]
+        popup.content = trigger
+        return popup
 
     def _build_sort_menu_items(self) -> List[ft.PopupMenuItem]:
         items: List[ft.PopupMenuItem] = []
