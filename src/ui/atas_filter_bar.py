@@ -205,9 +205,14 @@ class AtasFilterBar(ft.UserControl):
         items: List[ft.PopupMenuItem] = []
         for key, label in self.sort_options.items():
             checked = self.state["sort"] == key
-            icon = ft.Icon(ft.icons.CHECK, size=16) if checked else None
+            icon = ft.Icon(ft.icons.CHECK, size=16) if checked else ft.Container(width=16)
             row = ft.Row([ft.Text(label), ft.Container(expand=True), icon])
-            items.append(ft.PopupMenuItem(content=row, on_click=lambda e, k=key: self._on_sort_select(k)))
+            items.append(
+                ft.PopupMenuItem(
+                    content=row,
+                    on_click=lambda e, k=key: self._on_sort_select(k),
+                )
+            )
         return items
 
     # ------------------------------------------------------------------
