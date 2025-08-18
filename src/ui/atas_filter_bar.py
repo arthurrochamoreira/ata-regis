@@ -6,6 +6,7 @@ import flet as ft
 from theme.tokens import TOKENS as T
 from theme import colors as C
 from components import PrimaryButton, SecondaryButton
+from components.button import style as button_style
 
 S, SH = T.spacing, T.shadows
 
@@ -43,7 +44,6 @@ class AtasFilterBar(ft.UserControl):
         self.on_filters_change_cb = on_filters_change
         self.on_sort_change_cb = on_sort_change
         # state holds search text, checkbox states and current sort option
-        # visibility of dropdowns is controlled via ``ft.Ref`` objects
         self.state: Dict[str, any] = {
             "search": search,
             "filters": {
@@ -78,16 +78,8 @@ class AtasFilterBar(ft.UserControl):
             expand=True,
         )
 
-        self.filter_button = SecondaryButton(
-            text=self._filter_label(),
-            icon=ft.icons.TUNE,
-            on_click=self._toggle_filter_menu,
-        )
-        self.sort_button = SecondaryButton(
-            text="Ordenar",
-            icon=ft.icons.SORT,
-            on_click=self._toggle_sort_menu,
-        )
+        self.filter_button = self._build_filter_menu_button()
+        self.sort_button = self._build_sort_menu_button()
 
         buttons_row = ft.Row(
             [self.filter_button, self.sort_button],
@@ -122,43 +114,12 @@ class AtasFilterBar(ft.UserControl):
             expand=True,
         )
 
-        # Refs to control visibility of overlay and dropdown menus
-        self.ref_click_out_overlay: ft.Ref[ft.Container] = ft.Ref()
-        self.ref_filter_menu: ft.Ref[ft.Container] = ft.Ref()
-        self.ref_sort_menu: ft.Ref[ft.Container] = ft.Ref()
-
-        overlay = ft.Container(
-            ref=self.ref_click_out_overlay,
-            expand=True,
-            bgcolor=ft.colors.TRANSPARENT,
-            visible=False,
-            on_click=lambda e: self._close_menus(),
-        )
-
-        filter_dropdown = ft.Container(
-            ref=self.ref_filter_menu,
-            top=70,
-            left=0,
-            content=self._build_filter_menu(),
-            visible=False,
-        )
-        sort_dropdown = ft.Container(
-            ref=self.ref_sort_menu,
-            top=70,
-            left=160,
-            content=self._build_sort_menu(),
-            visible=False,
-        )
-
-        return ft.Stack(
-            [card, overlay, filter_dropdown, sort_dropdown],
-            expand=True,
-        )
+        return card
 
     # ------------------------------------------------------------------
     # UI builders
     # ------------------------------------------------------------------
-    def _build_filter_menu(self) -> ft.Container:
+    def _build_filter_menu_button(self) -> ft.PopupMenuButton:
         self.cb_todas = ft.Checkbox(
             label="Todas",
             value=self.state["filters"]["todas"],
@@ -189,14 +150,20 @@ class AtasFilterBar(ft.UserControl):
             spacing=S.SPACE_3,
         )
 
-        content = ft.Column(
-            [self.cb_todas, self.cb_vigente, self.cb_a_vencer, self.cb_vencida, footer],
+        column = ft.Column(
+            [
+                self.cb_todas,
+                self.cb_vigente,
+                self.cb_a_vencer,
+                self.cb_vencida,
+                footer,
+            ],
             spacing=S.SPACE_2,
-        )
-
-        return ft.Container(
-            content,
+            tight=True,
             width=300,
+        )
+        container = ft.Container(
+            column,
             padding=S.SPACE_3,
             bgcolor=C.SURFACE,
             border=ft.border.all(1, C.BORDER),
@@ -204,68 +171,39 @@ class AtasFilterBar(ft.UserControl):
             shadow=SH.SHADOW_MD,
         )
 
-    def _build_sort_menu(self) -> ft.Container:
-        options = [
-            ("mais_recente", "Mais recentes"),
-            ("mais_antiga", "Mais antigas"),
-            ("valor_maior", "Maior valor"),
-            ("valor_menor", "Menor valor"),
-        ]
-        self.sort_buttons: Dict[str, ft.TextButton] = {}
-        buttons: List[ft.Control] = []
-        for key, label in options:
-            btn = ft.TextButton(label, on_click=lambda e, k=key: self._on_sort_select(k))
-            self.sort_buttons[key] = btn
-            buttons.append(btn)
-        self._update_sort_buttons()
-        return ft.Container(
-            ft.Column(buttons, spacing=S.SPACE_1),
-            width=220,
-            padding=S.SPACE_3,
-            bgcolor=C.SURFACE,
-            border=ft.border.all(1, C.BORDER),
-            border_radius=T.radius.RADIUS_LG,
-            shadow=SH.SHADOW_MD,
+        return ft.PopupMenuButton(
+            icon=ft.icons.TUNE,
+            text=self._filter_label(),
+            items=[ft.PopupMenuItem(content=container)],
+            style=button_style.secondary("md"),
         )
+
+    def _build_sort_menu_button(self) -> ft.PopupMenuButton:
+        self.sort_options = {
+            "mais_recente": "Mais recentes",
+            "mais_antiga": "Mais antigas",
+            "valor_maior": "Maior valor",
+            "valor_menor": "Menor valor",
+        }
+        return ft.PopupMenuButton(
+            icon=ft.icons.SORT,
+            text=self._sort_label(),
+            items=self._build_sort_menu_items(),
+            style=button_style.secondary("md"),
+        )
+
+    def _build_sort_menu_items(self) -> List[ft.PopupMenuItem]:
+        items: List[ft.PopupMenuItem] = []
+        for key, label in self.sort_options.items():
+            checked = self.state["sort"] == key
+            icon = ft.Icon(ft.icons.CHECK, size=16) if checked else None
+            row = ft.Row([ft.Text(label), ft.Container(expand=True), icon])
+            items.append(ft.PopupMenuItem(content=row, on_click=lambda e, k=key: self._on_sort_select(k)))
+        return items
 
     # ------------------------------------------------------------------
     # Event handlers
     # ------------------------------------------------------------------
-    def _toggle_filter_menu(self, e: ft.ControlEvent) -> None:
-        """Open/close filter dropdown, hiding others."""
-        filter_menu = self.ref_filter_menu.current
-        overlay = self.ref_click_out_overlay.current
-        sort_menu = self.ref_sort_menu.current
-        if filter_menu.visible:
-            self._close_menus()
-            return
-        overlay.visible = True
-        filter_menu.visible = True
-        sort_menu.visible = False
-        self.update()
-
-    def _toggle_sort_menu(self, e: ft.ControlEvent) -> None:
-        """Open/close sort dropdown, hiding filter dropdown."""
-        sort_menu = self.ref_sort_menu.current
-        overlay = self.ref_click_out_overlay.current
-        filter_menu = self.ref_filter_menu.current
-        if sort_menu.visible:
-            self._close_menus()
-            return
-        overlay.visible = True
-        sort_menu.visible = True
-        filter_menu.visible = False
-        self.update()
-
-    def _close_menus(self, e: Optional[ft.ControlEvent] = None) -> None:
-        overlay = self.ref_click_out_overlay.current
-        filter_menu = self.ref_filter_menu.current
-        sort_menu = self.ref_sort_menu.current
-        overlay.visible = False
-        filter_menu.visible = False
-        sort_menu.visible = False
-        self.update()
-
     def _on_search_change(self, e: ft.ControlEvent) -> None:
         query = e.control.value
         self.state["search"] = query
@@ -314,29 +252,26 @@ class AtasFilterBar(ft.UserControl):
             self.state["filters"][k] = False
         self._sync_checkboxes()
         self._update_filter_label()
+        if self.on_filters_change_cb:
+            self.on_filters_change_cb([])
 
     def _on_filter_apply(self, e: ft.ControlEvent) -> None:
         active = specific_active(self.state["filters"])
-        self._close_menus()
+        self.filter_button.open = False
+        self.filter_button.text = self._filter_label()
+        self.filter_button.update()
         if self.on_filters_change_cb:
             self.on_filters_change_cb(active)
 
     def _on_sort_select(self, key: str) -> None:
         self.state["sort"] = key
-        self._update_sort_buttons()
-        self._close_menus()
+        self.sort_button.items = self._build_sort_menu_items()
+        self.sort_button.text = self._sort_label()
+        self.sort_button.open = False
+        self.sort_button.update()
         if self.on_sort_change_cb:
             self.on_sort_change_cb(key)
 
-    def _update_sort_buttons(self) -> None:
-        for key, btn in self.sort_buttons.items():
-            selected = self.state["sort"] == key
-            btn.style = ft.ButtonStyle(
-                bgcolor={ft.MaterialState.DEFAULT: C.PRIMARY if selected else C.SURFACE},
-                color={ft.MaterialState.DEFAULT: ft.colors.WHITE if selected else C.TEXT_PRIMARY},
-            )
-            # Buttons might be styled before being added to the page.
-            # ``Control.update`` requires the control to be attached to a page,
-            # so we only call ``update`` when the button is already mounted.
-            if btn.page:
-                btn.update()
+    def _sort_label(self) -> str:
+        label = self.sort_options.get(self.state["sort"], "")
+        return "Ordenar" if not label else f"Ordenar: {label}"
