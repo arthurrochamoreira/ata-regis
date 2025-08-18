@@ -4,15 +4,8 @@ from datetime import date, datetime, timedelta
 
 from models.ata import Ata
 from ui.theme.tokens import TOKENS as T
-theme_colors = T.colors
-SPACE_1 = T.spacing.SPACE_1
-SPACE_2 = T.spacing.SPACE_2
-SPACE_3 = T.spacing.SPACE_3
-SPACE_4 = T.spacing.SPACE_4
-SPACE_5 = T.spacing.SPACE_5
-SPACE_6 = T.spacing.SPACE_6
-RADIUS_XS = T.radius.RADIUS_XS
-RADIUS_MD = T.radius.RADIUS_MD
+
+C, S, R = T.colors, T.spacing, T.radius
 
 class ChartUtils:
     """Utilitários para criação de gráficos e visualizações"""
@@ -32,9 +25,9 @@ class ChartUtils:
         
         # Cores para cada status
         colors = {
-            "vigente": T.colors.GREEN,
-            "a_vencer": T.colors.ORANGE,
-            "vencida": T.colors.RED,
+            "vigente": C.GREEN,
+            "a_vencer": C.ORANGE,
+            "vencida": C.RED,
         }
         
         # Cria seções do gráfico
@@ -50,7 +43,7 @@ class ChartUtils:
                         radius=60,
                         title_style=ft.TextStyle(
                             size=12,
-                            color=theme_colors.TEXT_ON_DARK,
+                            color=C.TEXT_ON_DARK,
                             weight=ft.FontWeight.BOLD,
                         ),
                     )
@@ -74,9 +67,9 @@ class ChartUtils:
         
         # Ícones e cores para cada status
         status_info = {
-            "vigente": {"icon": "✅", "color": T.colors.GREEN, "label": "Vigentes"},
-            "a_vencer": {"icon": "⚠️", "color": T.colors.ORANGE, "label": "A Vencer"},
-            "vencida": {"icon": "❌", "color": T.colors.RED, "label": "Vencidas"},
+            "vigente": {"icon": "✅", "color": C.GREEN, "label": "Vigentes"},
+            "a_vencer": {"icon": "⚠️", "color": C.ORANGE, "label": "A Vencer"},
+            "vencida": {"icon": "❌", "color": C.RED, "label": "Vencidas"},
         }
         
         legend_items = []
@@ -86,17 +79,17 @@ class ChartUtils:
             
             item = ft.Row([
                 ft.Container(
-                    width=SPACE_4,
-                    height=SPACE_4,
+                    width=S.SPACE_4,
+                    height=S.SPACE_4,
                     bgcolor=info["color"],
-                    border_radius=RADIUS_XS,
+                    border_radius=R.RADIUS_XS,
                 ),
                 ft.Text(f"{info['icon']} {info['label']}: {count} ({percentage:.1f}%)")
-            ], spacing=SPACE_2)
+            ], spacing=S.SPACE_2)
             
             legend_items.append(item)
         
-        return ft.Column(legend_items, spacing=SPACE_2)
+        return ft.Column(legend_items, spacing=S.SPACE_2)
     
     @staticmethod
     def create_monthly_chart(atas: List[Ata]) -> ft.Container:
@@ -128,11 +121,11 @@ class ChartUtils:
             
             # Cor da barra baseada no status predominante
             if data["vencida"] > 0:
-                bar_color = T.colors.RED_200
+                bar_color = C.RED_200
             elif data["a_vencer"] > 0:
-                bar_color = T.colors.ORANGE_200
+                bar_color = C.ORANGE_200
             else:
-                bar_color = T.colors.GREEN_200
+                bar_color = C.GREEN_200
             
             bar = ft.Container(
                 content=ft.Column([
@@ -140,12 +133,12 @@ class ChartUtils:
                         width=30,
                         height=bar_height,
                         bgcolor=bar_color,
-                        border_radius=RADIUS_XS,
+                        border_radius=R.RADIUS_XS,
                         tooltip=f"{month}: {total} atas"
                     ),
                     ft.Text(month, size=10, text_align=ft.TextAlign.CENTER)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                padding=ft.padding.all(SPACE_1)
+                padding=ft.padding.all(S.SPACE_1)
             )
             bars.append(bar)
         
@@ -153,10 +146,10 @@ class ChartUtils:
             content=ft.Column([
                 ft.Text("Vencimentos por Mês", size=14, weight=ft.FontWeight.BOLD),
                 ft.Row(bars, alignment=ft.MainAxisAlignment.SPACE_AROUND)
-            ], spacing=SPACE_4),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.OUTLINE),
-            border_radius=RADIUS_MD
+            ], spacing=S.SPACE_4),
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.OUTLINE),
+            border_radius=R.RADIUS_MD
         )
     
     @staticmethod
@@ -173,15 +166,15 @@ class ChartUtils:
         if total_value == 0:
             return ft.Container(
                 content=ft.Text("Nenhum valor cadastrado"),
-                padding=ft.padding.all(SPACE_4)
+                padding=ft.padding.all(S.SPACE_4)
             )
         
         # Cria barras horizontais
         bars = []
         colors = {
-            "vigente": T.colors.GREEN,
-            "a_vencer": T.colors.ORANGE,
-            "vencida": T.colors.RED,
+            "vigente": C.GREEN,
+            "a_vencer": C.ORANGE,
+            "vencida": C.RED,
         }
         
         labels = {
@@ -205,11 +198,11 @@ class ChartUtils:
                             width=bar_width,
                             height=20,
                             bgcolor=colors[status],
-                            border_radius=RADIUS_XS
+                            border_radius=R.RADIUS_XS
                         ),
                         ft.Text(f"{percentage:.1f}% ({value_formatted})", size=12)
-                    ], spacing=SPACE_2, alignment=ft.MainAxisAlignment.START),
-                    margin=ft.margin.only(bottom=SPACE_2)
+                    ], spacing=S.SPACE_2, alignment=ft.MainAxisAlignment.START),
+                    margin=ft.margin.only(bottom=S.SPACE_2)
                 )
                 bars.append(bar)
         
@@ -219,13 +212,13 @@ class ChartUtils:
                 ft.Text(
                     f"Total: R$ {total_value:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
                     size=12,
-                    color=theme_colors.TEXT_LABEL,
+                    color=C.TEXT_LABEL,
                 ),
                 ft.Column(bars, spacing=0)
-            ], spacing=SPACE_4),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.OUTLINE),
-            border_radius=RADIUS_MD
+            ], spacing=S.SPACE_4),
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.OUTLINE),
+            border_radius=R.RADIUS_MD
         )
     
     @staticmethod
@@ -234,16 +227,16 @@ class ChartUtils:
         if not atas_vencimento:
             return ft.Container(
                 content=ft.Row([
-                    ft.Icon(ft.icons.CHECK_CIRCLE, color=theme_colors.TEXT_SUCCESS, size=24),
+                    ft.Icon(ft.icons.CHECK_CIRCLE, color=C.TEXT_SUCCESS, size=24),
                     ft.Text(
                         "Nenhuma ata próxima do vencimento",
-                        color=theme_colors.TEXT_SUCCESS,
+                        color=C.TEXT_SUCCESS,
                     ),
-                ], spacing=SPACE_2),
-                padding=ft.padding.all(SPACE_4),
-                border=ft.border.all(1, theme_colors.TEXT_SUCCESS),
-                border_radius=RADIUS_MD,
-                bgcolor=T.colors.GREEN_50,
+                ], spacing=S.SPACE_2),
+                padding=ft.padding.all(S.SPACE_4),
+                border=ft.border.all(1, C.TEXT_SUCCESS),
+                border_radius=R.RADIUS_MD,
+                bgcolor=C.GREEN_50,
             )
         
         # Classifica por urgência
@@ -253,18 +246,18 @@ class ChartUtils:
         
         # Determina cor e ícone baseado na urgência
         if urgente > 0:
-            color = theme_colors.TEXT_ERROR
-            bgcolor = T.colors.RED_50
+            color = C.TEXT_ERROR
+            bgcolor = C.RED_50
             icon = ft.icons.ERROR
             message = f"🚨 {urgente} ata(s) vencendo em 7 dias ou menos!"
         elif atencao > 0:
-            color = theme_colors.TEXT_WARNING
-            bgcolor = T.colors.ORANGE_50
+            color = C.TEXT_WARNING
+            bgcolor = C.ORANGE_50
             icon = ft.icons.WARNING
             message = f"⚠️ {atencao} ata(s) vencendo em 30 dias ou menos!"
         else:
-            color = theme_colors.TEXT_INFO
-            bgcolor = T.colors.BLUE_50
+            color = C.TEXT_INFO
+            bgcolor = C.BLUE_50
             icon = ft.icons.INFO
             message = f"ℹ️ {alerta} ata(s) vencendo em 90 dias ou menos"
         
@@ -274,11 +267,11 @@ class ChartUtils:
                 ft.Column([
                     ft.Text(message, weight=ft.FontWeight.BOLD, color=color),
                     ft.Text(f"Total de atas monitoradas: {len(atas_vencimento)}", size=12)
-                ], spacing=SPACE_1)
-            ], spacing=SPACE_2),
-            padding=ft.padding.all(SPACE_4),
+                ], spacing=S.SPACE_1)
+            ], spacing=S.SPACE_2),
+            padding=ft.padding.all(S.SPACE_4),
             border=ft.border.all(1, color),
-            border_radius=RADIUS_MD,
+            border_radius=R.RADIUS_MD,
             bgcolor=bgcolor
         )
     
@@ -296,7 +289,7 @@ class ChartUtils:
                     ft.Text(
                         "Total de Atas",
                         size=12,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -304,18 +297,18 @@ class ChartUtils:
                     ft.Text(
                         "cadastradas",
                         size=10,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=SPACE_1,
+                spacing=S.SPACE_1,
             ),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.OUTLINE),
-            border_radius=RADIUS_MD,
-            bgcolor=T.colors.SURFACE_VARIANT,
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.OUTLINE),
+            border_radius=R.RADIUS_MD,
+            bgcolor=C.SURFACE_VARIANT,
             width=160,
         )
         cards.append(card_total)
@@ -328,7 +321,7 @@ class ChartUtils:
                     ft.Text(
                         "Valor Total",
                         size=12,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -336,18 +329,18 @@ class ChartUtils:
                     ft.Text(
                         "em atas",
                         size=10,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=SPACE_1,
+                spacing=S.SPACE_1,
             ),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.OUTLINE),
-            border_radius=RADIUS_MD,
-            bgcolor=T.colors.SURFACE_VARIANT,
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.OUTLINE),
+            border_radius=R.RADIUS_MD,
+            bgcolor=C.SURFACE_VARIANT,
             width=160,
         )
         cards.append(card_value)
@@ -360,7 +353,7 @@ class ChartUtils:
                     ft.Text(
                         "Vigentes",
                         size=12,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -368,23 +361,23 @@ class ChartUtils:
                         str(stats["vigente"]),
                         size=24,
                         weight=ft.FontWeight.BOLD,
-                        color=theme_colors.TEXT_SUCCESS,
+                        color=C.TEXT_SUCCESS,
                     ),
                     ft.Text(
                         f"{vigentes_pct:.1f}%",
                         size=10,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=SPACE_1,
+                spacing=S.SPACE_1,
             ),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.GREEN),
-            border_radius=RADIUS_MD,
-            bgcolor=T.colors.GREEN_50,
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.GREEN),
+            border_radius=R.RADIUS_MD,
+            bgcolor=C.GREEN_50,
             width=160,
         )
         cards.append(card_vigentes)
@@ -397,7 +390,7 @@ class ChartUtils:
                     ft.Text(
                         "A Vencer",
                         size=12,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
@@ -405,26 +398,26 @@ class ChartUtils:
                         str(stats["a_vencer"]),
                         size=24,
                         weight=ft.FontWeight.BOLD,
-                        color=theme_colors.TEXT_WARNING,
+                        color=C.TEXT_WARNING,
                     ),
                     ft.Text(
                         f"{vencer_pct:.1f}%",
                         size=10,
-                        color=theme_colors.TEXT_LABEL,
+                        color=C.TEXT_LABEL,
                         max_lines=1,
                         overflow=ft.TextOverflow.ELLIPSIS,
                     ),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=SPACE_1,
+                spacing=S.SPACE_1,
             ),
-            padding=ft.padding.all(SPACE_4),
-            border=ft.border.all(1, T.colors.ORANGE),
-            border_radius=RADIUS_MD,
-            bgcolor=T.colors.ORANGE_50,
+            padding=ft.padding.all(S.SPACE_4),
+            border=ft.border.all(1, C.ORANGE),
+            border_radius=R.RADIUS_MD,
+            bgcolor=C.ORANGE_50,
             width=160,
         )
         cards.append(card_vencer)
 
-        return ft.Row(cards, spacing=SPACE_4, alignment=ft.MainAxisAlignment.SPACE_EVENLY)
+        return ft.Row(cards, spacing=S.SPACE_4, alignment=ft.MainAxisAlignment.SPACE_EVENLY)
 

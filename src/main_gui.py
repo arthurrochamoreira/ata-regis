@@ -22,10 +22,8 @@ from ui.main_view import (
 )
 from ui.sidebar import Sidebar
 from ui import build_ata_detail_view
-from ui.theme.spacing import SPACE_4, SPACE_5
+from ui.theme.tokens import TOKENS as T
 from ui.responsive import get_breakpoint
-from ui.theme.typography import FONT_SANS
-from ui.theme import colors
 
 class AtaApp:
     def __init__(self, page: ft.Page):
@@ -55,9 +53,9 @@ class AtaApp:
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Remove outer page padding to ensure consistent gutter handled by body container
         self.page.padding = 0
-        self.page.bgcolor = colors.PAGE_BG
-        self.page.fonts = {FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
-        self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=FONT_SANS)
+        self.page.bgcolor = T.colors.PAGE_BG
+        self.page.fonts = {T.typography.FONT_SANS: "https://fonts.gstatic.com/s/inter/v7/Inter-Regular.ttf"}
+        self.page.theme = ft.Theme(color_scheme_seed="blue", font_family=T.typography.FONT_SANS)
         self.page.on_resize = self.on_page_resize
     
     def build_ui(self):
@@ -102,7 +100,7 @@ class AtaApp:
             on_toggle=lambda c: self.page.update(),
         )
         self.body_container = ft.Container(
-            padding=ft.padding.only(top=SPACE_4, bottom=SPACE_4),
+            padding=ft.padding.only(top=T.spacing.SPACE_4, bottom=T.spacing.SPACE_4),
             expand=True,
         )
         self.update_body()
@@ -152,8 +150,8 @@ class AtaApp:
             content=ft.ResponsiveRow(
                 [filtros, search_container],
                 columns=12,
-                spacing=SPACE_4,
-                run_spacing=SPACE_4,
+                spacing=T.spacing.SPACE_4,
+                run_spacing=T.spacing.SPACE_4,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             margin=ft.margin.only(bottom=0),
@@ -187,7 +185,7 @@ class AtaApp:
                 ft.ListTile(title=ft.Text("Testar Email"), on_click=self.testar_email),
                 ft.ListTile(title=ft.Text("Status Sistema"), on_click=self.mostrar_status_sistema),
             ],
-            spacing=SPACE_4,
+            spacing=T.spacing.SPACE_4,
             expand=True,
         )
 
