@@ -45,7 +45,7 @@ class AtaApp:
     
     def setup_page(self):
         """Configurações da página"""
-        self.page.title = "Ata de Registro de Preços 0016/2024"
+        self.page.title = "ATA-REGIS"
         self.page.window_width = 1200
         self.page.window_height = 800
         self.page.theme_mode = ft.ThemeMode.LIGHT
