@@ -49,14 +49,14 @@ STATUS_INFO = {
 }
 
 
-def build_header(nova_ata_cb: Callable) -> ft.Container:
+def build_header(nova_ata_cb: Callable) -> ft.AppBar:
     appbar_height = T.sizes.APPBAR_HEIGHT
     actions_row = ft.Row(
         [PrimaryButton("Nova Ata", icon=ft.icons.ADD, on_click=nova_ata_cb)],
         spacing=T.spacing.SPACE_4,
         vertical_alignment=ft.CrossAxisAlignment.CENTER,
     )
-    appbar = ft.AppBar(
+    return ft.AppBar(
         leading=ft.Icon(ft.icons.DESCRIPTION_OUTLINED),
         leading_width=T.sizes.APPBAR_LEADING_W,
         title=text(
@@ -67,19 +67,9 @@ def build_header(nova_ata_cb: Callable) -> ft.Container:
             letter_spacing=T.typography.TRACKING_WIDER,
         ),
         bgcolor=C.SURFACE,
-        actions=[
-            ft.Container(
-                content=actions_row,
-                alignment=ft.alignment.center_right,
-                padding=ft.padding.only(right=T.spacing.SPACE_5),
-            )
-        ],
+        actions=[ft.Container(content=actions_row, alignment=ft.alignment.center_right,
+                              padding=ft.padding.only(right=T.spacing.SPACE_5))],
         toolbar_height=appbar_height,
-    )
-    return ft.Container(
-        content=appbar,
-        bgcolor=C.SURFACE,
-        border=ft.border.only(bottom=ft.BorderSide(1, C.BORDER)),
     )
 
 
